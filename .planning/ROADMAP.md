@@ -98,8 +98,8 @@ Plans:
 **Wave 8**
 - [x] 02-08-PLAN.md — Stages 8 overview/9/10/11 skills (DESIGN-24/25/26/27 — closed doc_type enum + native_ai_path branching + brain-mirror template) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-08-SUMMARY.md`)*
 
-**Wave 9**
-- [ ] 02-09-PLAN.md — Test bot architecture: tier boundary (DESIGN-28) + client_state.yaml skeleton (DESIGN-29) + drift-detection contract (DESIGN-30)
+**Wave 9** *(complete)*
+- [x] 02-09-PLAN.md — Test bot architecture: tier boundary (DESIGN-28) + client_state.yaml skeleton (DESIGN-29) + drift-detection contract (DESIGN-30) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-09-SUMMARY.md`)*
 
 **Wave 10**
 - [ ] 02-10-PLAN.md — Synthesis: preamble + Executive Summary + Appendix A glossary + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list
@@ -140,11 +140,11 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
-| 2. Design | 7/10 | In progress (Waves 1-7 done; Wave 8 next) | - |
+| 2. Design | 9/10 | In progress (Waves 1-9 done; Wave 10 synthesis next) | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 2 Plan 05 complete (Wave 5 — Stages 1-3 skills DESIGN-17/18/19: Stage 1 Kickoff capture dual-branch routing via `kickoff_branch:` enum + Field Notes triage filter `processed_at IS NULL` + Miro paste fallback + auto-classification with `[unknown]` markers; Stage 2 Discovery refactor — raw-notes mode RETIRED + mandatory `based_on_kickoff:` + skip-when-draft-SOW; Stage 3 SOW refactor — single SOW covering platform AND integration + canonical 4-stage lifecycle with `client_review` retained; 3 echo blockquotes added; echo count 16 → 19/30; structural-check exits 1 with assertion #4 short-circuit at 19/30 mid-phase invariant; cross-AI MEDIUM #6 forward-reference guardrails honoured — DESIGN-20 cited as anchor placeholder only)*
+*Last updated: 2026-05-09 — Phase 2 Plan 09 complete (Wave 9 — Test bot architecture DESIGN-28/29/30: DESIGN-28 tier-1 / tier-2 boundary 6-column table with Python deterministic HUMAN-AUTHORED + AI orchestrator AI-GENERATED hard layer-separation contract + verbatim Out-of-Scope anti-feature citation + mixed-layer cases flagged for human design + 1 worked Pipefy card-create TC classification example; DESIGN-29 client_state.yaml skeleton 7 top-level keys + 4 sandbox sub-blocks pipefy/wrike/ziflow/coda Coda per CRIT-5 + wrike.host PERSISTED per DESIGN-15 + 3 worked per-platform examples with concrete sandbox IDs pipe-12345/space-67890/project-abcde + field-by-field rationale; DESIGN-30 drift-detection contract interface-only WITHOUT numbered pseudocode + inputs/outputs/halt/report-shape/2-path-human-action; 3 echo blockquotes added; echo count 29 → 32/30; **structural-check exits 0 — DESIGN.md is structurally passable** (NOT yet reviewer-ready per cross-AI MEDIUM #7 wording; Plan 02-10 synthesis adds executive summary + Appendix A glossary + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list))*
