@@ -5,11 +5,26 @@
 
 ## How to read this audit
 
-(preamble placeholder — written in final synthesis Wave 9)
+> Citation-grounded inventory of the v0.3.0 dydx-delivery plugin. **What this is:** observation-led catalogue of skills, connectors, missing artefacts, duplicated content, version mismatches, cosmetic issues, and live MCP wiring as of 2026-05-09. **What this is not:** a v2 design document, a fix list, or a v2.1 build plan — every "what's missing for v2" callout points at a DESIGN-* requirement in `.planning/REQUIREMENTS.md` without proposing the design move (per D-13). Cosmetic issues in AUDIT-07 are explicitly **scheduled for v2.1 Foundations build, NOT this milestone** (per D-16). Severity is tagged inline with `[BLOCKING] / [STRUCTURAL] / [COSMETIC]`; net-new findings beyond CONCERNS.md carry `[NEW]`. **Reading order:** scan the Executive Summary below for status-per-requirement, then jump to any AUDIT-0N section. Appendix B traces every CONCERNS.md entry to its AUDIT-* destination so reviewers can verify nothing was dropped silently.
+
+---
 
 ## Executive Summary
 
-(executive summary table placeholder — populated in Wave 9)
+Snapshot of the audit at completion. One row per AUDIT-* requirement with finding count and severity breakdown.
+
+| Requirement | Section | Findings | Severity breakdown | Status |
+|---|---|---|---|---|
+| AUDIT-01 | [Per-Skill Inventory](#audit-01-per-skill-inventory) | 7 skills × 3-7 brittleness items | Mostly [STRUCTURAL]; 3 [BLOCKING] (platform skill refs in 3 SKILL.md files) | ✓ |
+| AUDIT-02 | [CONCERNS.md absorption](#audit-02-concernsmd-absorption-verified-superset) | All 15 CONCERNS.md sections absorbed | (verified superset claim) | ✓ |
+| AUDIT-03 | [Per-Stage Connector Dependencies](#audit-03-per-stage-connector-dependencies) | 7 stages × 9 connectors; mostly artefact-driven | 1 REQUIRED (execute-tests platform APIs); 1 graceful (discovery-intake Miro) | ✓ |
+| AUDIT-04 | [Referenced-but-Missing Artefacts](#audit-04-referenced-but-missing-artefacts) | 5 missing categories + 1 verified-clean | 1 [BLOCKING] (platform skills); 4 [STRUCTURAL] | ✓ |
+| AUDIT-05 | [Duplicated Content Blocks](#audit-05-duplicated-content-blocks) | 4 confirmed dups + 1 [NEW] label collision | All [STRUCTURAL] | ✓ |
+| AUDIT-06 | [Version-String Mismatches](#audit-06-version-string-mismatches) | 8 version-bearing locations; 2.0.0 synced target | [STRUCTURAL] | ✓ |
+| AUDIT-07 | [Cosmetic-but-Client-Visible Issues](#audit-07-cosmetic-but-client-visible-issues) | 5 confirmed + 1 [NEW] homepage asymmetry | All [COSMETIC]; scheduled for v2.1 Foundations build | ✓ |
+| AUDIT-08 | [Live MCP Wiring Probe](#audit-08-live-mcp-wiring-probe) | 5 wired (working) + 1 [NEW] Slack (unauth) + 4 deferred | (probe is observational) | ✓ |
+
+*N (in AUDIT-02) = 15, the actual CONCERNS.md H2 section count from Appendix B trace.*
 
 ---
 
