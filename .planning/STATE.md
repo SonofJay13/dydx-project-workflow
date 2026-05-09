@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 Plan 01 complete — Wave 1 scaffold landed (design-structure-check.sh + DESIGN.md skeleton at .planning/DESIGN.md). Structural-check exits 1 by design against empty skeleton (assertion #4 short-circuits). Plans 02-02..02-10 now have anchored sections to populate.
-last_updated: "2026-05-09T22:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 Plan 01 executed — 2 commits (8469bd9 script; bb13937 skeleton); Wave 1 invariant verified (script live, helper extraction returns 0 against empty skeleton — cross-AI HIGH #1 fix confirmed working).
+stopped_at: Phase 2 Plan 02 complete — Wave 2 cross-cutting decisions landed (DESIGN-01..10 H3 subsections + decision-summary table + Live status-lifecycle survey populated + Appendix C 3 persona examples). 10 of 30 DESIGN-NN echo lines added; structural-check exits 1 (assertion #4 short-circuits at 10 < 30 — mid-phase invariant). Plans 02-03..02-10 add remaining 20 echoes + hand-off matrix data rows.
+last_updated: "2026-05-09T23:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 Plan 02 executed — 3 commits (6d8d720 survey + decision-summary table; 2b78f95 10 H3 subsections DESIGN-01..10; b69615e Appendix C 3 persona examples); structural-check correctly exits 1 (echo count = 10, expected >= 30 — Plans 02-03..02-09 add remaining 20).
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 19
-  completed_plans: 10
-  percent: 26
+  completed_plans: 11
+  percent: 32
 ---
 
 # STATE
@@ -26,27 +26,27 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 2 (Design) — EXECUTING (1/10 plans complete)
-Plan: 1 of 10 complete (Wave 1 scaffold landed). Plans 02-02..02-10 each populate their DESIGN-* slice into the skeleton.
-Status: Wave 1 scaffold complete. `.planning/phases/02-design/scripts/design-structure-check.sh` (9 assertions, stateful section_between helper) and `.planning/DESIGN.md` skeleton (143 lines, all H2/H3 anchors, seed [OPEN] marker, frontmatter_version: 2 sentinel) shipped. Structural-check exits 1 against empty skeleton — invariant verified. Next: `/gsd-execute-phase 2` continues with Plan 02-02 (Cross-cutting decisions DESIGN-01..10 + status-lifecycle survey + Appendix C persona examples).
-Last activity: 2026-05-09 -- Phase 2 Plan 01 executed — 2 commits (8469bd9 script; bb13937 skeleton); Wave 1 invariant confirmed.
+Phase: 2 (Design) — EXECUTING (2/10 plans complete)
+Plan: 2 of 10 complete (Wave 2 cross-cutting landed). Plans 02-03..02-10 each populate their DESIGN-* slice.
+Status: Wave 2 cross-cutting complete. DESIGN.md now has the 10-row decision-summary table + 10 H3 subsections (### DESIGN-01..DESIGN-10) + populated Live status-lifecycle survey (12 sampled-source rows; conclusion: no live value orphaned) + Appendix C 3 persona-contract worked examples (sourced from AUDIT.md §AUDIT-07.1, §AUDIT-07.2, §AUDIT-01.1). Echo count = 10/30; structural-check exits 1 (mid-phase invariant). Next: `/gsd-execute-phase 2` continues with Plan 02-03 (Skill layout DESIGN-11 + 13-skill inventory DESIGN-12 + Stage-by-stage hand-off contract DESIGN-13 / D-26 with >= 10 transition rows).
+Last activity: 2026-05-09 -- Phase 2 Plan 02 executed — 3 commits (6d8d720 survey + decision-summary table; 2b78f95 10 H3 subsections; b69615e Appendix C); 10 DESIGN-NN echo lines added; structural-check correctly exits 1.
 
-Progress: [██▋░░░░░░░] 26% (1 phase complete + Phase 2 Wave 1 scaffold)
+Progress: [███▏░░░░░░] 32% (1 phase complete + Phase 2 Waves 1-2 — 11 of 19 plans)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 10
-- Average duration: ~10 min
-- Total execution time: ~107 min
+- Total plans completed: 11
+- Average duration: ~11 min
+- Total execution time: ~121 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Audit | 9 | ~101 min | ~11 min |
-| 2. Design | 1 of 10 planned | ~6 min | ~6 min |
+| 2. Design | 2 of 10 planned | ~20 min | ~10 min |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
 
@@ -64,6 +64,7 @@ Progress: [██▋░░░░░░░] 26% (1 phase complete + Phase 2 Wave 
 | 1 | 08 (Wave 8 — AUDIT-08) | ~12 min | 2 | 1 | 2026-05-09 |
 | 1 | 09 (Wave 9 — synthesis) | ~10 min | 5 | 2 | 2026-05-09 |
 | 2 | 01 (Wave 1 scaffold) | ~6 min | 3 | 3 | 2026-05-09 |
+| 2 | 02 (Wave 2 — DESIGN-01..10 + survey + Appendix C) | ~14 min | 3 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -111,6 +112,11 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 2 Plan 01: Wave 1 skeleton intentionally fails 2 of 9 assertions (#4 DESIGN-NN echo count = 0; #9 hand-off matrix data rows = 0) — proves the structural-check is live end-to-end. Phase 1 Plan 01 set the precedent.
 - Phase 2 Plan 01: stateful-helper extraction confirmed against empty skeleton — `section_between "## Stage-by-stage hand-off contract"` returned 0 lines matching `^| Stage`, proving the helper does NOT spuriously match the header row (T-02-01-02 mitigation honoured).
 - Phase 2 Plan 01: 13 Stage-N H2 anchors created (Stages 1, 2, 3, 4a, 4b, 5, 6, 7a, 7b, 8, 9, 10, 11) — exceeds the >= 11 floor; accommodates Stage 4 fnspec split (DESIGN-20) and Stage 7 dual build prompts (DESIGN-23).
+- Phase 2 Plan 02: status-lifecycle survey ran in fallback mode (no live `<Client> Brain/` folders reachable from `C:/Users/Jason Blignaut/Documents/Coding/`) — v0.3.0 SKILL.md enumeration documented transparently per T-02-02-01; 12 sampled-source rows cite `file:line` per D-32; distinct values found `{draft, client_review, approved}`; `archived` is net-new in v2 — DESIGN-08 contract locked WITHOUT [MIGRATION-RISK] marker.
+- Phase 2 Plan 02: forbidden-phrasings list rendered as 10 separate bullet lines (NOT inline comma-separated) — `grep -cE` counts matching LINES not occurrences; same Phase 1 precedent as Plan 05 §5.5 split-citation, Plan 06 STRUCTURAL split, Plan 08 CRIT cross-ref split; Rule 1 fix during Task 2 verification before commit (no separate commit needed — caught pre-commit).
+- Phase 2 Plan 02: DESIGN-10 forbidden-phrasings count verified within DESIGN-10 H3 region only via stateful awk `section_between` extraction (cross-AI MEDIUM #5 fix) — prevents future false positives if broader persona-linting is added.
+- Phase 2 Plan 02: 10 H3 subsections (DESIGN-01..10) placed BEFORE the `### Live status-lifecycle survey` H3 so DESIGN-08 cross-reference reads forward in document order; survey populated above the H3 contract block.
+- Phase 2 Plan 02: structural-check exits 1 with the expected mid-phase failure message `"expected >= 30 'DESIGN-NN:' success-criteria echo blockquote lines (D-35), found 10"` — assertion #4 short-circuits at 10/30 echo lines; Plans 02-03..02-09 add the remaining 20.
 
 ### Pending Todos
 
@@ -129,5 +135,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 2 Plan 01 (Wave 1 scaffold) complete — 2 commits (8469bd9 design-structure-check.sh; bb13937 DESIGN.md skeleton); structural-check exits 1 against empty skeleton (Wave 1 invariant verified). Plans 02-02..02-10 next; resume execution via `/gsd-execute-phase 2`.
-Resume file: `.planning/phases/02-design/02-02-PLAN.md`
+Stopped at: Phase 2 Plan 02 (Wave 2 — cross-cutting decisions) complete — 3 commits (6d8d720 survey + decision-summary table; 2b78f95 10 H3 subsections; b69615e Appendix C). Echo line count progressed 0 → 10. Structural-check correctly exits 1 (assertion #4 short-circuits — 10 of 30 echo lines). Plans 02-03..02-10 next; resume execution via `/gsd-execute-phase 2`.
+Resume file: `.planning/phases/02-design/02-03-PLAN.md`

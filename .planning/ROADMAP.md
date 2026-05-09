@@ -77,8 +77,8 @@ Plans:
 **Wave 1**
 - [x] 02-01-PLAN.md — Wave 1 scaffold: design-structure-check.sh + DESIGN.md skeleton with all required H2/H3 anchors + seed [OPEN] marker *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-01-SUMMARY.md`)*
 
-**Wave 2**
-- [ ] 02-02-PLAN.md — Cross-cutting decisions (DESIGN-01..10) + status-lifecycle survey (D-25) + Appendix C persona examples
+**Wave 2** *(complete)*
+- [x] 02-02-PLAN.md — Cross-cutting decisions (DESIGN-01..10) + status-lifecycle survey (D-25) + Appendix C persona examples *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-02-SUMMARY.md`)*
 
 **Wave 3**
 - [ ] 02-03-PLAN.md — Skill layout (DESIGN-11) + 13-skill inventory (DESIGN-12) + Stage-by-stage hand-off matrix (DESIGN-13 / D-26)

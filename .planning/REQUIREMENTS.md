@@ -30,16 +30,16 @@ Plugin v2 architecture decisions locked. Each requirement names a decision the d
 
 #### Cross-cutting structural decisions
 
-- [ ] **DESIGN-01**: DESIGN.md establishes the canonical **frontmatter scheme** — status lifecycle (`draft → client_review → approved → archived`); field-name convention (underscore-snake-case for keys, hyphen-kebab-case for file paths); platform-gated identifiers (`pipe_id`/`space_id`/`project_id` only present when their `platform:` value is active); `frontmatter_version: 2` field on new artefacts; absent → v0.3.0 lenient mode.
-- [ ] **DESIGN-02**: DESIGN.md establishes the canonical **stage-numbering scheme** — file-prefix is the stage number (`01_kickoff_…` through `11_…`); substages `4a/4b/7a/7b/8a/8b/8c/8d` per architecture research; canonical reference at `dydx-delivery/references/stage-numbering.md`; old→new mapping table for migration.
-- [ ] **DESIGN-03**: DESIGN.md establishes a **single source of truth for hard rules** at `dydx-delivery/references/safety-rules.md`, plus a per-client override mechanism (`<Client> Brain/safety-overrides.yaml` overlaying only fields marked `overridable: true`). Skills inline a one-line summary plus pointer; never copy the full ruleset.
-- [ ] **DESIGN-04**: DESIGN.md commits to **plugin surfaces** — `commands/` (1 parameterised `refine.md` taking skill name as `$1` + 4 GSD-prefixed shortcuts), `agents/` (1 — test-bot-orchestrator), `hooks/` (2 — `validate-frontmatter`, `bump-artefact-version`; explicitly NOT auto-progression hooks), `mcpServers` field. Plugin manifest version `2.0.0` synced across `plugin.json` + `marketplace.json` metadata + plugins[0].
-- [ ] **DESIGN-05**: DESIGN.md decides the **`/refine-<skill>` pattern** — build a single parameterised `commands/refine.md` taking skill name as `$1` (recommended), OR delete every orphan reference during v2.1 cutover. No middle ground.
-- [ ] **DESIGN-06**: DESIGN.md establishes the **approval-gate enforcement contract** — every stage skill ends with an explicit handoff message naming the approval action; `status: approved` writes carry mandatory `approved_by` + `approved_at`; an approval-gate hook refuses `status: approved` writes lacking `approved_by`.
-- [ ] **DESIGN-07**: DESIGN.md establishes the **connector-availability probe + graceful-degradation matrix** — session-start probe of each MCP; per-stage fallback behaviour (Stage 6 → manual mode if Coda missing; Stage 9 → halt if Drive missing; Stage 10 → copy-paste fallback if direct API missing; etc.) per the PITFALLS connector-fallback table.
-- [ ] **DESIGN-08**: DESIGN.md establishes **frontmatter migration co-existence rules** — v2 readers tolerate v0.3.0 frontmatter via the `frontmatter_version` field; migration is opt-in per change request; in-flight `client_review` artefacts NEVER auto-flip to `approved`; status lifecycle MUST retain `client_review` (in use in `generate-sow` today).
-- [ ] **DESIGN-09**: DESIGN.md establishes the **directional-boundary contract** — local `<Client> Brain/` is canonical; Coda is one-way published mirror; Field Notes table is read-only triage queue; Field Notes are NEVER auto-merged into the brain (kickoff quotes the note + asks human keep/drop/edit-and-keep).
-- [ ] **DESIGN-10**: DESIGN.md establishes the **persona contract** — "senior implementer voice" specification with do/don't examples; every stage skill quality bar restates "does not auto-progress."
+- [x] **DESIGN-01**: DESIGN.md establishes the canonical **frontmatter scheme** — status lifecycle (`draft → client_review → approved → archived`); field-name convention (underscore-snake-case for keys, hyphen-kebab-case for file paths); platform-gated identifiers (`pipe_id`/`space_id`/`project_id` only present when their `platform:` value is active); `frontmatter_version: 2` field on new artefacts; absent → v0.3.0 lenient mode.
+- [x] **DESIGN-02**: DESIGN.md establishes the canonical **stage-numbering scheme** — file-prefix is the stage number (`01_kickoff_…` through `11_…`); substages `4a/4b/7a/7b/8a/8b/8c/8d` per architecture research; canonical reference at `dydx-delivery/references/stage-numbering.md`; old→new mapping table for migration.
+- [x] **DESIGN-03**: DESIGN.md establishes a **single source of truth for hard rules** at `dydx-delivery/references/safety-rules.md`, plus a per-client override mechanism (`<Client> Brain/safety-overrides.yaml` overlaying only fields marked `overridable: true`). Skills inline a one-line summary plus pointer; never copy the full ruleset.
+- [x] **DESIGN-04**: DESIGN.md commits to **plugin surfaces** — `commands/` (1 parameterised `refine.md` taking skill name as `$1` + 4 GSD-prefixed shortcuts), `agents/` (1 — test-bot-orchestrator), `hooks/` (2 — `validate-frontmatter`, `bump-artefact-version`; explicitly NOT auto-progression hooks), `mcpServers` field. Plugin manifest version `2.0.0` synced across `plugin.json` + `marketplace.json` metadata + plugins[0].
+- [x] **DESIGN-05**: DESIGN.md decides the **`/refine-<skill>` pattern** — build a single parameterised `commands/refine.md` taking skill name as `$1` (recommended), OR delete every orphan reference during v2.1 cutover. No middle ground.
+- [x] **DESIGN-06**: DESIGN.md establishes the **approval-gate enforcement contract** — every stage skill ends with an explicit handoff message naming the approval action; `status: approved` writes carry mandatory `approved_by` + `approved_at`; an approval-gate hook refuses `status: approved` writes lacking `approved_by`.
+- [x] **DESIGN-07**: DESIGN.md establishes the **connector-availability probe + graceful-degradation matrix** — session-start probe of each MCP; per-stage fallback behaviour (Stage 6 → manual mode if Coda missing; Stage 9 → halt if Drive missing; Stage 10 → copy-paste fallback if direct API missing; etc.) per the PITFALLS connector-fallback table.
+- [x] **DESIGN-08**: DESIGN.md establishes **frontmatter migration co-existence rules** — v2 readers tolerate v0.3.0 frontmatter via the `frontmatter_version` field; migration is opt-in per change request; in-flight `client_review` artefacts NEVER auto-flip to `approved`; status lifecycle MUST retain `client_review` (in use in `generate-sow` today).
+- [x] **DESIGN-09**: DESIGN.md establishes the **directional-boundary contract** — local `<Client> Brain/` is canonical; Coda is one-way published mirror; Field Notes table is read-only triage queue; Field Notes are NEVER auto-merged into the brain (kickoff quotes the note + asks human keep/drop/edit-and-keep).
+- [x] **DESIGN-10**: DESIGN.md establishes the **persona contract** — "senior implementer voice" specification with do/don't examples; every stage skill quality bar restates "does not auto-progress."
 
 #### Skill layout & hand-offs
 
@@ -176,16 +176,16 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | AUDIT-06 | Phase 1 | Pending |
 | AUDIT-07 | Phase 1 | Complete (2026-05-09 — Plan 07) |
 | AUDIT-08 | Phase 1 | Complete (2026-05-09 — Plan 08) |
-| DESIGN-01 | Phase 2 | Pending |
-| DESIGN-02 | Phase 2 | Pending |
-| DESIGN-03 | Phase 2 | Pending |
-| DESIGN-04 | Phase 2 | Pending |
-| DESIGN-05 | Phase 2 | Pending |
-| DESIGN-06 | Phase 2 | Pending |
-| DESIGN-07 | Phase 2 | Pending |
-| DESIGN-08 | Phase 2 | Pending |
-| DESIGN-09 | Phase 2 | Pending |
-| DESIGN-10 | Phase 2 | Pending |
+| DESIGN-01 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-02 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-03 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-04 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-05 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-06 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-07 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-08 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-09 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
+| DESIGN-10 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
 | DESIGN-11 | Phase 2 | Pending |
 | DESIGN-12 | Phase 2 | Pending |
 | DESIGN-13 | Phase 2 | Pending |
