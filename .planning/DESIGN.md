@@ -1173,10 +1173,42 @@ Failure halts; reviewer triages. The `pre_archive_sanity_status: passed | failed
 
 ## Test bot architecture
 
-(Populated by 02-09-PLAN.md / Wave 9. Covers DESIGN-28, 29, 30 — Python↔AI orchestrator boundary, `client_state.yaml` skeleton, drift-detection contract.)
+The test bot architecture comprises three architectural commitments locked here as decision contracts: DESIGN-28 (tier-1 / tier-2 boundary); DESIGN-29 (`client_state.yaml` skeleton); DESIGN-30 (drift-detection contract). Per CONTEXT D-30, these contracts ship interface-level + skeleton-schema fidelity — algorithmic detail is implemented in v2.1+ Phase 5 Stage 8 build per CHANGE-01 9-phase plan. Stage 8 overview (above) declared the stage-level architecture; this section provides the per-DESIGN architectural detail.
 
 ### DESIGN-28: tier-1 / tier-2 boundary
-(populated by 02-09-PLAN.md)
+
+> **DESIGN-28:** Python ↔ AI orchestrator boundary — Python tier-1 asserts state, schema, presence/absence, equality, regex, retry-count, status-code class; AI tier-2 interprets free-form output, classifies failure causes, suggests remediation. Test plans mark each TC with the layer it belongs to. Mixed-layer cases flagged for human design.
+
+**Tier boundary table.**
+
+| Tier | Role | Owner | Asserts | Authoring | Examples |
+|------|------|-------|---------|-----------|----------|
+| Tier-1 | deterministic | Python (`test_runner.py`) | state, schema, presence/absence, equality, regex, retry-count, status-code class | HUMAN-AUTHORED — per `## Out of Scope` "Generating Python tier-1 tests from natural language alone" anti-feature; AI does NOT author tier-1 assertions | `assert response.status_code == 200`; `assert "client_id" in response.json()`; `assert re.match(r"^pipe-[0-9]+$", value)` |
+| Tier-2 | AI orchestrator | `test-bot-orchestrator` agent (DESIGN-04) | free-form output interpretation, failure cause classification, remediation suggestion | AI-GENERATED via agent invocation in Stage 8d (`execute-tests`) | "Classify this failure: <stderr>" → returns `failure_class:` per DESIGN-24 enum (`spec gap | implementation gap | environment issue | harness_drift | unknown`) |
+
+**Mixed-layer cases.** When a single test case (TC) needs BOTH tier-1 AND tier-2 assertions, the test plan marks it `layer: mixed` AND flags it for human design. The mixed case is split into two TC entries (one tier-1, one tier-2) OR explicitly kept as `mixed` with both layers cited per-step. Silent assignment of a mixed case to a single tier is FORBIDDEN — reviewer must consciously choose split-vs-mixed before the case enters the harness.
+
+**1 worked TC classification example.**
+
+```
+Example TC: "Pipefy card creation returns valid pipe_id and AI Agent picks up new card."
+
+Layer split:
+- Tier-1 (Python `test_runner.py`):
+  - assert response.status_code == 201
+  - assert "id" in response.json()["card"]
+  - assert re.match(r"^[0-9]+$", str(response.json()["card"]["id"]))
+- Tier-2 (AI orchestrator via `test-bot-orchestrator` agent):
+  - Wait 30s for AI Agent picker.
+  - Invoke agent: "Read Pipefy AI Agent log entries since <timestamp>. Did the agent acknowledge card <id>? If not, classify failure: ingest_lag | agent_skip | log_silence | unknown."
+  - Tier-2 returns failure_class: per DESIGN-24 enum OR success.
+```
+
+This TC is `layer: mixed` — tier-1 verifies the create-card API response shape; tier-2 verifies the downstream AI Agent pickup behaviour (which is non-deterministic and free-form by nature). The reviewer signs off on the split before the TC enters `<Client> Brain/test-bot/test_cases/`.
+
+**Implementing decisions.** D-20 (test-bot architecture commitment); D-32 (transcribe-not-interpret discipline — tier-1 examples are concrete `assert` statements, not paraphrased intent); D-35 (echo blockquote per DESIGN-NN).
+
+**Cross-references.** DESIGN-04 (test-bot-orchestrator agent — `dydx-delivery/agents/test-bot-orchestrator.md` is the canonical location for the tier-2 invocation contract; v2.1+ build phase populates the agent file body); DESIGN-24 (Stage 8 overview + `failure_class:` enum extension including `harness_drift`); DESIGN-29 (`client_state.yaml` per-test-case `layer:` field records this classification); REQUIREMENTS `## Out of Scope` (the canonical anti-feature list — "Generating Python tier-1 tests from natural language alone").
 
 ### DESIGN-29: client_state.yaml skeleton
 (populated by 02-09-PLAN.md)
