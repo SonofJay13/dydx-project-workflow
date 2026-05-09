@@ -56,8 +56,8 @@ Plans:
 **Wave 8** *(complete)*
 - [x] 01-08-PLAN.md — AUDIT-08: live MCP probe table (5 wired + Slack [NEW] + 4 deferred) with probe-time timestamp *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-08-SUMMARY.md`)*
 
-**Wave 9** *(unblocked)*
-- [ ] 01-09-PLAN.md — Synthesis: AUDIT-02 absorption claim + Appendix A glossary + Appendix B trace + executive summary + preamble + reviewer coverage doc; runs structural-check (must exit 0)
+**Wave 9** *(complete)*
+- [x] 01-09-PLAN.md — Synthesis: AUDIT-02 absorption claim + Appendix A glossary + Appendix B trace + executive summary + preamble + reviewer coverage doc; structural-check exits 0 (all 8 assertions pass) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-09-SUMMARY.md`)*
 
 ### Phase 2: Design
 **Goal**: Produce `.planning/DESIGN.md` — the locked v2 architecture covering cross-cutting structural decisions (frontmatter, stage numbering, hard-rules SoT, plugin surfaces, refine pattern, approval gates, connector probe, migration co-existence, directional boundary, persona); the v2 folder layout + 13-skill inventory + per-stage hand-off contracts; the three internalised platform skills (`platform-pipefy`/`-wrike`/`-ziflow`); every stage skill design (Stage 1 Kickoff, Stage 2 Discovery, Stage 3 SOW, Stage 4a/4b Fnspec split, Stage 5 Tech spec, Stage 6 Cost estimate, Stage 7a/7b Build prompts, Stage 8a-8d Test bot, Stage 9 Documentation, Stage 10 Native-AI, Stage 11 Sign-off); and the test bot architecture (Python↔AI orchestrator boundary, `client_state.yaml` schema, drift-detection algorithm).

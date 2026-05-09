@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 08 complete — AUDIT-08 live MCP probe table populated (probe time 2026-05-09T16:30:53Z; 5-MCP probe table with transport ✓ Connected + honest "cheap-read not invocable from sub-agent" Result column per CRITICAL HONESTY RULE; Slack [NEW] [STRUCTURAL] row; 4 deferred connectors; CRIT-1/2/3/9 split-bullet cross-refs); ready for Plan 09 (Wave 9 — AUDIT-02 absorption + Appendix B trace + Executive Summary + Preamble + Coverage)
-last_updated: "2026-05-09T21:00:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 08 complete (Wave 8 — AUDIT-08)
+stopped_at: Phase 1 Plan 09 complete — synthesis wave landed (AUDIT-02 absorption claim + Appendix A glossary + Appendix B 15-row trace + Executive Summary + How-to-read preamble); reviewer coverage doc created at `.planning/phases/01-audit/01-AUDIT-COVERAGE.md`; structural-check script exits 0 (all 8 assertions pass); Phase 1 deliverable `.planning/AUDIT.md` is structurally complete and ready for human approval gate before Phase 2 (Design) may begin
+last_updated: "2026-05-09T22:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 09 complete (Wave 9 — synthesis + structural-check pass) — Phase 1 ready for approval gate
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 8
-  percent: 22
+  completed_plans: 9
+  percent: 25
 ---
 
 # STATE
@@ -26,26 +26,26 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 1 (Audit) — EXECUTING
-Plan: 9 of 9 (Plan 08 complete; AUDIT-08 live MCP probe populated with empirically-honest results)
-Status: Executing Phase 1 — Wave 9 (synthesis: AUDIT-02 absorption + Appendix B trace + Executive Summary + Preamble + Coverage doc) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 08 complete (Wave 8 — AUDIT-08: probe time 2026-05-09T16:30:53Z; 5-MCP table with transport ✓ Connected + honest "cheap-read not invocable from sub-agent" Result column; Slack [NEW] [STRUCTURAL] row; 4 deferred connectors; CRIT-1/2/3/9 split-bullet cross-refs; D-13 banned phrases = 0; 8-H2-section count holds)
+Phase: 1 (Audit) — AWAITING APPROVAL GATE
+Plan: 9 of 9 (Plan 09 complete; synthesis wave landed; AUDIT.md structurally complete)
+Status: Phase 1 plans 9/9 complete; structural-check exits 0; awaiting human approval of `.planning/AUDIT.md` + `.planning/phases/01-audit/01-AUDIT-COVERAGE.md` before Phase 2 (Design) may begin
+Last activity: 2026-05-09 -- Phase 1 Plan 09 complete (Wave 9 — synthesis: AUDIT-02 verified-superset claim + canonical sentinel "All CONCERNS.md sections absorbed; zero entries dropped silently" + running-prose "All 15 sections absorbed"; Appendix A 17-term glossary; Appendix B 15-row numeric-indexed trace; Executive Summary 8-row anchor-link table; How-to-read preamble; reviewer coverage doc with 5 success-criterion sections + 3 spot-checks; structural-check 8/8 assertions pass; D-13 banned phrases = 0 across all new content)
 
-Progress: [██░░░░░░░░] 22% (0/4 phases complete; 8/9 Phase 1 plans complete)
+Progress: [██░░░░░░░░] 25% (0/4 phases complete; 9/9 Phase 1 plans complete — awaiting approval gate)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~11 min
-- Total execution time: ~91 min
+- Total execution time: ~101 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 8 | ~91 min | ~11 min |
+| 1. Audit | 9 | ~101 min | ~11 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -62,6 +62,7 @@ Progress: [██░░░░░░░░] 22% (0/4 phases complete; 8/9 Phase 1
 | 1 | 06 (Wave 6 — AUDIT-06) | ~10 min | 1 | 1 | 2026-05-09 |
 | 1 | 07 (Wave 7 — AUDIT-07) | ~7 min | 1 | 1 | 2026-05-09 |
 | 1 | 08 (Wave 8 — AUDIT-08) | ~12 min | 2 | 1 | 2026-05-09 |
+| 1 | 09 (Wave 9 — synthesis) | ~10 min | 5 | 2 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -99,6 +100,10 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 08: CRITICAL HONESTY RULE applied — sub-agent execution context does NOT expose `mcp__claude_ai_*` tool functions for the 5 wired MCPs (only `mcp__plugin_context-mode_context-mode__*` is in this agent's tool registry); per-endpoint cheap-read calls were therefore recorded as `transport ✓ Connected; cheap-read not invocable from this sub-agent` with explicit reviewer-re-probe call-out per VALIDATION.md, NOT fabricated as `200 OK / N items returned`. Empirical truth (probe transport via `claude mcp list` at 2026-05-09T16:30:53Z) > clean-looking matrix; T-01-08-01 mitigation honoured.
 - Phase 1 Plan 08: CRIT-1/2/3/9 cross-refs split onto 4 separate bullet lines (Rule 1 fix during verify) — `grep -cE 'CRIT-(1|2|3|9)'` counts matching lines, not occurrences; same precedent as Plan 05 §5.5 split-citation form and Plan 06 STRUCTURAL split.
 - Phase 1 Plan 08: bold prefix dropped from MCP-row leading cells (`| Coda |` not `| **Coda** |`) — Plan ships TWO row-count regexes (strict `^\| (Coda|...) \|` in `<verify automated>` AND optional-bold `^\| \*?\*?(Coda|...)\*?\*? \|` in `<acceptance>`); dropping the bold satisfies both simultaneously without weakening visual scannability.
+- Phase 1 Plan 09: live `^## ` H2 count of CONCERNS.md = 15 sections (RESEARCH.md §2 said 14 — missed the standalone "Versioning convention vs current state" at CONCERNS.md:226); Plan 09's grep-count is canonical and absorbs all 15 in Appendix B trace.
+- Phase 1 Plan 09: AUDIT-02 carries BOTH the running-prose form `All 15 CONCERNS.md sections absorbed` (visible count for reviewers) AND the canonical no-count sentinel `**All CONCERNS.md sections absorbed; zero entries dropped silently.**` on its own line (must_haves.contains literal-substring gate is robust to count drift in CONCERNS.md).
+- Phase 1 Plan 09: Appendix B uses numeric-index column-1 (`| 1 |`...`| 15 |`); structural-check assertion #7 tolerant regex `^\| [^\|]+ \|` matches 16 rows (15 data + 1 header) — passes the >= 14 gate with margin.
+- Phase 1 Plan 09: structural-check 8/8 assertions pass (file exists; 8 AUDIT-0N H2 sections; D-16 v2.1 sentinel present; CONCERNS absorption claim present; Executive Summary header present; Appendix B header present; >= 14 Appendix B rows; `2.0.0` D-17 sync target literal present); Phase 1 deliverable structurally complete.
 
 ### Pending Todos
 
@@ -117,5 +122,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 08 complete — AUDIT-08 live MCP probe table (probe time 2026-05-09T16:30:53Z; 5-MCP table with transport ✓ Connected + honest "cheap-read not invocable from sub-agent" Result column per CRITICAL HONESTY RULE; Slack [NEW] [STRUCTURAL] row; 4 deferred connectors; CRIT-1/2/3/9 split-bullet cross-refs; D-13 banned phrases = 0; 8-H2-section count holds) populated; ready for Plan 09 (Wave 9 — synthesis: AUDIT-02 absorption + Appendix B trace + Executive Summary + Preamble + Coverage doc)
-Resume file: .planning/phases/01-audit/01-09-PLAN.md
+Stopped at: Phase 1 Plan 09 complete — synthesis wave landed (AUDIT-02 absorption claim + Appendix A glossary + Appendix B 15-row trace + Executive Summary + How-to-read preamble); reviewer coverage doc created at `.planning/phases/01-audit/01-AUDIT-COVERAGE.md`; structural-check exits 0 (8/8 assertions pass); Phase 1 deliverable `.planning/AUDIT.md` is structurally complete and AWAITING HUMAN APPROVAL GATE before Phase 2 (Design) may begin
+Resume file: (Phase 1 awaiting approval — next plan is Phase 2's first plan after approval)
