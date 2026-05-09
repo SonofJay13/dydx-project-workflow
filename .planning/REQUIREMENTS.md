@@ -186,12 +186,12 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | DESIGN-08 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
 | DESIGN-09 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
 | DESIGN-10 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
-| DESIGN-11 | Phase 2 | Pending |
-| DESIGN-12 | Phase 2 | Pending |
-| DESIGN-13 | Phase 2 | Pending |
-| DESIGN-14 | Phase 2 | Pending |
-| DESIGN-15 | Phase 2 | Pending |
-| DESIGN-16 | Phase 2 | Pending |
+| DESIGN-11 | Phase 2 | Complete (Plan 02-03) |
+| DESIGN-12 | Phase 2 | Complete (Plan 02-03) |
+| DESIGN-13 | Phase 2 | Complete (Plan 02-03) |
+| DESIGN-14 | Phase 2 | Complete (Plan 02-04) |
+| DESIGN-15 | Phase 2 | Complete (Plan 02-04) |
+| DESIGN-16 | Phase 2 | Complete (Plan 02-04) |
 | DESIGN-17 | Phase 2 | Complete (Plan 02-05) |
 | DESIGN-18 | Phase 2 | Complete (Plan 02-05) |
 | DESIGN-19 | Phase 2 | Complete (Plan 02-05) |
@@ -203,9 +203,9 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | DESIGN-25 | Phase 2 | Complete |
 | DESIGN-26 | Phase 2 | Complete |
 | DESIGN-27 | Phase 2 | Complete |
-| DESIGN-28 | Phase 2 | Pending |
-| DESIGN-29 | Phase 2 | Pending |
-| DESIGN-30 | Phase 2 | Pending |
+| DESIGN-28 | Phase 2 | Complete (Plan 02-09) |
+| DESIGN-29 | Phase 2 | Complete (Plan 02-09) |
+| DESIGN-30 | Phase 2 | Complete (Plan 02-09) |
 | CHANGE-01 | Phase 3 | Pending |
 | CHANGE-02 | Phase 3 | Pending |
 | CHANGE-03 | Phase 3 | Pending |
