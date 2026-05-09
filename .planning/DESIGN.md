@@ -33,6 +33,189 @@ frontmatter_version: 2
 | DESIGN-09 | Directional boundary | Local `<Client> Brain/` canonical; Coda one-way mirror; Field Notes read-only triage queue; never auto-merged | — |
 | DESIGN-10 | Persona contract | ~5 senior-implementer voice principles + forbidden-phrasings list inline; 3 worked before/after examples in Appendix C | D-29 |
 
+### DESIGN-01 — Canonical frontmatter scheme
+
+> **DESIGN-01:** Canonical frontmatter scheme — status lifecycle, field-name convention, platform-gated identifiers, frontmatter_version semantics.
+
+**Contract.**
+
+- `frontmatter_version: 2` is mandatory on every new artefact written by a v2 skill. Absent value → v0.3.0 lenient mode (per DESIGN-08).
+- Status lifecycle (canonical): `draft → client_review → approved → archived`. `client_review` is retained per AUDIT.md §AUDIT-01.2 (live in `dydx-delivery/skills/generate-sow/SKILL.md:93`); see `### Live status-lifecycle survey` above for the reconciliation confirming no live value is orphaned.
+- Field-name convention: underscore-snake-case for keys (`based_on_kickoff`, `pipe_id`, `approved_by`, `approved_at`, `tier_claims_last_verified`); hyphen-kebab-case for file paths inside `based_on_*` values (`02_kickoff_v1`).
+- Platform-gated identifiers: `pipe_id` / `space_id` / `project_id` may only appear when the artefact's `platform:` value is active for that identifier (Pipefy / Wrike / Ziflow respectively). Carrying `pipe_id` on a Wrike artefact is a validation failure raised by the `validate-frontmatter` hook (DESIGN-04).
+- `frontmatter_version: 2` lenient-mode reader behaviour is specified in DESIGN-08; v2 readers MUST NOT auto-flip in-flight artefacts.
+
+**Cross-references.** DESIGN-04 (hook implementation); DESIGN-06 (approval-gate field requirements `approved_by` + `approved_at`); DESIGN-08 (migration semantics + lenient mode); DESIGN-27 (Stage 11 writes `status: archived`).
+
+---
+
+### DESIGN-02 — Canonical stage-numbering scheme
+
+> **DESIGN-02:** Canonical stage-numbering scheme — file-prefix as stage number, substages, canonical reference doc, old→new mapping.
+
+**Contract.**
+
+- File-prefix = stage number across the v2 pipeline: `01_kickoff_*` (Stage 1) → `02_discovery_*` (Stage 2) → `03_sow_*` (Stage 3) → `04a_fnspec-platform_*` / `04b_fnspec-integration_*` (Stages 4a / 4b) → `05_techspec_*` (Stage 5) → `06_cost_*` (Stage 6) → `07a_build-prompt-dev_*` / `07b_build-prompt-impl_*` (Stages 7a / 7b) → `08_test-results_*` (Stage 8) → `09_doc-diff_*` (Stage 9) → `10_native-ai_*` (Stage 10) → `11_signoff_*` (Stage 11).
+- Substage letter suffixes: `4a` / `4b` (fnspec split per DESIGN-20); `7a` / `7b` (build-prompt dual per DESIGN-23); `8a` / `8b` / `8c` / `8d` (provision-test-harness / test plan / UAT plan / execute-tests refactor per DESIGN-24).
+- Canonical reference document at `dydx-delivery/references/stage-numbering.md` (NEW in v2; lands in v2.1 Foundations build) carries the full stage→file-prefix mapping plus the v0.3.0→v2 migration table. Skills cite this doc rather than re-asserting numbering.
+- Old→new mapping table: v0.3.0 `00_discovery_*` → v2 `02_discovery_*`; v0.3.0 `01_sow_*` → v2 `03_sow_*`; v0.3.0 `02_functional-spec_*` → v2 `04a_fnspec-platform_*` (split per DESIGN-20); v0.3.0 `03_technical-spec_*` → v2 `05_techspec_*`; v0.3.0 `04_build-prompt_*` → v2 `07a_build-prompt-dev_*`; v0.3.0 `test-plan_v*` → v2 `08b_test-plan_*` (path moves to `<Client> Brain/test-bot/test_cases/`); v0.3.0 `results-YYYY-MM-DD_v*` → v2 `08_test-results_*`. Resolves the two-scheme conflict cited at AUDIT.md §AUDIT-01.1 (`intake-template.md:13` self-labels "Stage 0" while file-prefix is `00_`).
+
+**Cross-references.** DESIGN-08 (migration co-existence — old prefixes coexist during opt-in CR-driven upgrade); DESIGN-13 (hand-off contract uses v2 carrier file paths); DESIGN-20 (fnspec split anchors `4a` / `4b`); DESIGN-23 (build prompt dual anchors `7a` / `7b`).
+
+---
+
+### DESIGN-03 — Single source of truth for hard rules
+
+> **DESIGN-03:** Single source of truth for hard rules at `dydx-delivery/references/safety-rules.md` plus per-client overrides overlay.
+
+**Contract.**
+
+- Single SoT location: `dydx-delivery/references/safety-rules.md` (canonical hard-rules document; v0.3.0 lives at `dydx-delivery/skills/execute-tests/references/safety-rules.md` per AUDIT.md §AUDIT-05; v2 promotes it to plugin-level `references/`).
+- Per-client overlay: `<Client> Brain/safety-overrides.yaml` overlays ONLY fields marked `overridable: true` in the canonical SoT. Non-overridable rules (sandbox-only test execution, hard-stop integration safety) cannot be relaxed by a client overlay.
+- Skills inline a one-line summary plus a pointer at `dydx-delivery/references/safety-rules.md`; never copy the full ruleset. AUDIT.md §AUDIT-05 catalogues the 4 hard-rules duplicates (3 copies + 1 canonical) collapsed by this contract.
+- Override resolution at runtime: skill loads canonical SoT → loads per-client overlay if present → applies overrides only to `overridable: true` fields → final ruleset assembled in memory.
+
+**Cross-references.** DESIGN-04 (`validate-frontmatter` and `bump-artefact-version` hooks read from canonical SoT); DESIGN-24 (Stage 8 test bot sandbox-only enforcement reads canonical SoT); DESIGN-27 (Stage 11 archive checks pre-archive sanity against canonical rules).
+
+---
+
+### DESIGN-04 — Plugin surfaces
+
+> **DESIGN-04:** Plugin surfaces — commands/agents/hooks/mcpServers/version + plugin self-tests (D-24).
+
+**Contract.**
+
+- `commands/`: 1 parameterised `commands/refine.md` (per DESIGN-05) + 4 GSD-prefixed shortcut commands (namespace: `/dydx-*`).
+- `agents/`: 1 — `test-bot-orchestrator.md` (drives Stage 8 tier-2 AI orchestration per DESIGN-24).
+- `hooks/`: 2 (NOT auto-progression hooks — explicit non-goal per kickoff mandate):
+  - `validate-frontmatter.py` — validates `frontmatter_version`, status-lifecycle membership, platform-gated identifier rules, `approved_by` + `approved_at` mandatory on `status: approved` writes (DESIGN-06).
+  - `bump-artefact-version.py` — increments `version` field in frontmatter and renames `_v{N}.md` → `_v{N+1}.md` idempotently (Option B versioning carried forward from v0.3.0).
+- `mcpServers` field in `dydx-delivery/.claude-plugin/plugin.json` lists the 5 wired MCPs (Coda, Google Drive, Gmail, Calendar, Miro per AUDIT.md §AUDIT-08).
+- Plugin manifest version `2.0.0` synced across `dydx-delivery/.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` metadata + `marketplace.json:plugins[0]` (resolves AUDIT.md §AUDIT-06 version-string mismatches).
+
+**Plugin self-tests subsection (per D-24).** Plugin v2.1 ships pytest smoke tests for plugin-level correctness at `dydx-delivery/tests/` (NEW directory). Coverage:
+- `validate-frontmatter` hook — positive cases (valid v2 frontmatter passes) + negative cases (missing `approved_by` on `status: approved` write rejected; `pipe_id` on Wrike artefact rejected; non-canonical status value rejected).
+- `bump-artefact-version` hook — idempotency (running twice on `_v3.md` produces `_v4.md` then `_v5.md` without artefact corruption); version-bump correctness (`version: 3` → `version: 4`).
+- Frontmatter parser — status-lifecycle membership, platform-gated identifier rules, `frontmatter_version` field handling (absent → lenient mode per DESIGN-08).
+- Test framework: pytest. CI integration: tests run on every PR via plugin CI (CI infrastructure lands with v2.1 Foundations build).
+
+**Cross-references.** DESIGN-01 (frontmatter scheme — what hooks validate); DESIGN-05 (`commands/refine.md` parameterisation); DESIGN-06 (approval-gate fields enforced by `validate-frontmatter`); DESIGN-08 (lenient-mode reader behaviour); AUDIT.md §AUDIT-06 (version-string mismatch closure); AUDIT.md §AUDIT-08 (live MCP wiring snapshot).
+
+---
+
+### DESIGN-05 — `/refine-<skill>` resolution
+
+> **DESIGN-05:** `/refine-<skill>` resolution — single parameterised `commands/refine.md`, namespace `/dydx-refine-*` (D-23).
+
+**Contract.**
+
+- Single parameterised `commands/refine.md` taking the skill name as `$1`. The command body dispatches to the named skill's refinement flow; new skills get refine-coverage automatically without N more command files.
+- Namespace: `/dydx-refine-*` (NOT bare `/refine-*` — D-23). Avoids collision with other plugins or native shortcuts; clients invoke `/dydx-refine-discovery-intake`, `/dydx-refine-generate-sow`, etc.
+- Resolves AUDIT.md §AUDIT-04.2 orphan-reference finding: v0.3.0 SKILL.md files reference `/refine-<skill>` commands that never shipped. v2.1 cutover: parameterised `refine.md` resolves all orphan references; documentation updates SKILL.md prose to use `/dydx-refine-*` namespace.
+- Phase 3 CHANGELIST.md schedules the refine-command build for v2.1 Foundations.
+
+**Cross-references.** DESIGN-04 (commands/ directory shape); AUDIT.md §AUDIT-04.2 (orphan `/refine-<skill>` references catalogued).
+
+---
+
+### DESIGN-06 — Approval-gate enforcement
+
+> **DESIGN-06:** Approval-gate enforcement — mandatory `approved_by` + `approved_at` on `status: approved` writes, hook refuses otherwise.
+
+**Contract.**
+
+- Every stage skill ends with an explicit hand-off message naming the approval action (e.g., "Run `generate-sow` after `00_discovery_v{N}.md` is `status: approved`"). The hand-off message shape is locked per-stage in DESIGN-13.
+- Mandatory frontmatter fields on every `status: approved` write: `approved_by: <human-name>` (NOT `Claude` / `AI` / `system`) + `approved_at: <ISO-8601 timestamp>`.
+- The `validate-frontmatter` hook (DESIGN-04) refuses any write that sets `status: approved` and lacks either `approved_by` or `approved_at`. The hook returns a non-zero exit and surfaces the missing fields by name.
+- Auto-progression between stages remains an explicit non-goal (kickoff mandate). Approval is a human action; the hook is the enforcement floor, not a substitute for review.
+
+**Cross-references.** DESIGN-01 (status-lifecycle membership); DESIGN-04 (`validate-frontmatter` hook implementation); DESIGN-13 (hand-off message shape per stage transition).
+
+---
+
+### DESIGN-07 — Connector-availability probe + degradation matrix
+
+> **DESIGN-07:** Connector-availability probe + per-stage graceful-degradation matrix.
+
+**Contract.**
+
+- Session-start MCP probe: at the start of each Claude Code session, the plugin probes each wired MCP (Coda, Google Drive, Gmail, Calendar, Miro per AUDIT.md §AUDIT-08) with a cheap-read endpoint. Probe outcome cached for the session: `connected | degraded | missing`.
+- Per-stage graceful-degradation matrix: each stage skill's behaviour when a required connector returns `missing` is locked. Examples (full 10-row matrix lands in DESIGN-07 per the PITFALLS-cited fallback table referenced in AUDIT.md §AUDIT-03):
+  - Stage 1 Kickoff (Miro missing) → paste-fallback mode (workflow-map ingest via copy-paste).
+  - Stage 6 Cost estimate (Coda missing) → manual mode (cost estimate emitted as local `.md` only; Coda upsert deferred).
+  - Stage 9 Documentation (Drive missing) → halt with explicit error; Stage 9 cannot complete without Drive.
+  - Stage 10 Native-AI enablement (platform native-AI API missing) → copy-paste fallback per `native_ai_path: paste`.
+- Probe is non-blocking at session start; failure to reach a connector does NOT block plugin load. Stages that require the connector halt at their own gates per the matrix.
+- Probe results plus per-stage matrix are written to a session-scoped `connector_probe.yaml` cache so skills do not re-probe.
+
+**Cross-references.** AUDIT.md §AUDIT-03 (per-stage connector dependencies); AUDIT.md §AUDIT-08 (live MCP wiring snapshot — probe baseline); DESIGN-26 (Stage 10 `native_ai_path` flag drives degradation).
+
+---
+
+### DESIGN-08 — Frontmatter migration co-existence
+
+> **DESIGN-08:** Frontmatter migration co-existence — CR-driven opt-in, `client_review` retained, lenient mode for v0.3.0 absent (D-25 survey locks).
+
+**Contract.**
+
+- v2 readers tolerate v0.3.0 frontmatter via the `frontmatter_version` field. Absent value → lenient mode (reader assumes v0.3.0 conventions; does not raise on missing `archived` status, missing `frontmatter_version: 2`, or missing `approved_by` / `approved_at` on `status: approved` artefacts written before v2.1).
+- Migration is opt-in per change request (CR-driven). When a CR fires that touches an artefact, the artefact upgrades to v2 frontmatter as part of that CR's diff. No date-based cutover.
+- In-flight `client_review` artefacts NEVER auto-flip to `approved`. The migration upgrade preserves the in-flight status verbatim.
+- Status lifecycle MUST retain `client_review` (live in `generate-sow:93` per AUDIT.md §AUDIT-01.2 and confirmed by the survey above).
+- Survey result locks the contract: see `### Live status-lifecycle survey` above for methodology, sampled sources, distinct values found, and reconciliation against canonical `{draft, client_review, approved, archived}`. No live value is orphaned. No `[MIGRATION-RISK]` marker required.
+
+**Cross-references.** DESIGN-01 (canonical frontmatter scheme — what v2 enforces); DESIGN-04 (`validate-frontmatter` hook lenient-mode behaviour); `### Live status-lifecycle survey` (above — D-25 methodology + result).
+
+---
+
+### DESIGN-09 — Directional-boundary contract
+
+> **DESIGN-09:** Directional-boundary contract — local canonical, Coda one-way mirror, Field Notes read-only triage queue.
+
+**Contract.**
+
+- Local `<Client> Brain/` is canonical: every artefact, decision, and brain-spoke document lives locally first. Drafts edit locally; reviews happen against local files.
+- Coda is a one-way mirror: Stage 11 (DESIGN-27) pushes brain content to a Coda mirror doc using the brain-mirror Coda doc template (Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes). No Coda → local sync; no two-way merge.
+- Field Notes table on Coda is a read-only triage queue: clients and team members add notes; the plugin reads notes during Stage 1 Kickoff (DESIGN-17) for triage but NEVER auto-merges. Kickoff quotes the note + asks human to keep / drop / edit-and-keep before integrating into the brain.
+- Field Notes are NEVER auto-merged into the brain; the directional boundary is enforced by skill design, not by Coda permissions. Kickoff is the only stage that reads Field Notes.
+
+**Cross-references.** DESIGN-17 (Stage 1 Kickoff — Field Notes triage); DESIGN-27 (Stage 11 — Coda one-way push); AUDIT.md §AUDIT-04 (existing brain-mirror references).
+
+---
+
+### DESIGN-10 — Persona contract
+
+> **DESIGN-10:** Persona contract — senior-implementer voice principles + forbidden-phrasings list inline + 3 worked examples in Appendix C (D-29).
+
+**Contract.**
+
+Senior-implementer voice principles (5):
+
+1. **No AI hedging.** Statements are claims, not suggestions. Avoid soft modal verbs ("might", "could", "perhaps").
+2. **Specific over abstract.** Cite `file:line` when stating a fact about the codebase. Replace vague references with concrete paths or names.
+3. **No apology-prefaces.** Skip "Note that…", "It's worth noting…", "Please be aware…". State the fact directly.
+4. **Imperative over advisory.** Prefer "Update README:14" over "we recommend updating the README". The reader is the implementor; tell them what to do.
+5. **End with hand-off, not summary.** The closing sentence names the next action and the artefact it produces; not a recap of what was just said.
+
+Forbidden phrasings (verbatim — these strings MUST NOT appear in v2 prose authored by skills):
+
+- "we recommend"
+- "as an AI"
+- "I would suggest"
+- "perhaps consider"
+- "might want to"
+- "it's worth noting"
+- "please be aware"
+- "in order to"
+- "make sure to"
+- "feel free to"
+
+3 worked before/after examples — see `## Appendix C: Persona contract worked examples`.
+
+**Cross-references.** DESIGN-13 (hand-off message shape — closing sentence per principle 5); DESIGN-25 (`tone_lint` pass at Stage 11 enforces persona compliance pre-archive); `## Appendix C: Persona contract worked examples`.
+
+---
+
 ### Live status-lifecycle survey
 
 **Methodology.** No live `<Client> Brain/` folders are reachable from this workspace at probe time (2026-05-09; checked sibling directories under `C:/Users/Jason Blignaut/Documents/Coding/` — only non-client project folders present: `AWS`, `Anaconda`, `Ardit Sluice` (non-dYdX project subfolders), `dydx-project-workflow`). Per D-25 fallback, the survey enumerates every `status:` value visible in v0.3.0 SKILL.md sources: every literal `status:` token (frontmatter sample, `status:` flow assignment, prose status-flag reference, hand-off-message status reference) is captured with `file:line` per D-32. Fallback is documented transparently rather than fabricating live-folder results (T-02-02-01 mitigation).
