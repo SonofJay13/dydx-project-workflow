@@ -193,7 +193,19 @@ Catalogues all 7 v0.3.0 skills shipped under `dydx-delivery/skills/`. Each skill
 
 ## AUDIT-03: Per-Stage Connector Dependencies
 
-(populated by 01-03-PLAN.md / Wave 3)
+The v0.3.0 pipeline is **artefact-driven** — each skill reads a markdown file from the previous stage and writes a markdown file for the next, per `dydx-delivery/README.md:60-72` and `.planning/codebase/INTEGRATIONS.md:175-197`. As a result, most skills do NOT directly invoke connectors at all; generated artefacts merely *reference* connector vocabulary (e.g. Pipefy GraphQL endpoints in `dydx-delivery/skills/generate-technical-spec/references/technical-spec-template.md:112-119`, Slack `#ops-alerts` in `dydx-delivery/skills/execute-tests/references/safety-rules.md:41`). The two real-connector exceptions are `discovery-intake` (optional Miro paste) and `execute-tests` (the only skill that actually issues sandbox API calls per `dydx-delivery/skills/execute-tests/references/safety-rules.md:75-76`). v2's Coda/Drive/Gmail/Calendar dependencies (Phase 2 scope per `.planning/ROADMAP.md`) are OUT OF SCOPE for AUDIT-03 — the design contract for graceful-degradation lives in **DESIGN-07**.
+
+| Stage | Miro | Coda | Drive | Gmail | Calendar | Claude in Chrome | Pipefy API | Wrike API | Ziflow API |
+|---|---|---|---|---|---|---|---|---|---|
+| discovery-intake | optional (graceful) | (none) | (none) | (none) | (none) | (none) | (none) | (none) | (none) |
+| generate-sow | (none) | (none) | (none) | (none) | (none) | (none) | (none) | (none) | (none) |
+| generate-functional-spec | (none) | (none) | (none) | (none) | (none) | (none) | (none) | (none) | (none) |
+| generate-technical-spec | (none) | (none) | (none) | (none) | (none) | (none) | (referenced in artefact only) | (referenced in artefact only) | (referenced in artefact only) |
+| generate-test-plan | (none) | (none) | (none) | (none) | (none) | (none) | (referenced in artefact only) | (referenced in artefact only) | (none) |
+| generate-build-prompt | (none) | (none) | (none) | (none) | (none) | (none) | (referenced in artefact only) | (referenced in artefact only) | (referenced in artefact only) |
+| execute-tests | (none) | (none) | (none) | (none) | (none) | (none) | REQUIRED | REQUIRED | REQUIRED |
+
+*Citations: Per-stage usage derived from `dydx-delivery/skills/<skill>/SKILL.md` Inputs/Outputs sections; INTEGRATIONS.md §"Stage Pipeline Wiring" (lines 175-197) is the consolidated source. `discovery-intake` Miro paste-in is optional per `dydx-delivery/skills/discovery-intake/SKILL.md:30-50`. `execute-tests` REQUIRED cells reflect the `platform:` dispatch contract — exactly one of Pipefy/Wrike/Ziflow is required per active platform per `dydx-delivery/skills/execute-tests/SKILL.md:53-55` and `dydx-delivery/skills/execute-tests/references/safety-rules.md:11-17`. Live-wiring probe results (working/broken/missing) are AUDIT-08's territory; this table inventories dependency, not connectivity.*
 
 ---
 
