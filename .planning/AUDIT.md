@@ -209,6 +209,21 @@ The v0.3.0 pipeline is **artefact-driven** — each skill reads a markdown file 
 
 ---
 
+**Sub-section: Research-derived graceful-degradation hints**
+
+`.planning/research/PITFALLS.md` (research synthesis, 2026-05-09) drafts a connector-availability fallback matrix for v2 stages that go beyond v0.3.0's surface — Coda → Stage 5/Stage 10 manual mode if MCP missing; Drive → Stage 8 halt if MCP missing; Miro/Gmail/Calendar → manual paste fallback; Pipefy/Wrike/Ziflow APIs → halt the affected stage; native-AI ingestion → copy-paste UI fallback. The full matrix is research-derived input to DESIGN-07; AUDIT.md cites it by reference and does NOT lock the contract here. Representative rows below (sample, not full mirror):
+
+| v2 stage (per Phase 2 scope) | Connector | Research fallback hint | Closes via |
+|---|---|---|---|
+| Stage 6 Cost estimate | Coda MCP | manual mode (`.csv` export + paste-in) when missing | DESIGN-07; DESIGN-22 |
+| Stage 9 Documentation publishing | Google Drive MCP | halt — Stage 9 fails fast; rest of pipeline still runs | DESIGN-07; DESIGN-25 |
+| Stage 10 Native-AI knowledge push | Pipefy/Wrike/Ziflow APIs | copy-paste fallback when direct API missing | DESIGN-07; DESIGN-26 |
+| Stage 1 Kickoff capture | Miro MCP | paste-in fallback (already supported in v0.3.0 discovery-intake) | DESIGN-07; DESIGN-17 |
+
+**Research-derived; v2 design contract = DESIGN-07.** AUDIT.md does not lock the matrix; the rows above are sourced from `.planning/research/PITFALLS.md` "Connector-availability fallback matrix" content (per RESEARCH.md §12 Open Q4 — option (c)) so reviewers see the input shape Phase 2 will work from. Pitfall IDs anchoring the per-row hints: CRIT-3 (Coda rate-limit forces manual fallback when MCP missing), CRIT-5 (sandbox-allowlist gap on Coda), MOD-1 (graceful-degradation behaviour codification gap), MIN-2 (Drive permission asymmetry on Stage 9 halt path).
+
+---
+
 ## AUDIT-04: Referenced-but-Missing Artefacts
 
 (populated by 01-04-PLAN.md / Wave 4)
