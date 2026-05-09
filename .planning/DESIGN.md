@@ -1211,10 +1211,179 @@ This TC is `layer: mixed` — tier-1 verifies the create-card API response shape
 **Cross-references.** DESIGN-04 (test-bot-orchestrator agent — `dydx-delivery/agents/test-bot-orchestrator.md` is the canonical location for the tier-2 invocation contract; v2.1+ build phase populates the agent file body); DESIGN-24 (Stage 8 overview + `failure_class:` enum extension including `harness_drift`); DESIGN-29 (`client_state.yaml` per-test-case `layer:` field records this classification); REQUIREMENTS `## Out of Scope` (the canonical anti-feature list — "Generating Python tier-1 tests from natural language alone").
 
 ### DESIGN-29: client_state.yaml skeleton
-(populated by 02-09-PLAN.md)
+
+> **DESIGN-29:** `client_state.yaml` schema — sandbox tenant IDs gated by platform; fixtures; integration toggles; `wrike_host`; `last_known_schema` per platform; `last_passed_at` per test case; `targets_artefact` per test case for obsolescence detection.
+
+**Skeleton YAML.** Per CONTEXT D-30 — top-level keys locked here; full per-test fixtures are NOT scoped to this DESIGN slice. Stage 8a (`provision-test-harness/`) bootstraps this file on first run and delta-updates per ship.
+
+```yaml
+# <Client> Brain/test-bot/client_state.yaml
+# Skeleton — DESIGN-29 contract (Phase 2). Stage 8a bootstraps + delta-updates per ship.
+client: <client_slug>
+client_state_version: <semver>
+last_provisioned_at: <ISO>
+
+sandbox:
+  pipefy:
+    pipe_id: <sandbox-pipe-id>
+    api_token_ref: env:PIPEFY_SANDBOX_TOKEN
+  wrike:
+    space_id: <sandbox-space-id>
+    host: <wrike-host-from-OAuth-token-response>  # PERSISTED per DESIGN-15
+    api_token_ref: env:WRIKE_SANDBOX_TOKEN
+  ziflow:
+    project_id: <sandbox-project-id>
+    api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+  coda:
+    doc_id: <sandbox-coda-doc>   # CRIT-5 fix per DESIGN-24 — sandbox allowlist extended to Coda
+    api_token_ref: env:CODA_SANDBOX_TOKEN
+
+fixtures:
+  shared:
+    test_user_email: test@<client_slug>.example
+  pipefy:
+    test_card_template: <template-id>
+  wrike:
+    test_task_template: <template-id>
+  ziflow:
+    test_proof_template: <template-id>
+
+integration_toggles:
+  pipefy_to_wrike: true | false
+  pipefy_to_ziflow: true | false
+  wrike_to_ziflow: true | false
+  any_to_coda: true
+
+last_known_schema:
+  pipefy:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/pipefy_<ISO>.json
+  wrike:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/wrike_<ISO>.json
+  ziflow:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/ziflow_<ISO>.json
+
+test_cases:
+  TC-001:
+    targets_artefact: <Client> Brain/<Project>/04a_fnspec-platform_v2.md
+    last_passed_at: <ISO>
+    layer: tier-1 | tier-2 | mixed
+    state: active | obsolete | quarantined
+  TC-002:
+    targets_artefact: <Client> Brain/<Project>/04b_fnspec-integration_v2.md
+    last_passed_at: <ISO>
+    layer: tier-2
+    state: active
+```
+
+**3 worked per-platform examples.**
+
+- **Pipefy example** — client `acme-inc`, sandbox tenant ID `pipe-12345`, schema fetched `2026-04-15T10:00:00Z`:
+  ```yaml
+  sandbox:
+    pipefy:
+      pipe_id: pipe-12345
+      api_token_ref: env:PIPEFY_SANDBOX_TOKEN
+  last_known_schema:
+    pipefy:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:a1b2c3...
+      schema_snapshot_path: ./schema_cache/pipefy_2026-04-15.json
+  test_cases:
+    TC-001:
+      targets_artefact: acme-inc Brain/widget-redesign/04a_fnspec-platform_v2.md
+      last_passed_at: 2026-04-15T10:30:00Z
+      layer: tier-1
+      state: active
+  ```
+
+- **Wrike example** — client `acme-inc`, sandbox space ID `space-67890`, OAuth-discovered host `https://app-us2.wrike.com/api/v4` PERSISTED per DESIGN-15 (CRITICAL — never hardcode `www.wrike.com`):
+  ```yaml
+  sandbox:
+    wrike:
+      space_id: space-67890
+      host: https://app-us2.wrike.com/api/v4   # PERSISTED from OAuth token response
+      api_token_ref: env:WRIKE_SANDBOX_TOKEN
+  last_known_schema:
+    wrike:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:d4e5f6...
+      schema_snapshot_path: ./schema_cache/wrike_2026-04-15.json
+  test_cases:
+    TC-101:
+      targets_artefact: acme-inc Brain/widget-redesign/04b_fnspec-integration_v2.md
+      last_passed_at: 2026-04-15T10:35:00Z
+      layer: tier-2
+      state: active
+  ```
+
+- **Ziflow example** — client `acme-inc`, sandbox project ID `project-abcde`, read-after-create eventual consistency window flagged per DESIGN-16:
+  ```yaml
+  sandbox:
+    ziflow:
+      project_id: project-abcde
+      api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+  last_known_schema:
+    ziflow:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:g7h8i9...
+      schema_snapshot_path: ./schema_cache/ziflow_2026-04-15.json
+  test_cases:
+    TC-201:
+      targets_artefact: acme-inc Brain/widget-redesign/04a_fnspec-platform_v2.md
+      last_passed_at: 2026-04-15T10:40:00Z
+      layer: mixed
+      state: quarantined   # flaky read-after-create within 30s consistency window
+  ```
+
+**Field-by-field rationale.**
+
+- `client:` — per-client lock — one `client_state.yaml` per client; reused across CRs (DESIGN-24 persistent harness contract).
+- `client_state_version:` — semver; bumps on schema-breaking changes to this file (Stage 8a delta-update contract).
+- `last_provisioned_at:` — last time Stage 8a touched the file (audit trail).
+- `sandbox:` — per-platform tenant IDs; `coda:` sub-block per CRIT-5 fix (DESIGN-24 sandbox allowlist extension); `wrike.host:` PERSISTED per DESIGN-15 (OAuth-discovered host MUST NOT default to hardcoded `www.wrike.com`).
+- `fixtures:` — reusable test fixtures (templates / shared user emails); per-platform sub-blocks.
+- `integration_toggles:` — boolean flags per cross-platform integration; gates which TCs are eligible to run for this client.
+- `last_known_schema:` — per-platform schema snapshot (hash + path) — input to DESIGN-30 drift-detection contract.
+- `test_cases:` — per-TC state — `targets_artefact:` for obsolescence detection (when artefact retired, TC becomes `obsolete`); `last_passed_at:` for staleness signal; `layer:` per DESIGN-28 enum; `state:` per DESIGN-24 lifecycle enum.
+
+**Cross-references.** DESIGN-15 (Wrike `host` OAuth persistence rule — `wrike.host:` field source-of-truth); DESIGN-24 (Stage 8 overview — `sandbox_lock.yaml` paired concurrency artefact at sibling path; lifecycle states `active | obsolete | quarantined`; CRIT-5 sandbox allowlist extension to Coda); DESIGN-30 (drift-detection contract — `last_known_schema.<platform>.schema_hash` is the input the contract diffs against); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform sandbox access patterns).
 
 ### DESIGN-30: drift-detection contract
-(populated by 02-09-PLAN.md)
+
+> **DESIGN-30:** Drift detection — pre-flight fetches current sandbox schema and diffs against `client_state.yaml.last_known_schema`; mismatch halts + emits `schema_drift_report.md` instead of executing; drift requires explicit human action (acknowledge or revert).
+
+**Inputs.**
+
+- Current sandbox schema (fetched fresh at pre-flight by Stage 8d `execute-tests`).
+- Cached `last_known_schema.<platform>.schema_hash` from `<Client> Brain/test-bot/client_state.yaml` (DESIGN-29).
+
+**Outputs.**
+
+- **Match** — `current_schema_hash == last_known_schema.<platform>.schema_hash` → proceed to test execution.
+- **Mismatch** — `current_schema_hash != last_known_schema.<platform>.schema_hash` → HALT + emit `<Client> Brain/test-bot/schema_drift_report.md`; no tests run.
+
+**Halt condition.** Mismatch halts the entire Stage 8d run for the affected platform. No tests execute, no sandbox writes occur, no `last_passed_at:` updates land in `client_state.yaml`. The halt is hard — there is no override flag, no `--force`, no auto-acknowledge. Stage 8d emits the report and exits non-zero; the `failure_class:` recorded for any cancelled TCs is `harness_drift` (per DESIGN-24 5th canonical class).
+
+**`schema_drift_report.md` shape.**
+
+- **Frontmatter:** `client: <client_slug>` + `platform: pipefy | wrike | ziflow | coda` + `previous_schema_hash: <sha256>` + `current_schema_hash: <sha256>` + `detected_at: <ISO>`.
+- **Body:** per-column diff (added columns / removed columns / type-changed columns / renamed columns) + recommended human action (which of the two paths below applies).
+
+**Human-action requirement.** Drift requires explicit human action — acknowledge or revert — before Stage 8d may run again for this platform / client.
+
+1. **Acknowledge.** Human runs Stage 8a (`provision-test-harness/`) to refresh `last_known_schema.<platform>` against the current sandbox schema; reviews per-TC impact; marks affected TCs as `quarantined` (per DESIGN-24 lifecycle) until tier-1 assertions are updated against the new schema. Stage 8a writes the new `schema_hash` + `fetched_at` + `schema_snapshot_path:` and the new `client_state_version:`.
+
+2. **Revert.** Human reverts the sandbox to match `last_known_schema` (e.g., un-applies a sandbox migration that introduced the drift); reruns Stage 8d. No `client_state.yaml` change required; the existing `schema_hash` is canonical and the sandbox is brought back into alignment.
+
+**Algorithmic detail (Stage 8 build phase territory).** Per CONTEXT D-30, this contract specifies inputs / outputs / halt condition / report shape / human-action requirement WITHOUT numbered pseudocode. The actual algorithm — schema-fetch transport, hash-canonicalisation rules, per-column diff format, frontmatter validation, idempotent re-runs — is implemented in v2.1+ Phase 5 Stage 8 build per CHANGE-01 9-phase plan. Phase 2's contract is interface-level only.
+
+**Cross-references.** DESIGN-24 (Stage 8 overview — `harness_drift` failure class is the failure_class assigned when this contract fires); DESIGN-29 (`last_known_schema:` data shape — the canonical input this contract diffs against; `client_state_version:` field bumps on acknowledge path); platform-pipefy / platform-wrike / platform-ziflow (per-platform schema-fetch surface; the actual schema-introspection API per platform).
 
 ---
 
