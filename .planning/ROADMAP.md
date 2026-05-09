@@ -38,10 +38,10 @@ Plans:
 **Wave 2** *(complete)*
 - [x] 01-02-PLAN.md — AUDIT-01: 7-row skill matrix + 7 prose subsections (per-skill brittleness + DESIGN-* closures) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-02-SUMMARY.md`)*
 
-**Wave 3** *(blocked on Wave 2 completion)*
-- [ ] 01-03-PLAN.md — AUDIT-03: per-stage × per-connector dependency table + PITFALLS-cited fallback hint with DESIGN-07 pointer
+**Wave 3** *(complete)*
+- [x] 01-03-PLAN.md — AUDIT-03: per-stage × per-connector dependency table + PITFALLS-cited fallback hint with DESIGN-07 pointer *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-03-SUMMARY.md`)*
 
-**Wave 4** *(blocked on Wave 3 completion)*
+**Wave 4** *(unblocked)*
 - [ ] 01-04-PLAN.md — AUDIT-04: 5 missing-artefact subsections + 1 verified-clean negative-finding subsection
 
 **Wave 5** *(blocked on Wave 4 completion)*
@@ -108,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 2/9 | In progress (Waves 1-2 done; Wave 3 next) | - |
+| 1. Audit | 3/9 | In progress (Waves 1-3 done; Wave 4 next) | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
@@ -116,4 +116,4 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 1 Plan 02 complete (Wave 2 — AUDIT-01 inventory populated)*
+*Last updated: 2026-05-09 — Phase 1 Plan 03 complete (Wave 3 — AUDIT-03 per-stage connector dependency table populated)*

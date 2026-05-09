@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 02 complete — AUDIT-01 per-skill inventory populated; ready for Plan 03 (Wave 3 — AUDIT-03 connector dependency table)
-last_updated: "2026-05-09T16:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 02 complete (Wave 2 — AUDIT-01)
+stopped_at: Phase 1 Plan 03 complete — AUDIT-03 per-stage connector dependency table + PITFALLS-cited fallback hint sub-table populated; ready for Plan 04 (Wave 4 — AUDIT-04 missing-artefact inventory)
+last_updated: "2026-05-09T17:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 03 complete (Wave 3 — AUDIT-03)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 2
-  percent: 6
+  completed_plans: 3
+  percent: 8
 ---
 
 # STATE
@@ -27,25 +27,25 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 (Audit) — EXECUTING
-Plan: 3 of 9 (Plan 02 complete; AUDIT-01 per-skill inventory populated)
-Status: Executing Phase 1 — Wave 3 (AUDIT-03 per-stage connector dependency table) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 02 complete (Wave 2 — AUDIT-01: 7-row matrix + 7 prose subsections)
+Plan: 4 of 9 (Plan 03 complete; AUDIT-03 per-stage connector dependency table + PITFALLS-cited fallback hint populated)
+Status: Executing Phase 1 — Wave 4 (AUDIT-04 missing-artefact inventory) is next
+Last activity: 2026-05-09 -- Phase 1 Plan 03 complete (Wave 3 — AUDIT-03: 7×9 dependency table + 4-row fallback hint)
 
-Progress: [█░░░░░░░░░] 6% (0/4 phases complete; 2/9 Phase 1 plans complete)
+Progress: [█░░░░░░░░░] 8% (0/4 phases complete; 3/9 Phase 1 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: ~15 min
-- Total execution time: ~30 min
+- Total plans completed: 3
+- Average duration: ~13 min
+- Total execution time: ~40 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 2 | ~30 min | ~15 min |
+| 1. Audit | 3 | ~40 min | ~13 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -56,6 +56,7 @@ Progress: [█░░░░░░░░░] 6% (0/4 phases complete; 2/9 Phase 1 
 |-------|------|----------|-------|-------|------|
 | 1 | 01 (Wave 1 scaffold) | ~5 min | 3 | 2 | 2026-05-09 |
 | 1 | 02 (Wave 2 — AUDIT-01) | ~25 min | 2 | 1 | 2026-05-09 |
+| 1 | 03 (Wave 3 — AUDIT-03) | ~10 min | 2 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -77,6 +78,9 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 02: per-skill brittleness findings transcribed verbatim from RESEARCH.md §3 — no re-discovery from SKILL.md (transcribe-not-interpret discipline keeps `file:line` citations stable)
 - Phase 1 Plan 02: `[BLOCKING]` reserved for the three skills' `platform:` runtime-loading contract; documentation references to missing artefacts (README orphan refs) tagged `[STRUCTURAL]` instead
 - Phase 1 Plan 02: per-skill subsections always emit all 3 mini-headers (Hand-off contract / Observed brittleness / What's missing for v2) even where a section is terse — reviewers scan the contract triplet
+- Phase 1 Plan 03: AUDIT-03 cell vocabulary fixed at 4 enum values (`(none)` / `(referenced in artefact only)` / `optional (graceful)` / `REQUIRED`) — keeps observation precision tight without leaking design proposals
+- Phase 1 Plan 03: live-MCP probe results (working/broken/missing) deferred to AUDIT-08; AUDIT-03 inventories *dependency*, AUDIT-08 inventories *connectivity* — split prevents conflating "stage uses connector X" with "X is currently working"
+- Phase 1 Plan 03: PITFALLS-cited fallback hint sub-table is a 4-row sample, not a transcription of the full PITFALLS matrix — honours D-13 (no design proposals); full matrix is DESIGN-07's territory in Phase 2
 
 ### Pending Todos
 
@@ -95,5 +99,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 02 complete — AUDIT-01 per-skill inventory (matrix + 7 subsections) populated; ready for Plan 03 (Wave 3 — AUDIT-03 per-stage connector dependency table)
-Resume file: .planning/phases/01-audit/01-03-PLAN.md
+Stopped at: Phase 1 Plan 03 complete — AUDIT-03 per-stage connector dependency table (7×9 matrix) + PITFALLS-cited fallback hint sub-table populated; ready for Plan 04 (Wave 4 — AUDIT-04 missing-artefact inventory)
+Resume file: .planning/phases/01-audit/01-04-PLAN.md

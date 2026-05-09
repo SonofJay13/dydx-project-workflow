@@ -17,7 +17,7 @@ Coverage of the v0.3.0 plugin so the v2 design rests on accurate observation, no
 
 - [x] **AUDIT-01**: AUDIT.md catalogues every v0.3.0 skill (`discovery-intake`, `generate-sow`, `generate-functional-spec`, `generate-technical-spec`, `generate-test-plan`, `generate-build-prompt`, `execute-tests`) with purpose, inputs, outputs, hand-off contract, dependencies, observed brittleness, and what's missing for v2. *(complete 2026-05-09 in Phase 1 Plan 02)*
 - [ ] **AUDIT-02**: AUDIT.md absorbs every entry in `.planning/codebase/CONCERNS.md` and adds any new structural issues found during the audit pass — the audit is a superset of CONCERNS.md, never less.
-- [ ] **AUDIT-03**: AUDIT.md inventories per-stage connector dependencies (Miro, Coda, Drive, Gmail, Calendar, Claude in Chrome, Pipefy/Wrike/Ziflow APIs) and identifies which connectors are *required* vs *graceful-degradation* per stage.
+- [x] **AUDIT-03**: AUDIT.md inventories per-stage connector dependencies (Miro, Coda, Drive, Gmail, Calendar, Claude in Chrome, Pipefy/Wrike/Ziflow APIs) and identifies which connectors are *required* vs *graceful-degradation* per stage.
 - [ ] **AUDIT-04**: AUDIT.md catalogues referenced-but-missing artefacts (`platform-pipefy`/`platform-wrike` skills, `/refine-<skill>` slash commands, workspace `hub.md`, client-folder `.env.example`) with exact citations from the v0.3.0 docs.
 - [ ] **AUDIT-05**: AUDIT.md surfaces duplicated content with the canonical-source recommendation per duplicate (hard-rules across 4 files; pipeline diagram across 3 files; start-at-any-point triage block across 6 SKILL.md files; Cowork-vs-Claude-Code positioning across 3 files).
 - [ ] **AUDIT-06**: AUDIT.md inventories versioning mismatches across `plugin.json`, `marketplace.json`, root README, plugin README, and any hardcoded version strings, recommending `2.0.0` as the synced target.
@@ -170,7 +170,7 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 |---|---|---|
 | AUDIT-01 | Phase 1 | Complete (2026-05-09 — Plan 02) |
 | AUDIT-02 | Phase 1 | Pending |
-| AUDIT-03 | Phase 1 | Pending |
+| AUDIT-03 | Phase 1 | Complete (2026-05-09 — Plan 03) |
 | AUDIT-04 | Phase 1 | Pending |
 | AUDIT-05 | Phase 1 | Pending |
 | AUDIT-06 | Phase 1 | Pending |
