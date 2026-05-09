@@ -33,7 +33,7 @@ This is a **design-only** milestone. The deliverables are four markdown document
 **Plans:** 9 plans
 Plans:
 **Wave 1**
-- [ ] 01-01-PLAN.md — Wave 1 scaffold: structural-check script + AUDIT.md skeleton with all 8 H2 anchors
+- [x] 01-01-PLAN.md — Wave 1 scaffold: structural-check script + AUDIT.md skeleton with all 8 H2 anchors *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-01-SUMMARY.md`)*
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 01-02-PLAN.md — AUDIT-01: 7-row skill matrix + 7 prose subsections (per-skill brittleness + DESIGN-* closures)
@@ -108,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 0/9 | Not started | - |
+| 1. Audit | 1/9 | In progress (Wave 1 done; Wave 2 next) | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
