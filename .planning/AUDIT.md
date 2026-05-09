@@ -420,7 +420,7 @@ Citations:
 
 ## AUDIT-06: Version-String Mismatches
 
-Inventories every version-bearing location in v0.3.0 — manifests, READMEs, hardcoded runner strings, and an unscoped `v1` reference — and recommends `2.0.0` as the synced target version per D-17. This audit catalogues the gap; the actual version bump is scheduled for v2.1 Foundations build (FOUND-04), not this design milestone.
+Inventories every version-bearing location in v0.3.0 — manifests, READMEs, hardcoded runner strings, and an unscoped `v1` reference — and recommends `2.0.0` as the synced target version per D-17. This audit catalogues the gap; the actual version bump lands in the v2.1 Foundations work (FOUND-04), not this design milestone.
 
 | # | Location | Citation | Current value | What it represents | Drifts from 0.3.0? |
 |---|---|---|---|---|---|
@@ -445,7 +445,59 @@ Summary observations (locations #1, #2, #5 align at `0.3.0`; the rest drift):
 
 ## AUDIT-07: Cosmetic-but-Client-Visible Issues
 
-(populated by 01-07-PLAN.md / Wave 7)
+Catalogues every cosmetic-but-client-visible issue in v0.3.0 — README truncation, naming residuals, pipeline-step count mismatch, missing LICENSE, owner-email mismatch, manifest asymmetries. **Each fix below carries the per-bullet sentinel "Scheduled for v2.1 Foundations build (FOUND-NN), NOT this milestone." so a v2.1 implementer cannot lift one bullet out of context (per D-16).** This audit catalogues the issues; the v2.1 Foundations build executes the fixes (FOUND-04, FOUND-07).
+
+### 7.1 README truncation (plugin-level)
+
+- **Citation:** `dydx-delivery/README.md:126` — Changelog entry for `0.3.0` reads: *"The bot-run terminal stage (`execute-tests`) now c"* and the file terminates mid-sentence. No closing punctuation, no further entries.
+- **Context:** Plugin README is the install-time README; truncation is visible to anyone reading the plugin's marketplace listing.
+- **Severity:** **[COSMETIC]** — client-visible (plugin README).
+- **Fix:** Complete the truncated sentence in the changelog entry. **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+---
+
+### 7.2 Residual "test sheet" wording
+
+- **Citation:** `README.md:9` — Root README still says "discovery → SOW → functional spec → technical spec → **test sheet** → execution".
+- **Context:** Plugin README changelog (`dydx-delivery/README.md:126`) records the 0.3.0 rename `generate-test-sheet` → `generate-test-plan`; root README never followed the rename.
+- **Severity:** **[COSMETIC]** — client-visible (root marketplace README).
+- **Fix:** Change "test sheet" to "test plan" at `README.md:9`. **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+---
+
+### 7.3 Pipeline-step count mismatch (root README)
+
+- **Citation:** `README.md:9` says 5 pipeline steps; `.claude-plugin/marketplace.json:15` and `dydx-delivery/.claude-plugin/plugin.json:4` describe **seven skills**; `dydx-delivery/README.md:33-41` lists seven.
+- **Context:** Two-vs-three sources of truth disagree on pipeline length; new readers see contradictory information.
+- **Severity:** **[COSMETIC]** — client-visible (root README).
+- **Fix:** Update `README.md:9` to reflect the 7-skill v0.3.0 pipeline (or v2's 13-skill pipeline post-rebuild). **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+---
+
+### 7.4 Missing LICENSE file
+
+- **Citation:** `dydx-delivery/.claude-plugin/plugin.json:10` declares `"license": "Proprietary"`; no `LICENSE` or `LICENSE.md` file exists at repo root or plugin folder; `.claude-plugin/marketplace.json` has no `license` field.
+- **Context:** Provenance gap — the `Proprietary` declaration is unbacked by an actual licence text; clients viewing the marketplace see a license field that doesn't resolve to a document.
+- **Severity:** **[COSMETIC]** — client-visible (provenance).
+- **Fix:** Add `LICENSE` file at repo root (or `dydx-delivery/LICENSE`) with proprietary licence terms; add matching `license` field to `marketplace.json`. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.**
+
+---
+
+### 7.5 Owner-email mismatch with stated org
+
+- **Citation:** `.claude-plugin/marketplace.json:5` (`owner.email`) and `dydx-delivery/.claude-plugin/plugin.json:7` (`author.email`) both list `jasonmichaelb@gmail.com`; README and marketplace metadata describe the team as "dYdX Digital" (e.g. `.claude-plugin/marketplace.json:4`, `dydx-delivery/.claude-plugin/plugin.json:4`); no `@dydx.digital` or org domain appears in the manifests.
+- **Context:** Provenance — clients viewing the marketplace see a personal Gmail; mismatches the stated organisational identity.
+- **Severity:** **[COSMETIC]** — client-visible (provenance).
+- **Fix:** Change to an org-domain address. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.** **Cross-ref:** MIN-6 PITFALL.
+
+---
+
+### 7.6 [NEW] Homepage asymmetry
+
+- **Citation:** `dydx-delivery/.claude-plugin/plugin.json:9` has `"homepage": "https://github.com/SonofJay13/dydx-project-workflow"`; `.claude-plugin/marketplace.json` has no `homepage` field. (`.planning/codebase/CONCERNS.md:197-199`).
+- **Context:** Asymmetric metadata — the marketplace listing omits a link the plugin manifest provides.
+- **Severity:** **[NEW]** **[COSMETIC]** — client-visible (marketplace listing). [NEW] tag because CONCERNS.md flagged the asymmetry but didn't formally categorize it; AUDIT.md elevates it to cosmetic-client-visible.
+- **Fix:** Add matching `homepage` field to `marketplace.json`. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.**
 
 ---
 
