@@ -11,7 +11,7 @@ This is a **design-only** milestone. The deliverables are four markdown document
 - Decimal phases (e.g., 2.1): Urgent insertions only — none expected in a design-only milestone
 - All phases gated by human approval of the deliverable file before the next phase runs
 
-- [ ] **Phase 1: Audit** — Catalogue v0.3.0 plugin reality so v2 design rests on observation, not memory; output `.planning/AUDIT.md`
+- [x] **Phase 1: Audit** — Catalogue v0.3.0 plugin reality so v2 design rests on observation, not memory; output `.planning/AUDIT.md` ✓ APPROVED 2026-05-09
 - [ ] **Phase 2: Design** — Lock v2 architecture across cross-cutting structure, 13-skill inventory, platform skills, every stage skill, and test bot; output `.planning/DESIGN.md`
 - [ ] **Phase 3: Change list** — Sequence the v0.3.0 → v2 delta as the v2.1+ build plan with per-skill delta and cosmetic-fix list; output `.planning/CHANGELIST.md`
 - [ ] **Phase 4: Open questions register** — Catalogue every "couldn't verify" + design-decision-deferred item, assign owner / phase; output `.planning/OPEN-QUESTIONS.md`
