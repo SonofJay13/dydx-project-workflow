@@ -360,7 +360,48 @@ Forbidden phrasings (verbatim — these strings MUST NOT appear in v2 prose auth
 ---
 
 ## Appendix C: Persona contract worked examples
-(Populated by 02-02-PLAN.md alongside DESIGN-10. 3 before/after examples per D-29.)
+
+Three worked before/after examples drawn from real audit findings. Each shows a v0.3.0-style passage rewritten in v2 senior-implementer voice; the **Why the rewrite works** line names which DESIGN-10 voice principle the rewrite satisfies and which forbidden phrasing it eliminates.
+
+### Example 1 — Truncated changelog/README sentence
+
+**Source:** `AUDIT.md §AUDIT-07.1` — `dydx-delivery/README.md:126` truncated changelog entry for `0.3.0` reads: *"The bot-run terminal stage (`execute-tests`) now c"* and the file terminates mid-sentence.
+
+**Before (v0.3.0-style):**
+> We recommend that the README be updated — perhaps consider completing the truncated sentence at line 126; it might want to read something more complete.
+
+**After (v2 senior-implementer voice):**
+> Update `dydx-delivery/README.md:126` — replace the truncated sentence ending mid-clause with the completed claim: *"The bot-run terminal stage (`execute-tests`) now consumes the approved test plan and emits a results artefact under `<Client>/testing/<feature>/results-YYYY-MM-DD_v{N}.md`."*
+
+**Why the rewrite works:** Eliminates "we recommend", "perhaps consider", "might want to" (3 forbidden phrasings). Satisfies principle 1 (no AI hedging — the rewrite is a claim) + principle 2 (specific over abstract — exact `file:line` cited) + principle 4 (imperative over advisory — "Update" not "we recommend").
+
+---
+
+### Example 2 — "Test sheet" residual wording
+
+**Source:** `AUDIT.md §AUDIT-07.2` — `README.md:9` still says "discovery → SOW → functional spec → technical spec → **test sheet** → execution"; `dydx-delivery/README.md:126` records the 0.3.0 rename `generate-test-sheet` → `generate-test-plan` but the root README never followed.
+
+**Before (v0.3.0-style):**
+> Note that the document references a "test sheet" which may need attention. It's worth noting that the rename happened in 0.3.0 — please be aware that you might want to update this in order to reflect the current vocabulary.
+
+**After (v2 senior-implementer voice):**
+> Replace `test sheet` (`README.md:9`) with `test plan` — `test sheet` is v0.1.0 vocabulary; the 0.3.0 rename to `generate-test-plan` is recorded at `dydx-delivery/README.md:126` but never propagated to the root README.
+
+**Why the rewrite works:** Eliminates "Note that", "may need attention", "It's worth noting", "please be aware", "might want to", "in order to" (6 forbidden phrasings or apology-prefaces). Satisfies principle 2 (specific over abstract — both source and rename-record cited with `file:line`) + principle 3 (no apology-prefaces) + principle 4 (imperative — "Replace" not "may need attention").
+
+---
+
+### Example 3 — Generic AI-style hedging in skill prose
+
+**Source:** `AUDIT.md §AUDIT-01.1` — `dydx-delivery/skills/discovery-intake/SKILL.md:98-107` writes `status: draft` but the skill body documents no follow-up status word; `discovery-intake/SKILL.md:27-28` references workspace `hub.md` twice when no `hub.md` exists. Representative pattern of the hedged hand-off message brittleness category catalogued at `AUDIT.md §AUDIT-01`.
+
+**Before (v0.3.0-style):**
+> As an AI, I would suggest that you make sure to check the `hub.md` file for client context. Feel free to skip this if it's not available — perhaps consider using the discovery template directly.
+
+**After (v2 senior-implementer voice):**
+> Read `<Client> Brain/00_HUB.md` for client context; the v0.3.0 reference to `hub.md` (`dydx-delivery/skills/discovery-intake/SKILL.md:27-28`) is an orphan — `hub.md` does not exist in the repo (per `AUDIT.md §AUDIT-01.1`). On `00_HUB.md` absence, halt and surface the missing-hub error — do not fall through to a templated discovery.
+
+**Why the rewrite works:** Eliminates "As an AI", "I would suggest", "make sure to", "Feel free to", "perhaps consider" (5 forbidden phrasings). Satisfies principle 1 (no AI hedging — the speaker is the implementor, not an AI) + principle 2 (specific over abstract — `file:line` for the orphan reference + AUDIT.md cite) + principle 5 (end with hand-off, not summary — closing sentence names the next action: halt + surface error).
 
 ---
 
