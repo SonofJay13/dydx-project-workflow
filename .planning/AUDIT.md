@@ -322,7 +322,80 @@ Beyond the missing artefacts above, several cross-references in v0.3.0 docs DO r
 
 ## AUDIT-05: Duplicated Content Blocks
 
-(populated by 01-05-PLAN.md / Wave 5)
+Catalogues every block of duplicated content in v0.3.0 along with the canonical-source recommendation per AUDIT-05 requirement. The recommendation names where canonical content should live; v2 design moves (single-SoT consolidation, plugin-level `references/`) are tracked under DESIGN-* requirements per D-13.
+
+### 5.1 Hard-rules block (4 mentions; 3 duplicates of 1 canonical)
+
+Sandbox / no-deletions / read-write-only / audit-trail rules appear in 4 surfaces. The 4 copies do NOT match exactly — canonical lists 10 numbered rules; the others list 5–7 condensed. Per RESEARCH.md §12 Open Q6, framing is "4 mentions; 3 are duplicates of 1 canonical" (correcting CONCERNS.md's "three places" wording).
+
+| Location | Lines | Role |
+|---|---|---|
+| `dydx-delivery/skills/execute-tests/references/safety-rules.md` | full file (1-101) | **CANONICAL** — 10 numbered rules |
+| `dydx-delivery/README.md:99-105` | 7 lines | DUPLICATE — 5 condensed bullets ("Test execution — safety rules (hard)") |
+| `dydx-delivery/skills/execute-tests/SKILL.md:21-31` | 11 lines | DUPLICATE — 7 numbered rules condensed |
+| `dydx-delivery/skills/generate-test-plan/references/test-plan-template.md:36-44` | 9 lines | DUPLICATE — 5 condensed bullets |
+
+**Canonical source:** `dydx-delivery/skills/execute-tests/references/safety-rules.md` — most complete (10 numbered rules), already documented as the canonical reference at `dydx-delivery/skills/execute-tests/SKILL.md:23`.
+
+**Severity:** **[STRUCTURAL]** — wording mismatch across 4 surfaces creates rule-divergence risk.
+
+**Closes via:** DESIGN-03 (single SoT for hard rules at `dydx-delivery/references/safety-rules.md` — note v2 elevates to plugin-level `references/`). **Pitfall ref:** MOD-16 (hard-rules duplicate-and-edit).
+
+---
+
+### 5.2 Start-at-any-point triage block (6 SKILL.md copies)
+
+Near-identical 3-option prompt ("(a) Paste / (b) Walk through inline / (c) Cancel") appears in 6 SKILL.md files with small wording variations. No canonical source today.
+
+| Location | Lines | Role |
+|---|---|---|
+| `dydx-delivery/skills/generate-sow/SKILL.md:27-33` | 7 lines | DUPLICATE |
+| `dydx-delivery/skills/generate-functional-spec/SKILL.md:28-32` | 5 lines | DUPLICATE |
+| `dydx-delivery/skills/generate-technical-spec/SKILL.md:28-32` | 5 lines | DUPLICATE |
+| `dydx-delivery/skills/generate-test-plan/SKILL.md:30-34` | 5 lines | DUPLICATE |
+| `dydx-delivery/skills/generate-build-prompt/SKILL.md:28-32` | 5 lines | DUPLICATE |
+| `dydx-delivery/skills/execute-tests/SKILL.md:40-44` | 5 lines | DUPLICATE |
+
+**Canonical source:** None today. Audit observation: needs a v2 canonical reference (e.g. plugin-level `references/start-at-any-point.md`); audit names the gap, the named DESIGN-* requirement carries the location.
+
+**Severity:** **[STRUCTURAL]** — wording variations create per-skill divergence.
+
+**Closes via:** DESIGN-11 (plugin-level `references/` directory) implies a place; specific consolidation is part of v2.1 build phase per FOUND-02.
+
+---
+
+### 5.3 Cowork-vs-Claude-Code positioning (3 copies)
+
+Cowork-as-strategy-seat / Claude-Code-as-build-seat framing appears in 3 surfaces. The decision-matrix `when-to-open-claude-code.md` is canonical; the other two repeat the framing one-liner without the matrix.
+
+| Location | Lines | Role |
+|---|---|---|
+| `dydx-delivery/skills/generate-build-prompt/references/when-to-open-claude-code.md` | full file (1-89) | **CANONICAL** — decision matrix; framing one-liner duplicated above |
+| `dydx-delivery/README.md:5,9-29` | header + 21 lines | DUPLICATE — pipeline-diagram framing + one-liner ("Cowork is the strategy seat. Claude Code is the build seat.") |
+| `dydx-delivery/skills/generate-build-prompt/SKILL.md:8,163-171` | 1 line + 9 lines | DUPLICATE — one-liner at line 8; "Iterating between Cowork and Claude Code" section at 163-171 |
+
+**Canonical source:** `dydx-delivery/skills/generate-build-prompt/references/when-to-open-claude-code.md` — keeps the canonical decision matrix; the plugin README and `generate-build-prompt` SKILL.md should inline a one-line summary plus pointer (consistent with hard-rules pattern).
+
+**Severity:** **[STRUCTURAL]** — same framing duplicated; wording could drift.
+
+**Closes via:** DESIGN-10 (persona contract) — likely subsumes the positioning text; specific consolidation is v2.1 build.
+
+---
+
+### 5.4 Pipeline diagram (2 copies)
+
+Two ASCII pipeline diagrams: high-level overview (plugin README) and tool-transition swimlanes (`when-to-open-claude-code.md`). Two copies serve different purposes — could be argued they're not strict duplicates. Audit calls out per CONCERNS.md classification but recommends both retained.
+
+| Location | Lines | Role |
+|---|---|---|
+| `dydx-delivery/README.md:9-29` | 21 lines | **CANONICAL (high-level overview)** — pipeline-overview ASCII + 7-skill table |
+| `dydx-delivery/skills/generate-build-prompt/references/when-to-open-claude-code.md:18-40` | 23 lines | **CANONICAL (tool-transition view, distinct purpose)** — swimlane variant illustrating tool transitions |
+
+**Canonical source:** Both retained; the swimlane variant is marked as "tool-transition view" not "pipeline view" — different lens, not strict duplicate.
+
+**Severity:** **[STRUCTURAL]** — visual drift risk if maintained separately; observation logged for v2 consideration.
+
+**Closes via:** DESIGN-12 (skill inventory) implies a redrawn 13-skill diagram in plugin-level docs.
 
 ---
 
