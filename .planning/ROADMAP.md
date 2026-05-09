@@ -84,7 +84,7 @@ Plans:
 - [x] 02-03-PLAN.md — Skill layout (DESIGN-11) + v2 skill inventory (DESIGN-12; H2 anchor renamed from `13-skill inventory` per cross-AI MEDIUM #4) + Stage-by-stage hand-off matrix (DESIGN-13 / D-26; 12 transition rows) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-03-SUMMARY.md`)*
 
 **Wave 4**
-- [ ] 02-04-PLAN.md — Platform skills: platform-pipefy / -wrike / -ziflow (DESIGN-14, 15, 16) + per-platform [OPEN] markers
+- [x] 02-04-PLAN.md — Platform skills: platform-pipefy / -wrike / -ziflow (DESIGN-14, 15, 16) + per-platform [OPEN] markers *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-04-SUMMARY.md`)*
 
 **Wave 5**
 - [ ] 02-05-PLAN.md — Stages 1-3 skills (DESIGN-17 Kickoff dual-branch + DESIGN-18 Discovery refactor + DESIGN-19 SOW refactor)
@@ -139,12 +139,12 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 8/9 | In progress (Waves 1-8 done; Wave 9 next) | - |
-| 2. Design | 0/TBD | Not started | - |
+| 1. Audit | 9/9 | Complete | 2026-05-09 |
+| 2. Design | 4/10 | In progress (Waves 1-4 done; Wave 5 next) | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 1 Plan 08 complete (Wave 8 — AUDIT-08 live MCP probe: 5-MCP table with empirically-honest "transport ✓ Connected; cheap-read not invocable from sub-agent" Result column per CRITICAL HONESTY RULE; Slack [NEW] [STRUCTURAL] row; 4 deferred connectors; CRIT-1/2/3/9 split-bullet cross-refs)*
+*Last updated: 2026-05-09 — Phase 2 Plan 04 complete (Wave 4 — Platform skills DESIGN-14/15/16: 3-row platform-comparison matrix + 3 H3 subsections each with 5-file references/ shape + native-AI capability matrix + API surface + sandbox pattern + native_ai_path flag + tier_claims_last_verified frontmatter; 7 new inline [OPEN: Phase 4 — ...] markers; echo count 13 → 16/30; structural-check exits 1 with assertion #4 short-circuit at 16/30 mid-phase invariant)*

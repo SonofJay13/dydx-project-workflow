@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 Plan 03 complete — Wave 3 skill layout + v2 skill inventory + stage hand-off matrix landed (DESIGN-11 ASCII tree of 7 surfaces; DESIGN-12 19-row inventory matrix with H2 renamed `## 13-skill inventory` -> `## v2 skill inventory` per cross-AI MEDIUM #4; DESIGN-13 12-row transition matrix; structural-check script's `required_h2` array updated atomically). 13 of 30 DESIGN-NN echo lines added; structural-check exits 1 (assertion #4 short-circuits at 13 < 30 — mid-phase invariant; assertion #9 hand-off matrix >= 10 rows now PASSES via stateful section_between helper). Plans 02-04..02-09 add remaining 17 echoes.
-last_updated: "2026-05-09T23:55:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 Plan 03 executed — 2 commits (59252e6 H2 rename + Skill layout DESIGN-11 + v2 skill inventory DESIGN-12; 1d67dd1 Stage-by-stage hand-off matrix DESIGN-13 with 12 transition rows); echo count progressed 10 -> 13/30; structural-check correctly exits 1 (assertion #4 echo count failing — Plans 02-04..02-09 close remaining 17 echoes; assertion #9 hand-off matrix now PASSES via stateful section_between).
+stopped_at: Phase 2 Plan 04 complete — Wave 4 platform skills DESIGN-14/15/16 landed (3-row platform-comparison matrix opening `## Platform skills` per D-19; 3 H3 subsections each with identical 5-file `references/` ASCII tree + 2026-grounded native-AI capability matrix with HIGH/MEDIUM/LOW Confidence column + API surface + sandbox pattern + `native_ai_path: api|paste|none` flag + `tier_claims_last_verified` frontmatter contract; Wrike `host` OAuth-persistence rule triple-mentioned as CRITICAL bug-prevention; 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format). 16 of 30 DESIGN-NN echo lines added; structural-check exits 1 (assertion #4 short-circuits at 16 < 30 — mid-phase invariant). Plans 02-05..02-09 add remaining 14 echoes.
+last_updated: "2026-05-09T00:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 Plan 04 executed — 2 commits (e7495b3 Platform skills opening matrix + DESIGN-14 platform-pipefy; e14a8e4 DESIGN-15 platform-wrike + DESIGN-16 platform-ziflow + structural-check run); echo count progressed 13 -> 16/30; total inline `[OPEN: Phase 4]` count = 13 across DESIGN.md (>= 8 floor with margin); structural-check correctly exits 1 (assertion #4 echo count short-circuit at 16/30 — Plans 02-05..02-09 close remaining 14).
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 19
-  completed_plans: 12
-  percent: 37
+  completed_plans: 13
+  percent: 42
 ---
 
 # STATE
@@ -26,27 +26,27 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 2 (Design) — EXECUTING (3/10 plans complete)
-Plan: 3 of 10 complete (Wave 3 skill layout + inventory + hand-off matrix landed). Plans 02-04..02-10 each populate their DESIGN-* slice.
-Status: Wave 3 complete. DESIGN.md now has populated `## Skill layout` (DESIGN-11 echo + ASCII tree showing 7 v2 surfaces with per-leaf cite of locking decisions); renamed + populated `## v2 skill inventory` (was `## 13-skill inventory` — H2 renamed per cross-AI MEDIUM #4; DESIGN-12 echo + reconciliation paragraph + 19-row inventory matrix [16 stage skills + 3 platform skills] + migration mapping note for RETIRED `generate-functional-spec`); populated `## Stage-by-stage hand-off contract` (DESIGN-13 echo + 12-row transition matrix carrying carrier paths + frontmatter fields + gating status flags + single-line hand-off messages, including CRIT-8 fix encoded in Stage 9->10 row). Structural-check script's `required_h2` array updated to match renamed anchor (atomic with DESIGN.md edit). Echo count progressed 10 -> 13/30; structural-check assertion #9 (hand-off matrix >= 10 rows) now PASSES; assertion #4 (echo count) short-circuits at 13/30 — expected mid-phase invariant. Next: `/gsd-execute-phase 2` continues with Plan 02-04 (Platform skills DESIGN-14, 15, 16; running echo total after 02-04 = 16/30).
-Last activity: 2026-05-09 -- Phase 2 Plan 03 executed — 2 commits (59252e6 H2 rename + Skill layout + v2 skill inventory; 1d67dd1 Stage-by-stage hand-off matrix); 3 DESIGN-NN echo lines added (DESIGN-11/12/13); structural-check correctly exits 1 (assertion #4 echo count short-circuit; assertion #9 hand-off matrix now passes).
+Phase: 2 (Design) — EXECUTING (4/10 plans complete)
+Plan: 4 of 10 complete (Wave 4 platform skills landed). Plans 02-05..02-10 each populate their DESIGN-* slice.
+Status: Wave 4 complete. DESIGN.md now has populated `## Platform skills` H2 with framing paragraph + 3-row platform-comparison matrix (D-19 — pipefy/wrike/ziflow x 6 columns: Platform | Native-AI surface 2026 | API protocol | Sandbox access | `native_ai_path` default | Known research-blocked items); populated `### platform-pipefy` (DESIGN-14 echo + 5-file `references/` ASCII tree + 7-row native-AI capability matrix [KB/Skills/MCP/IDP/Web Search/BYO-LLM all HIGH; KB content-upload via API LOW with [OPEN]] + GraphQL API surface with `paginate_all` helper + sandbox tenant pattern + `native_ai_path: api` default + `tier_claims_last_verified` frontmatter); populated `### platform-wrike` (DESIGN-15 echo + 5-file ASCII tree + 4-row native-AI matrix [Copilot HIGH; 16 MCP tools HIGH; attach-doc-via-MCP MEDIUM; AI Studio knowledge-ingestion API LOW with [OPEN]] + REST API surface with CRITICAL `wrike_host` OAuth-persistence rule + sandbox space pattern with both `wrike_sandbox_space_id` and `wrike_host` mandatory + `native_ai_path: api` default + frontmatter); populated `### platform-ziflow` (DESIGN-16 echo + 5-file ASCII tree + 4-row native-AI matrix [Checklists Public Preview HIGH; Change Verification + Brand Standards Coming Soon MEDIUM; ReviewAI knowledge-ingestion API LOW with [OPEN]] + REST API surface with `wait_for_proof` helper for read-after-create eventual consistency + sandbox project pattern + `native_ai_path: paste` DEFAULT + frontmatter). Echo count progressed 13 -> 16/30; total inline `[OPEN: Phase 4]` markers across DESIGN.md = 13 (>= 8 floor with margin); structural-check assertion #4 (echo count) short-circuits at 16/30 — expected mid-phase invariant. Next: `/gsd-execute-phase 2` continues with Plan 02-05 (Stages 1-3 skills DESIGN-17/18/19; running echo total after 02-05 = 19/30).
+Last activity: 2026-05-09 -- Phase 2 Plan 04 executed — 2 commits (e7495b3 Platform skills opening matrix + DESIGN-14 platform-pipefy; e14a8e4 DESIGN-15 platform-wrike + DESIGN-16 platform-ziflow + structural-check run); 3 DESIGN-NN echo lines added (DESIGN-14/15/16); 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format; structural-check correctly exits 1 (assertion #4 echo count short-circuit at 16/30).
 
-Progress: [███▋░░░░░░] 37% (1 phase complete + Phase 2 Waves 1-3 — 12 of 19 plans)
+Progress: [████▏░░░░░] 42% (1 phase complete + Phase 2 Waves 1-4 — 13 of 19 plans)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 12
+- Total plans completed: 13
 - Average duration: ~11 min
-- Total execution time: ~131 min
+- Total execution time: ~141 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Audit | 9 | ~101 min | ~11 min |
-| 2. Design | 3 of 10 planned | ~30 min | ~10 min |
+| 2. Design | 4 of 10 planned | ~40 min | ~10 min |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
 
@@ -66,6 +66,7 @@ Progress: [███▋░░░░░░] 37% (1 phase complete + Phase 2 Waves
 | 2 | 01 (Wave 1 scaffold) | ~6 min | 3 | 3 | 2026-05-09 |
 | 2 | 02 (Wave 2 — DESIGN-01..10 + survey + Appendix C) | ~14 min | 3 | 1 | 2026-05-09 |
 | 2 | 03 (Wave 3 — DESIGN-11/12/13 + H2 rename) | ~10 min | 2 | 2 | 2026-05-09 |
+| 2 | 04 (Wave 4 — DESIGN-14/15/16 platform skills) | ~10 min | 2 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -123,6 +124,14 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 2 Plan 03: Skill layout ASCII tree enumerates 7 v2 surfaces (`.claude-plugin/`, `references/`, `skills/`, `commands/`, `agents/`, `hooks/`, `tests/`) with per-leaf cite of locking decision (DESIGN-NN, AUDIT-NN, FOUND-NN); plugin-level `references/` directory grounded in FOUND-01.
 - Phase 2 Plan 03: Hand-off matrix has 12 transition rows (Stage 1->2 through 10->11); each cell uses single-line format so cells are reusable verbatim by Plans 02-05..02-08 per D-26; CRIT-8 fix encoded in Stage 9->10 row hand-off message ("push-native-ai-knowledge refuses ingest if doc_published_at < last_diff_review_at") for grep-canonical reference by the Stage 10 build phase.
 - Phase 2 Plan 03: Structural-check assertion #9 (hand-off matrix >= 10 rows via stateful `section_between` helper) now PASSES; only assertion #4 (echo count >= 30) remains failing — expected mid-phase invariant; echo count progresses 10 -> 13/30.
+- Phase 2 Plan 04: `## Platform skills` H2 opens with 3-row platform-comparison matrix (D-19) — pipefy/wrike/ziflow x 6 columns (Native-AI surface 2026 / API protocol / Sandbox access / native_ai_path default / Known research-blocked items); reads as quick-scan reference before per-platform H3 contracts.
+- Phase 2 Plan 04: Each platform H3 carries identical 5-file `references/` ASCII tree (api-contract / native-ai-inventory / knowledge-ingestion / client-shape-gotchas / vocabulary) per DESIGN-14/15/16 echo; locks D-21 contract that this plan ships decision contracts only — full SKILL.md and references/*.md prose authoring runs in v2.2 PLAT-01..03 per CHANGELIST.md.
+- Phase 2 Plan 04: 2026-grounded native-AI capability matrices honestly labelled HIGH / MEDIUM / LOW per D-25 — Pipefy 7 rows (KB/Skills/MCP/IDP/Web Search/BYO-LLM HIGH; KB content-upload via API LOW with [OPEN]); Wrike 4 rows (Copilot HIGH; 16 MCP tools HIGH; attach-doc-via-MCP MEDIUM; AI Studio knowledge-ingestion API LOW with [OPEN]); Ziflow 4 rows (Checklists Public Preview HIGH; Change Verification + Brand Standards Coming Soon MEDIUM; ReviewAI knowledge-ingestion API LOW with [OPEN]).
+- Phase 2 Plan 04: Wrike `host` OAuth-persistence rule triple-mentioned as CRITICAL bug-prevention against v0.3.0 hardcoded `www.wrike.com` regression — API surface CRITICAL callout + sandbox-access pattern (both `wrike_sandbox_space_id` AND `wrike_host` mandatory in client_state.yaml) + cross-references to DESIGN-29 forward; satisfies T-02-04-02 + T-02-04-06 mitigation.
+- Phase 2 Plan 04: Ziflow `wait_for_proof(proof_id, max_wait_s)` helper grounded in read-after-create eventual consistency — proof-create returns before proof readable; subsequent reads may 404 within consistency window; helper polls until readable or max-wait expires; conservative default 30s poll with 2s interval pending [OPEN] verification.
+- Phase 2 Plan 04: 7 new inline [OPEN: Phase 4 — ...] markers added with uniform OPEN-01 + Phase-N citation format per CHANGE-04 (3 pipefy: KB content-upload + GraphQL cursor field names + 2026 rate-limit currency; 2 wrike: AI Studio knowledge-ingestion API + 2026 rate-limit currency; 2 ziflow: ReviewAI knowledge-ingestion API + read-after-create consistency window); total inline `[OPEN: Phase 4]` count across DESIGN.md = 13 (>= 8 floor with margin); ready for Plan 02-10 enumeration.
+- Phase 2 Plan 04: Forward-reference guardrails per cross-AI review MEDIUM #6 — DESIGN-22/23/24/26 cited as anchor placeholders only with explicit 'forward reference, populated in Plan 02-0X' inline at every cite site; acceptance criteria verified anchor IDs cited but did NOT assert body content exists (deferred to Plan 02-10 Appendix B traceability synthesis); T-02-04-07 mitigation honoured — no false-fail on not-yet-written content.
+- Phase 2 Plan 04: Echo line count progresses 13 -> 16/30 (DESIGN-14/15/16 added); structural-check assertion #4 (echo count >= 30) short-circuits at 16/30 — expected mid-phase invariant; Plans 02-05..02-09 close remaining 14.
 
 ### Pending Todos
 
@@ -141,5 +150,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 2 Plan 03 (Wave 3 — skill layout + v2 skill inventory + stage hand-off matrix) complete — 2 commits (59252e6 H2 rename + Skill layout DESIGN-11 + v2 skill inventory DESIGN-12; 1d67dd1 Stage-by-stage hand-off matrix DESIGN-13 with 12 transition rows). Echo line count progressed 10 -> 13. Structural-check assertion #9 (hand-off matrix >= 10 rows) now PASSES; assertion #4 (echo count >= 30) short-circuits at 13/30 — expected mid-phase invariant. Plans 02-04..02-10 next; resume execution via `/gsd-execute-phase 2`.
-Resume file: `.planning/phases/02-design/02-04-PLAN.md`
+Stopped at: Phase 2 Plan 04 (Wave 4 — Platform skills DESIGN-14/15/16) complete — 2 commits (e7495b3 Platform skills opening matrix + ### platform-pipefy DESIGN-14; e14a8e4 ### platform-wrike DESIGN-15 + ### platform-ziflow DESIGN-16 + structural-check run). Echo line count progressed 13 -> 16. 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format; total inline `[OPEN]` count across DESIGN.md = 13 (>= 8 floor with margin). Structural-check assertion #4 (echo count >= 30) short-circuits at 16/30 — expected mid-phase invariant. Plans 02-05..02-10 next; resume execution via `/gsd-execute-phase 2`.
+Resume file: `.planning/phases/02-design/02-05-PLAN.md`
