@@ -187,7 +187,31 @@ Catalogues all 7 v0.3.0 skills shipped under `dydx-delivery/skills/`. Each skill
 
 ## AUDIT-02: CONCERNS.md absorption (verified superset)
 
-(populated by Wave 9 — synthesis after Waves 2-8 land)
+AUDIT.md is a **verified superset of** `.planning/codebase/CONCERNS.md` (audit dated 2026-05-09). Every CONCERNS.md entry has been rewritten into the appropriate AUDIT-* section per D-08, with the original `file:line` citation preserved. Net-new findings discovered during this audit pass carry the `[NEW]` tag per D-10. **All 15 CONCERNS.md sections absorbed; zero entries dropped silently.**
+
+**All CONCERNS.md sections absorbed; zero entries dropped silently.**
+
+High-level absorption summary (one row per CONCERNS.md H2 section → primary AUDIT-* destination — short form; **Appendix B carries the detailed trace**):
+
+| CONCERNS.md section | Primary destination |
+|---|---|
+| Version string mismatches | AUDIT-06 |
+| References to skills/files that do not exist | AUDIT-04 |
+| Truncated / cut-off content | AUDIT-07 |
+| Pipeline stage numbering inconsistencies | AUDIT-01; AUDIT-05 |
+| "test plan" vs "test sheet" | AUDIT-07 |
+| Pipeline-step count mismatch | AUDIT-07 |
+| Empty / missing scaffold directories | AUDIT-04 |
+| Cross-references between docs (negative) | AUDIT-04 §4.6 |
+| Duplicated content across skills | AUDIT-05 |
+| TODO / FIXME / HACK / XXX markers (negative) | AUDIT-01 / AUDIT-07 (clean) |
+| Frontmatter / template structural inconsistencies | AUDIT-01 (per skill) |
+| Identifiers / contact details | AUDIT-07 (email); AUDIT-04 / AUDIT-07 (homepage) |
+| Build artefact path references in spec text | AUDIT-01 (build-prompt); AUDIT-04 |
+| License field | AUDIT-07 |
+| Versioning convention vs current state | AUDIT-06 |
+
+**See Appendix B for the full row-per-section trace** including line ranges, entry counts, severity tags, and cross-references.
 
 ---
 
