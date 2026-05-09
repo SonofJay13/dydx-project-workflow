@@ -50,10 +50,10 @@ Plans:
 **Wave 6** *(complete)*
 - [x] 01-06-PLAN.md — AUDIT-06: 8-row version-mismatch table + 2.0.0 synced-target recommendation (D-17) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-06-SUMMARY.md`)*
 
-**Wave 7** *(unblocked)*
-- [ ] 01-07-PLAN.md — AUDIT-07: 6 cosmetic-fix subsections, each with per-bullet "scheduled for v2.1 build, NOT this milestone" (D-16)
+**Wave 7** *(complete)*
+- [x] 01-07-PLAN.md — AUDIT-07: 6 cosmetic-fix subsections, each with per-bullet "scheduled for v2.1 build, NOT this milestone" (D-16) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-07-SUMMARY.md`)*
 
-**Wave 8** *(blocked on Wave 7 completion)*
+**Wave 8** *(unblocked)*
 - [ ] 01-08-PLAN.md — AUDIT-08: live MCP probe table (5 wired + Slack [NEW] + 4 deferred) with probe-time timestamp
 
 **Wave 9** *(blocked on Wave 8 completion)*

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 06 complete — AUDIT-06 version-string mismatches (8-row table + 2.0.0 synced-target recommendation per D-17) populated; structural-check assertion #8 now passes; ready for Plan 07 (Wave 7 — AUDIT-07 cosmetic-but-client-visible issues)
-last_updated: "2026-05-09T19:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 06 complete (Wave 6 — AUDIT-06)
+stopped_at: Phase 1 Plan 07 complete — AUDIT-07 cosmetic-but-client-visible issues (6 H3 subsections; per-bullet D-16 sentinel = 7; FOUND-04 + FOUND-07 traceability; structural-check assertion #3 passes; sentinel containment scrubbed via Rule 1 fix on AUDIT-06 opener) populated; ready for Plan 08 (Wave 8 — AUDIT-08 live MCP probe)
+last_updated: "2026-05-09T20:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 07 complete (Wave 7 — AUDIT-07)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 6
-  percent: 17
+  completed_plans: 7
+  percent: 19
 ---
 
 # STATE
@@ -27,25 +27,25 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 (Audit) — EXECUTING
-Plan: 7 of 9 (Plan 06 complete; AUDIT-06 8-row version-mismatch table + 2.0.0 synced-target recommendation populated)
-Status: Executing Phase 1 — Wave 7 (AUDIT-07 cosmetic-but-client-visible issues) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 06 complete (Wave 6 — AUDIT-06: 8-row table; 9 path citations; 3 STRUCTURAL; structural-check assertion #8 passes)
+Plan: 8 of 9 (Plan 07 complete; AUDIT-07 6 cosmetic-fix subsections + per-bullet D-16 sentinel populated)
+Status: Executing Phase 1 — Wave 8 (AUDIT-08 live MCP probe) is next
+Last activity: 2026-05-09 -- Phase 1 Plan 07 complete (Wave 7 — AUDIT-07: 6 cosmetic-fix subsections; per-bullet sentinel count = 7 case-insensitive; [COSMETIC] = 6; [NEW] tag on 7.6; FOUND-04 ×4 + FOUND-07 ×4; structural-check assertion #3 passes; sentinel leakage scrubbed from AUDIT-06 opener via Rule 1 fix)
 
-Progress: [██░░░░░░░░] 17% (0/4 phases complete; 6/9 Phase 1 plans complete)
+Progress: [██░░░░░░░░] 19% (0/4 phases complete; 7/9 Phase 1 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: ~12 min
-- Total execution time: ~72 min
+- Total plans completed: 7
+- Average duration: ~11 min
+- Total execution time: ~79 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 6 | ~72 min | ~12 min |
+| 1. Audit | 7 | ~79 min | ~11 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -60,6 +60,7 @@ Progress: [██░░░░░░░░] 17% (0/4 phases complete; 6/9 Phase 1
 | 1 | 04 (Wave 4 — AUDIT-04) | ~10 min | 2 | 1 | 2026-05-09 |
 | 1 | 05 (Wave 5 — AUDIT-05) | ~12 min | 2 | 1 | 2026-05-09 |
 | 1 | 06 (Wave 6 — AUDIT-06) | ~10 min | 1 | 1 | 2026-05-09 |
+| 1 | 07 (Wave 7 — AUDIT-07) | ~7 min | 1 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -92,6 +93,8 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 06: AUDIT-06 summary observations split into 3 separate bullets (one `**[STRUCTURAL]**` per line) — initial single-paragraph form failed `grep -c '\*\*\[STRUCTURAL\]\*\*' >= 3` because grep -c counts matching **lines**, not occurrences (Rule 1 fix; same pattern as Plan 05's 5.5 split-citation fix)
 - Phase 1 Plan 06: live-source transcription discipline applied (T-01-06-01 mitigation) — every cited manifest line range was Read at the cited line BEFORE table transcription; values verbatim from `plugin.json:3` (0.3.0), `marketplace.json:9` (1.2.0), `marketplace.json:16` (0.3.0), `README.md:9` (0.1.0), `results-template.md:9` (v0.1.0), `safety-rules.md:93` (v1 reference)
 - Phase 1 Plan 06: D-17 "Recommended sync target: `2.0.0`" phrasing chosen over alternatives — confirmed against banned-phrase ERE that this token sequence is NOT matched (no `propose`; `recommend that v2` requires literal contiguous tokens which "Recommended sync target" does not contain)
+- Phase 1 Plan 07: per-bullet D-16 sentinel rendered in canonical uppercase form `**Scheduled for v2.1 Foundations build (FOUND-NN), NOT this milestone.**` on every cosmetic-fix bullet — case-insensitive ERE gate `'scheduled for v2\.1 (foundations )?build'` accepts both this uppercase variant and lowercase / no-Foundations variants for future revisions, so Plan 07 prose stays clean while the gate stays robust
+- Phase 1 Plan 07: Rule 1 fix during verification — AUDIT-06 opener (Plan 06 output) leaked the sentinel ERE outside AUDIT-07; reworded `"the actual version bump is scheduled for v2.1 Foundations build (FOUND-04)"` → `"the actual version bump lands in the v2.1 Foundations work (FOUND-04)"` to satisfy threat T-01-07-04 leakage gate without changing meaning; AUDIT-06 D-17 gate (assertion #8 + 2.0.0 recommendation) remains intact
 
 ### Pending Todos
 
@@ -110,5 +113,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 06 complete — AUDIT-06 version-string mismatches (8-row table; 9 path citations; 3 STRUCTURAL; 2.0.0 synced-target recommendation per D-17; FOUND-04 named as v2.1 build target; structural-check assertion #8 passes) populated; ready for Plan 07 (Wave 7 — AUDIT-07 cosmetic-but-client-visible issues)
-Resume file: .planning/phases/01-audit/01-07-PLAN.md
+Stopped at: Phase 1 Plan 07 complete — AUDIT-07 cosmetic-but-client-visible issues (6 H3 subsections; per-bullet D-16 sentinel count = 7 case-insensitive; [COSMETIC] = 6; [NEW] tag on 7.6; FOUND-04 ×4 + FOUND-07 ×4; 9 path citations; structural-check assertion #3 passes; sentinel containment scrubbed from AUDIT-06 opener via Rule 1 fix) populated; ready for Plan 08 (Wave 8 — AUDIT-08 live MCP probe)
+Resume file: .planning/phases/01-audit/01-08-PLAN.md
