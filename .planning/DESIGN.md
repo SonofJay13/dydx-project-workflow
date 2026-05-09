@@ -369,10 +369,60 @@ The hand-off matrix is the single most-cited section of DESIGN.md (per CONTEXT s
 
 ## Platform skills
 
-(Populated by 02-04-PLAN.md / Wave 4. Covers DESIGN-14, 15, 16 — `platform-pipefy/`, `platform-wrike/`, `platform-ziflow/` with identical 5-file `references/` shape.)
+The three platform skills (`platform-pipefy/`, `platform-wrike/`, `platform-ziflow/`) internalise per-platform knowledge that v0.3.0 referenced as missing artefacts (per AUDIT.md §AUDIT-04.1). Each carries an identical 5-file `references/` shape: `api-contract.md` + `native-ai-inventory.md` + `knowledge-ingestion.md` + `client-shape-gotchas.md` + `vocabulary.md`. The native-AI capability matrices are 2026-grounded per RESEARCH.md / FEATURES.md. Per D-21, this section ships decision contracts only — full SKILL.md and references/*.md prose authoring runs in v2.2 per CHANGELIST.md PLAT-01..03. Each platform contract carries a `tier_claims_last_verified: <ISO date>` frontmatter requirement so the v2.x build's first action against any platform skill re-verifies the native-AI capability matrix against then-current platform reality (locks the contract against silent drift).
+
+**Platform-comparison matrix (per D-19).**
+
+| Platform | Native-AI surface (2026) | API protocol | Sandbox access | `native_ai_path` default | Known research-blocked items |
+|----------|--------------------------|--------------|-----------------|--------------------------|------------------------------|
+| pipefy | AI Agents (KB + Skills + MCP + IDP + Web Search + BYO-LLM) | GraphQL | Sandbox tenant per client | `api` (HIGH on Behaviors/Skills; LOW on KB content-upload) | KB content-upload endpoint; GraphQL pagination cursor field names; 2026 rate-limit currency |
+| wrike | Copilot + 16 MCP tools | REST | Sandbox space per client; `host` from OAuth token persisted (NOT hardcoded `www.wrike.com`) | `api` (MEDIUM; depends on Copilot knowledge-ingestion API) | AI Studio knowledge-ingestion API; 2026 rate-limit currency |
+| ziflow | ReviewAI Checklists Public Preview (Change Verification + Brand Standards Coming Soon) | REST | Sandbox project per client | `paste` (Checklists Public Preview is the documented path; copy-paste fallback default) | ReviewAI knowledge-ingestion API; read-after-create consistency window |
 
 ### platform-pipefy
-(populated by 02-04-PLAN.md)
+
+> **DESIGN-14:** `platform-pipefy/` skill structure — 5-file `references/` shape (`api-contract.md`, `native-ai-inventory.md`, `knowledge-ingestion.md`, `client-shape-gotchas.md`, `vocabulary.md`); 2026-grounded native-AI capability matrix; API surface for the gap; sandbox access pattern; `native_ai_path: api | paste | none` flag with confidence; `tier_claims_last_verified` frontmatter.
+
+**Skill folder layout (5-file references/ shape per DESIGN-14):**
+
+```text
+dydx-delivery/skills/platform-pipefy/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # GraphQL endpoints, paginate_all helper, rate-limit handling
+    ├── native-ai-inventory.md    # AI Agents capability matrix (KB / Skills / MCP / IDP / Web Search / BYO-LLM)
+    ├── knowledge-ingestion.md    # KB content-upload path (LOW-confidence — see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client pipe shape variations
+    └── vocabulary.md             # Pipefy-specific terms (pipe, phase, card, connection, etc.)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| Knowledge base | yes | Pipefy AI Agents → KB | HIGH |
+| Skills | yes | AI Agents → Skills | HIGH |
+| MCP integration | yes | AI Agents → MCP | HIGH |
+| IDP (Intelligent Document Processing) | yes | AI Agents → IDP | HIGH |
+| Web Search | yes | AI Agents → Web Search | HIGH |
+| BYO-LLM | yes | AI Agents config | HIGH |
+| KB content-upload via API | unknown | `[OPEN: Phase 4 — Pipefy AI KB content-upload endpoint not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: GraphQL via Pipefy public API.
+- Helper: `paginate_all(query, cursor_field)` for cursor pagination across multi-page result sets.
+- Cursor field names: `[OPEN: Phase 4 — Pipefy GraphQL pagination cursor field names need verification against current 2026 schema per OPEN-01]`.
+- Rate limit: `[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`
+- Auth: Bearer token from Pipefy app installation; sandbox token distinct from production token.
+
+**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` per client.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `api` for Behaviors instructions + Skills config (HIGH-confidence). `paste` fallback for KB content-upload UNTIL the `[OPEN]` resolves; downgrade to `paste` keeps Stage 10 functional even with the LOW-confidence row unsettled.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: pipefy`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the native-AI capability matrix against then-current Pipefy reality before any new ingestion run.
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
 
 ### platform-wrike
 (populated by 02-04-PLAN.md)
