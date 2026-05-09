@@ -43,15 +43,15 @@ Plugin v2 architecture decisions locked. Each requirement names a decision the d
 
 #### Skill layout & hand-offs
 
-- [ ] **DESIGN-11**: DESIGN.md presents the v2 **folder/skill layout** — `skills/`, `commands/`, `agents/`, `hooks/`, `.claude-plugin/`, plus the new plugin-level `references/` directory.
-- [ ] **DESIGN-12**: DESIGN.md presents the v2 **skill inventory** — 13 skills total per architecture research (6 NEW stage skills + 3 NEW platform skills + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED). Each skill carries: purpose, inputs (frontmatter + upstream artefact), outputs, downstream consumer, complexity tag, dependencies, hand-off message shape.
-- [ ] **DESIGN-13**: DESIGN.md presents the **stage-by-stage hand-off contract** — for every stage transition, the carrier file path, the frontmatter fields that propagate, and the status flag that gates the next stage.
+- [x] **DESIGN-11**: DESIGN.md presents the v2 **folder/skill layout** — `skills/`, `commands/`, `agents/`, `hooks/`, `.claude-plugin/`, plus the new plugin-level `references/` directory.
+- [x] **DESIGN-12**: DESIGN.md presents the v2 **skill inventory** — 13 skills total per architecture research (6 NEW stage skills + 3 NEW platform skills + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED). Each skill carries: purpose, inputs (frontmatter + upstream artefact), outputs, downstream consumer, complexity tag, dependencies, hand-off message shape.
+- [x] **DESIGN-13**: DESIGN.md presents the **stage-by-stage hand-off contract** — for every stage transition, the carrier file path, the frontmatter fields that propagate, and the status flag that gates the next stage.
 
 #### Platform skills (internalisation)
 
-- [ ] **DESIGN-14**: DESIGN.md specifies `platform-pipefy/` skill structure — `SKILL.md` + `references/{api-contract.md, native-ai-inventory.md, knowledge-ingestion.md, client-shape-gotchas.md, vocabulary.md}`. Native-AI capability matrix grounded in 2026 Pipefy AI Agents docs (KB + Skills + MCP + IDP + Web Search + BYO-LLM). API surface for the gap (GraphQL, including `paginate_all` helper for cursor pagination). Sandbox access pattern. Native-AI knowledge ingestion path with `native_ai_path: api | paste | none` flag (LOW-confidence: KB upload endpoint not externally verified). `tier_claims_last_verified` frontmatter.
-- [ ] **DESIGN-15**: DESIGN.md specifies `platform-wrike/` skill structure with the same shape. Native-AI matrix grounded in Wrike Copilot + 16 MCP tools. API surface for the gap (REST; `host` field from OAuth token response is base-URL — hardcoding `www.wrike.com` is a bug). Sandbox access. Knowledge ingestion via attach-doc-via-MCP.
-- [ ] **DESIGN-16**: DESIGN.md specifies `platform-ziflow/` skill structure with the same shape. Native-AI matrix grounded in Ziflow ReviewAI (Checklists Public Preview; Change Verification + Brand Standards Coming Soon). API surface for the gap (REST; `wait_for_proof` helper for eventual consistency on proof creation). Sandbox access. Knowledge ingestion path = Checklist generation primarily; copy-paste fallback.
+- [x] **DESIGN-14**: DESIGN.md specifies `platform-pipefy/` skill structure — `SKILL.md` + `references/{api-contract.md, native-ai-inventory.md, knowledge-ingestion.md, client-shape-gotchas.md, vocabulary.md}`. Native-AI capability matrix grounded in 2026 Pipefy AI Agents docs (KB + Skills + MCP + IDP + Web Search + BYO-LLM). API surface for the gap (GraphQL, including `paginate_all` helper for cursor pagination). Sandbox access pattern. Native-AI knowledge ingestion path with `native_ai_path: api | paste | none` flag (LOW-confidence: KB upload endpoint not externally verified). `tier_claims_last_verified` frontmatter.
+- [x] **DESIGN-15**: DESIGN.md specifies `platform-wrike/` skill structure with the same shape. Native-AI matrix grounded in Wrike Copilot + 16 MCP tools. API surface for the gap (REST; `host` field from OAuth token response is base-URL — hardcoding `www.wrike.com` is a bug). Sandbox access. Knowledge ingestion via attach-doc-via-MCP.
+- [x] **DESIGN-16**: DESIGN.md specifies `platform-ziflow/` skill structure with the same shape. Native-AI matrix grounded in Ziflow ReviewAI (Checklists Public Preview; Change Verification + Brand Standards Coming Soon). API surface for the gap (REST; `wait_for_proof` helper for eventual consistency on proof creation). Sandbox access. Knowledge ingestion path = Checklist generation primarily; copy-paste fallback.
 
 #### Stage skill designs
 
@@ -69,9 +69,9 @@ Plugin v2 architecture decisions locked. Each requirement names a decision the d
 
 #### Test bot deeper specifics
 
-- [ ] **DESIGN-28**: DESIGN.md specifies the **Python ↔ AI orchestrator boundary** — Python tier-1 asserts state, schema, presence/absence, equality, regex, retry-count, status-code class; AI tier-2 interprets free-form output, classifies failure causes, suggests remediation. Test plans mark each TC with the layer it belongs to. Mixed-layer cases flagged for human design.
-- [ ] **DESIGN-29**: DESIGN.md specifies the **`client_state.yaml` schema** — sandbox tenant IDs (gated by platform), fixtures, integration toggles, `wrike_host`, `last_known_schema` per platform, `last_passed_at` per test case, `targets_artefact` per test case for obsolescence detection.
-- [ ] **DESIGN-30**: DESIGN.md specifies the **drift detection algorithm** — pre-flight fetches current sandbox schema and diffs against `client_state.yaml.last_known_schema`; mismatch halts + emits `schema_drift_report.md` instead of executing; drift requires explicit human action (acknowledge or revert).
+- [x] **DESIGN-28**: DESIGN.md specifies the **Python ↔ AI orchestrator boundary** — Python tier-1 asserts state, schema, presence/absence, equality, regex, retry-count, status-code class; AI tier-2 interprets free-form output, classifies failure causes, suggests remediation. Test plans mark each TC with the layer it belongs to. Mixed-layer cases flagged for human design.
+- [x] **DESIGN-29**: DESIGN.md specifies the **`client_state.yaml` schema** — sandbox tenant IDs (gated by platform), fixtures, integration toggles, `wrike_host`, `last_known_schema` per platform, `last_passed_at` per test case, `targets_artefact` per test case for obsolescence detection.
+- [x] **DESIGN-30**: DESIGN.md specifies the **drift detection algorithm** — pre-flight fetches current sandbox schema and diffs against `client_state.yaml.last_known_schema`; mismatch halts + emits `schema_drift_report.md` instead of executing; drift requires explicit human action (acknowledge or revert).
 
 ### Change list (CHANGELIST.md)
 

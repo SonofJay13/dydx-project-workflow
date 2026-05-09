@@ -101,8 +101,8 @@ Plans:
 **Wave 9** *(complete)*
 - [x] 02-09-PLAN.md — Test bot architecture: tier boundary (DESIGN-28) + client_state.yaml skeleton (DESIGN-29) + drift-detection contract (DESIGN-30) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-09-SUMMARY.md`)*
 
-**Wave 10**
-- [ ] 02-10-PLAN.md — Synthesis: preamble + Executive Summary + Appendix A glossary + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list
+**Wave 10** *(complete — Phase 2 deliverable complete)*
+- [x] 02-10-PLAN.md — Synthesis: preamble + Executive Summary 21-row TOC + Appendix A glossary 69 entries + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list 8 bullets with explicit ownership *(complete 2026-05-10; SUMMARY at `.planning/phases/02-design/02-10-SUMMARY.md`; **DESIGN.md is reviewer-ready** per cross-AI MEDIUM #7 terminal state)*
 
 ### Phase 3: Change list
 **Goal**: Produce `.planning/CHANGELIST.md` — the sequenced, justified delta from v0.3.0 to v2 that commits the SUMMARY.md 9-phase build plan as the authoritative v2.x milestone sequence, names per-skill NEW/MODIFIED/RETIRED/UNCHANGED tagging, schedules cosmetic fixes for v2.1 build (NOT this milestone), flags research-blocked phases (Phase 1 connector probe; Phase 7 native-AI ingestion paths), and locks migration cutover rules so v0.3.0 artefacts in flight don't get auto-corrupted.
@@ -140,11 +140,11 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
-| 2. Design | 9/10 | In progress (Waves 1-9 done; Wave 10 synthesis next) | - |
+| 2. Design | 10/10 | Complete (DESIGN.md reviewer-ready; awaiting Phase 2 approval gate) | 2026-05-10 |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 2 Plan 09 complete (Wave 9 — Test bot architecture DESIGN-28/29/30: DESIGN-28 tier-1 / tier-2 boundary 6-column table with Python deterministic HUMAN-AUTHORED + AI orchestrator AI-GENERATED hard layer-separation contract + verbatim Out-of-Scope anti-feature citation + mixed-layer cases flagged for human design + 1 worked Pipefy card-create TC classification example; DESIGN-29 client_state.yaml skeleton 7 top-level keys + 4 sandbox sub-blocks pipefy/wrike/ziflow/coda Coda per CRIT-5 + wrike.host PERSISTED per DESIGN-15 + 3 worked per-platform examples with concrete sandbox IDs pipe-12345/space-67890/project-abcde + field-by-field rationale; DESIGN-30 drift-detection contract interface-only WITHOUT numbered pseudocode + inputs/outputs/halt/report-shape/2-path-human-action; 3 echo blockquotes added; echo count 29 → 32/30; **structural-check exits 0 — DESIGN.md is structurally passable** (NOT yet reviewer-ready per cross-AI MEDIUM #7 wording; Plan 02-10 synthesis adds executive summary + Appendix A glossary + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list))*
+*Last updated: 2026-05-10 — **Phase 2 COMPLETE**: Plan 02-10 (Wave 10 — synthesis) executed — preamble blockquote finalised + Executive Summary 21-row TOC table populated + Appendix A Glossary 69 entries populated (frontmatter fields / status lifecycle / stage prefixes / platform terms / test-bot terms / plugin surfaces / doc + sign-off terms) + Appendix B 30-row DESIGN-* → DESIGN.md section traceability table populated covering DESIGN-01..30 (substage-spanning rows for DESIGN-08 + DESIGN-12 (renamed `## v2 skill inventory` anchor per cross-AI MEDIUM #4 follow-through) + DESIGN-20 (4a + 4b) + DESIGN-23 (7a + 7b) + DESIGN-29/30 (D-30 interface-only)) + Deferred OPEN-QUESTIONS list finalised with 8-bullet enumeration in document order (Pipefy AI KB / Pipefy pagination cursor / Pipefy rate-limit / Wrike AI Studio / Wrike rate-limit / Ziflow ReviewAI / Ziflow read-after-create / risk-multiplier defaults) each with explicit `owner: Phase <N> per CHANGE-04` per cross-AI #10 + reconciliation algorithm passing all 3 conditions per cross-AI HIGH #3 (cardinality match INLINE_COUNT=LIST_BULLETS=8; textual match `diff` empty; ownership-per-bullet OWNERS_PRESENT=8=LIST_BULLETS); meta-pattern Rule 2 reword on preamble + CR pre-archive sanity bullet to remove literal `[OPEN: Phase 4 — ...]` ellipsis pattern that would inflate INLINE_COUNT; final structural-check exits 0 — all 9 assertions PASS — **DESIGN.md is reviewer-ready** (cross-AI MEDIUM #7 terminal state phrase reserved for Plan 02-10). Awaiting Phase 2 approval gate review per ROADMAP. Phase 3 (Change list) next via `/gsd-discuss-phase 3` after approval.*
