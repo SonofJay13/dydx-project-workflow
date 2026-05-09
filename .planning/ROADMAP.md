@@ -71,7 +71,38 @@ Plans:
   4. `DESIGN.md` specifies every stage skill end-to-end with concrete contracts — Stage 1 Kickoff dual-branch + Field Notes triage filter (`processed_at IS NULL`); Stage 2 Discovery refactor consuming `01_kickoff_v*` (skips raw-notes mode + skips entire stage if kickoff produced draft SOW); Stage 3 SOW single-spec covering platform AND integration; Stage 4 Fnspec split with per-requirement `delivery: native-ai | api` tagging (the routing key for Stages 5/6/7b/10) and cross-spec consistency check; Stage 5 Tech spec scope-gated to 4b existence with platform-API addendum on 4a; **Stage 6 Cost estimate naming the Coda integration mechanics concretely — `keyColumns` upsert for idempotency, `mutationStatus` polling, schema-introspection cached in `00_HUB.md`, closed risk-multiplier taxonomy (default L=1.1 / M=1.3 / H=1.6 — flagged for dYdX-historical validation) with mandatory `rationale` field per row, rate-limit at 4 req/10s (80% of 5/10s ceiling), wait-for-commercial-inputs gate before client-facing summary**; Stage 7a dev prompt + Stage 7b per-platform implementation prompt (Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = checklist/criteria spec — NOT a universal template); Stage 9 doc-diff before publish + closed `doc_type` enum + naming `<client_slug>__<project_slug>__<doc_type>__v<N>` with double-underscore separator + `doc_published_at` invariant; Stage 10 native-AI push reading `04a` + Stage 9 fragments + per-platform `native-ai-inventory.md`, refusing ingest if `doc_published_at < last_diff_review_at` (CRIT-8) or target ID mismatches `client:` frontmatter (MIN-4); Stage 11 sign-off with one-way Coda mirror + `tone_lint` pass + Field Notes preserved (input-only).
   5. `DESIGN.md` specifies the test bot architecture in full — `provision-test-harness` (8a) bootstraps once + delta-updates each ship; persistent harness lives at `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` (outside this repo); tier-1 deterministic Python (state/schema/equality/regex/retry/status-code class) + tier-2 AI orchestrator (free-form output, failure classification, remediation suggestion) with hard layer-separation contract (Python tests are human-authored, not AI-generated; AI does not write tier-1); `harness_drift` failure class added to `spec gap | implementation gap | environment issue | unknown`; `sandbox_lock.yaml` for concurrency; sandbox allowlist extended to Coda (CRIT-5 fix); test-case lifecycle states `active | obsolete | quarantined`; `client_state.yaml` schema (sandbox tenant IDs gated by platform, fixtures, integration toggles, `wrike_host`, `last_known_schema` per platform, `last_passed_at` per test case, `targets_artefact` per test case for obsolescence detection); drift-detection algorithm (pre-flight fetches current sandbox schema, diffs against `last_known_schema`, mismatch halts + emits `schema_drift_report.md` instead of executing, drift requires explicit human acknowledge-or-revert).
 **Approval gate**: Human reviews `.planning/DESIGN.md` and approves before Phase 3 begins. Approval signal = explicit go-ahead from the user. Rationale: change list sequences against the locked design — sequencing before architecture is locked re-orders work that doesn't exist yet.
-**Plans**: TBD
+**Plans:** 10 plans
+Plans:
+
+**Wave 1**
+- [ ] 02-01-PLAN.md — Wave 1 scaffold: design-structure-check.sh + DESIGN.md skeleton with all required H2/H3 anchors + seed [OPEN] marker
+
+**Wave 2**
+- [ ] 02-02-PLAN.md — Cross-cutting decisions (DESIGN-01..10) + status-lifecycle survey (D-25) + Appendix C persona examples
+
+**Wave 3**
+- [ ] 02-03-PLAN.md — Skill layout (DESIGN-11) + 13-skill inventory (DESIGN-12) + Stage-by-stage hand-off matrix (DESIGN-13 / D-26)
+
+**Wave 4**
+- [ ] 02-04-PLAN.md — Platform skills: platform-pipefy / -wrike / -ziflow (DESIGN-14, 15, 16) + per-platform [OPEN] markers
+
+**Wave 5**
+- [ ] 02-05-PLAN.md — Stages 1-3 skills (DESIGN-17 Kickoff dual-branch + DESIGN-18 Discovery refactor + DESIGN-19 SOW refactor)
+
+**Wave 6**
+- [ ] 02-06-PLAN.md — Stages 4a/4b/5 skills (DESIGN-20 Fnspec split + delivery routing key + cross-spec consistency check + DESIGN-21 Tech spec scope gate)
+
+**Wave 7**
+- [ ] 02-07-PLAN.md — Stages 6/7a/7b skills (DESIGN-22 Cost estimate Coda mechanics + risk-multiplier structure + DESIGN-23 dual build prompts)
+
+**Wave 8**
+- [ ] 02-08-PLAN.md — Stages 8 overview/9/10/11 skills (DESIGN-24/25/26/27 — closed doc_type enum + native_ai_path branching + brain-mirror template)
+
+**Wave 9**
+- [ ] 02-09-PLAN.md — Test bot architecture: tier boundary (DESIGN-28) + client_state.yaml skeleton (DESIGN-29) + drift-detection contract (DESIGN-30)
+
+**Wave 10**
+- [ ] 02-10-PLAN.md — Synthesis: preamble + Executive Summary + Appendix A glossary + Appendix B 30-row DESIGN-* traceability + finalised closed [OPEN] list
 
 ### Phase 3: Change list
 **Goal**: Produce `.planning/CHANGELIST.md` — the sequenced, justified delta from v0.3.0 to v2 that commits the SUMMARY.md 9-phase build plan as the authoritative v2.x milestone sequence, names per-skill NEW/MODIFIED/RETIRED/UNCHANGED tagging, schedules cosmetic fixes for v2.1 build (NOT this milestone), flags research-blocked phases (Phase 1 connector probe; Phase 7 native-AI ingestion paths), and locks migration cutover rules so v0.3.0 artefacts in flight don't get auto-corrupted.
