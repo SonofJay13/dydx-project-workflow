@@ -44,10 +44,10 @@ Plans:
 **Wave 4** *(complete)*
 - [x] 01-04-PLAN.md — AUDIT-04: 5 missing-artefact subsections + 1 verified-clean negative-finding subsection *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-04-SUMMARY.md`)*
 
-**Wave 5** *(unblocked)*
-- [ ] 01-05-PLAN.md — AUDIT-05: 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision
+**Wave 5** *(complete)*
+- [x] 01-05-PLAN.md — AUDIT-05: 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-05-SUMMARY.md`)*
 
-**Wave 6** *(blocked on Wave 5 completion)*
+**Wave 6** *(unblocked)*
 - [ ] 01-06-PLAN.md — AUDIT-06: 8-row version-mismatch table + 2.0.0 synced-target recommendation (D-17)
 
 **Wave 7** *(blocked on Wave 6 completion)*

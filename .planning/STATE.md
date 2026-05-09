@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 04 complete — AUDIT-04 missing-artefact inventory (5 subsections + 1 verified-clean) populated; ready for Plan 05 (Wave 5 — AUDIT-05 duplicated content blocks)
-last_updated: "2026-05-09T18:00:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 04 complete (Wave 4 — AUDIT-04)
+stopped_at: Phase 1 Plan 05 complete — AUDIT-05 duplicated-content inventory (5 H3 subsections; 4 confirmed dups + 1 [NEW] Stage-N label collision) populated; ready for Plan 06 (Wave 6 — AUDIT-06 version-string mismatches)
+last_updated: "2026-05-09T19:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 05 complete (Wave 5 — AUDIT-05)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 4
-  percent: 11
+  completed_plans: 5
+  percent: 14
 ---
 
 # STATE
@@ -27,25 +27,25 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 (Audit) — EXECUTING
-Plan: 5 of 9 (Plan 04 complete; AUDIT-04 5 missing-artefact subsections + 1 verified-clean populated)
-Status: Executing Phase 1 — Wave 5 (AUDIT-05 duplicated content blocks) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 04 complete (Wave 4 — AUDIT-04: 6 H3 subsections; 18 citations; 1 BLOCKING + 4 STRUCTURAL + 1 negative-finding)
+Plan: 6 of 9 (Plan 05 complete; AUDIT-05 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision populated)
+Status: Executing Phase 1 — Wave 6 (AUDIT-06 version-string mismatches) is next
+Last activity: 2026-05-09 -- Phase 1 Plan 05 complete (Wave 5 — AUDIT-05: 5 H3 subsections; 17 citations; 5 STRUCTURAL + 1 NEW)
 
-Progress: [█░░░░░░░░░] 11% (0/4 phases complete; 4/9 Phase 1 plans complete)
+Progress: [█░░░░░░░░░] 14% (0/4 phases complete; 5/9 Phase 1 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: ~12 min
-- Total execution time: ~50 min
+- Total execution time: ~62 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 4 | ~50 min | ~12 min |
+| 1. Audit | 5 | ~62 min | ~12 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -58,6 +58,7 @@ Progress: [█░░░░░░░░░] 11% (0/4 phases complete; 4/9 Phase 1
 | 1 | 02 (Wave 2 — AUDIT-01) | ~25 min | 2 | 1 | 2026-05-09 |
 | 1 | 03 (Wave 3 — AUDIT-03) | ~10 min | 2 | 1 | 2026-05-09 |
 | 1 | 04 (Wave 4 — AUDIT-04) | ~10 min | 2 | 1 | 2026-05-09 |
+| 1 | 05 (Wave 5 — AUDIT-05) | ~12 min | 2 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -84,6 +85,9 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 03: PITFALLS-cited fallback hint sub-table is a 4-row sample, not a transcription of the full PITFALLS matrix — honours D-13 (no design proposals); full matrix is DESIGN-07's territory in Phase 2
 - Phase 1 Plan 04: AUDIT-04 opener uses "the named DESIGN-* requirement carries the fix" instead of the PLAN-drafted "design proposes the fix" — D-13 banned-phrase ERE bans the literal token `propose`, so PLAN's own gate forced the rewording (same meaning; Rule 1 fix to PLAN's drafted text)
 - Phase 1 Plan 04: subsection 4.6 (verified-clean negative finding) deliberately carries NO severity tag and NO Closes via trailer per Pattern 7 — observation of cleanliness, not a gap; structural-check assertion #4 (CONCERNS absorption) catches silent drop
+- Phase 1 Plan 05: hard-rules duplication framing locked at "4 mentions; 3 duplicates of 1 canonical" per RESEARCH.md §12 Open Q6 — corrects CONCERNS.md's "three places" wording (CONCERNS missed counting the canonical itself); reviewers can now triage all 4 surfaces from a single subsection
+- Phase 1 Plan 05: 5.5 [NEW] Stage-N label collision uses split-bullet citation form (not inline semicolon-separated) — Task 2 acceptance regex is line-counted, so each `file:line` citation must occupy its own line for the grep-c assertion to score correctly (Rule 1 fix during Task 2 verification)
+- Phase 1 Plan 05: 5.4 pipeline diagram retains BOTH copies as canonical for distinct lenses (high-level overview vs tool-transition swimlane) — audit logs visual-drift risk without prescribing consolidation; CONCERNS-classified-as-dup but the two serve different purposes per RESEARCH §6.4
 
 ### Pending Todos
 
@@ -102,5 +106,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 04 complete — AUDIT-04 missing-artefact inventory (6 H3 subsections; 18 citations; 1 BLOCKING + 4 STRUCTURAL + 1 verified-clean negative-finding) populated; ready for Plan 05 (Wave 5 — AUDIT-05 duplicated content blocks)
-Resume file: .planning/phases/01-audit/01-05-PLAN.md
+Stopped at: Phase 1 Plan 05 complete — AUDIT-05 duplicated-content inventory (5 H3 subsections; 17 citations; 5 STRUCTURAL + 1 NEW; canonical-source recommendation per dup; DESIGN-02/03/10/11/12 closures anchored) populated; ready for Plan 06 (Wave 6 — AUDIT-06 version-string mismatches with D-17 2.0.0 synced target)
+Resume file: .planning/phases/01-audit/01-06-PLAN.md
