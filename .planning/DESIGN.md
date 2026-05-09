@@ -1415,9 +1415,18 @@ test_cases:
 
 ## Deferred to Phase 4 OPEN-QUESTIONS
 
-(Populated by 02-10-PLAN.md / Wave 10 synthesis. Closed enumerated list of every inline `[OPEN: Phase 4 — ...]` marker, in document order, with source section reference. Phase 4 register builds against this list.)
+This list enumerates every inline OPEN-Phase-4 marker in DESIGN.md, in document order, as the canonical handoff to Phase 4 OPEN-QUESTIONS.md. Each item names the source section + recommended owning phase per CHANGE-04 (or `owner: TBD` if not yet decided — never silently omitted per cross-AI review #10). Phase 4 register builds against this list mechanically.
 
-- [OPEN: Phase 4 — risk-multiplier numeric defaults pending dYdX-historical validation per D-22]
+- **`[OPEN: Phase 4 — Pipefy AI KB content-upload endpoint not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-pipefy → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Pipefy GraphQL pagination cursor field names need verification against current 2026 schema per OPEN-01]`** — source: §Platform skills → §platform-pipefy → API surface for the gap — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`** — source: §Platform skills → §platform-pipefy → API surface for the gap — owner: Phase 1/Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — Wrike AI Studio knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-wrike → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]`** — source: §Platform skills → §platform-wrike → API surface for the gap — owner: Phase 1/Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — Ziflow ReviewAI knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-ziflow → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Ziflow read-after-create consistency window unverified per OPEN-01; Phase 2 owner per CHANGE-04. Conservative default in helper: 30 second poll with 2s interval.]`** — source: §Platform skills → §platform-ziflow → API surface for the gap — owner: Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]`** — source: §Stage 6: Cost estimate → Risk-multiplier taxonomy — owner: Phase 4 per CHANGE-04 (decide before Stage 6 build per CHANGE-01 ordering)
+
+Verification (run by Phase 4 / final reviewer): the reconciliation algorithm in Plan 02-10 verifies (a) inline-marker text count outside this section matches list-bullet count; (b) `diff` of normalised marker texts is empty; (c) every bullet carries `owner:` (Phase or TBD). Mismatch on any condition halts Phase 4 register build.
 
 ---
 
@@ -1512,7 +1521,41 @@ Canonical v2 vocabulary. Each entry cites the locking DESIGN-NN section. Frontma
 ---
 
 ## Appendix B: DESIGN-* → DESIGN.md section traceability
-(Populated by 02-10-PLAN.md / Wave 10 synthesis. 30-row table: DESIGN-NN | section anchor | locking decision IDs.)
+
+This appendix maps every REQUIREMENTS DESIGN-* ID to its DESIGN.md home section + locking CONTEXT decision IDs. Reviewer can verify 1:1 coverage against REQUIREMENTS.md §"Design (DESIGN.md)" DESIGN-01..30.
+
+| DESIGN-NN | Section anchor | Locking decision IDs |
+|-----------|----------------|----------------------|
+| DESIGN-01 | §Cross-cutting decisions → §DESIGN-01 — Canonical frontmatter scheme | D-25 (status-lifecycle survey result) |
+| DESIGN-02 | §Cross-cutting decisions → §DESIGN-02 — Canonical stage-numbering scheme | — |
+| DESIGN-03 | §Cross-cutting decisions → §DESIGN-03 — Single source of truth for hard rules | — |
+| DESIGN-04 | §Cross-cutting decisions → §DESIGN-04 — Plugin surfaces | D-24 (plugin self-tests) |
+| DESIGN-05 | §Cross-cutting decisions → §DESIGN-05 — `/refine-<skill>` resolution | D-23 (`/dydx-refine-*` namespace) |
+| DESIGN-06 | §Cross-cutting decisions → §DESIGN-06 — Approval-gate enforcement | — |
+| DESIGN-07 | §Cross-cutting decisions → §DESIGN-07 — Connector probe + degradation | — |
+| DESIGN-08 | §Cross-cutting decisions → §DESIGN-08 — Frontmatter migration co-existence; §Live status-lifecycle survey | D-25 (survey result locks `client_review` retention) |
+| DESIGN-09 | §Cross-cutting decisions → §DESIGN-09 — Directional boundary | — |
+| DESIGN-10 | §Cross-cutting decisions → §DESIGN-10 — Persona contract; §Appendix C: Persona contract worked examples | D-29 (worked examples in Appendix C) |
+| DESIGN-11 | §Skill layout | FOUND-01 |
+| DESIGN-12 | §v2 skill inventory | (cross-AI review MEDIUM #4 — anchor renamed from `## 13-skill inventory` to `## v2 skill inventory`) |
+| DESIGN-13 | §Stage-by-stage hand-off contract | D-26 (matrix-then-prose authoring shape) |
+| DESIGN-14 | §Platform skills → §platform-pipefy | — |
+| DESIGN-15 | §Platform skills → §platform-wrike | — |
+| DESIGN-16 | §Platform skills → §platform-ziflow | — |
+| DESIGN-17 | §Stage 1: Kickoff capture | — |
+| DESIGN-18 | §Stage 2: Discovery refactor | — |
+| DESIGN-19 | §Stage 3: SOW refactor | — |
+| DESIGN-20 | §Stage 4a: Functional spec — platform; §Stage 4b: Functional spec — integration | D-20 (per-skill matrix-then-prose) |
+| DESIGN-21 | §Stage 5: Tech spec | — |
+| DESIGN-22 | §Stage 6: Cost estimate | D-22 (structure-only — numerics deferred to Phase 4 OPEN-QUESTIONS) |
+| DESIGN-23 | §Stage 7a: Build prompt — dev; §Stage 7b: Build prompt — implementation per platform | D-20 (per-skill matrix-then-prose) |
+| DESIGN-24 | §Stage 8: Test bot — overview | — |
+| DESIGN-25 | §Stage 9: Documentation publishing | — |
+| DESIGN-26 | §Stage 10: Native-AI enablement | — |
+| DESIGN-27 | §Stage 11: Sign-off, brain update, archive | — |
+| DESIGN-28 | §Test bot architecture → §DESIGN-28: tier-1 / tier-2 boundary | — |
+| DESIGN-29 | §Test bot architecture → §DESIGN-29: client_state.yaml skeleton | D-30 (interface-only / skeleton-schema fidelity) |
+| DESIGN-30 | §Test bot architecture → §DESIGN-30: drift-detection contract | D-30 (interface-only — no numbered pseudocode) |
 
 ---
 
