@@ -549,10 +549,83 @@ dydx-delivery/skills/platform-ziflow/
 **Cross-references.** DESIGN-18 (forward — Stage 2 reads `kickoff_branch:` to skip when `draft-sow`; populated next in this plan); DESIGN-19 (forward — Stage 3 reads same `kickoff_branch:` field for direct-from-kickoff path; populated next); AUDIT.md §AUDIT-08 (Miro MCP currently MISSING — Phase 1 connector probe owner); AUDIT.md §AUDIT-01.1 (Field Notes triage flow grounded in v0.3.0 brain pattern).
 
 ## Stage 2: Discovery refactor
-(Populated by 02-05-PLAN.md / Wave 5. Covers DESIGN-18.)
+
+> **DESIGN-18:** Stage 2 Discovery intake refactor — consume `01_kickoff_v*` artefact (skip raw-notes mode); skip entire stage when kickoff produced a draft SOW; same template structure as v0.3.0 otherwise.
+
+**Skill:** `discovery-intake/` (MODIFIED per DESIGN-12 inventory — input shape changed; raw-notes mode RETIRED).
+**Stage:** 2 (file prefix `02_discovery_*` per DESIGN-02).
+**Complexity:** Low (skip mode adds a branch; template body structurally unchanged from v0.3.0).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_kickoff: 01_kickoff_v<N>` + `client:` + `project:` + `frontmatter_version: 2`. The `based_on_kickoff:` field is now MANDATORY (v0.3.0 lenient mode tolerated absence; v2 requires it).
+- **Upstream artefact paths:** `01_kickoff_v<N>.md` (Stage 1 output, must carry `status: approved`).
+- **External inputs:** none — raw-notes mode RETIRED. Discovery now derives strictly from the approved kickoff artefact; meeting notes / paste flows belong to Stage 1.
+
+**Outputs.**
+- **Carrier file:** `02_discovery_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `based_on_kickoff: 01_kickoff_v<N>`, `client:`, `project:`, `frontmatter_version: 2`, `status: draft → client_review → approved` per DESIGN-01 canonical lifecycle.
+
+**Skip behaviour (DESIGN-18 contract).** IF `01_kickoff_v<N>.md` carries `kickoff_branch: draft-sow`, this stage SKIPS entirely — Stage 1 output flows directly to Stage 3 (generate-sow). The `discovery-intake/` skill itself reads the upstream `kickoff_branch:` value first; if `draft-sow`, the skill emits an explicit "Stage 2 SKIPPED — kickoff produced draft SOW; routing to Stage 3" hand-off and exits without writing a `02_discovery_v<N>.md` artefact. No silent skip; reviewer sees the routing decision logged.
+
+**Downstream consumer.** generate-sow (Stage 3).
+
+**Status flag(s).** `status: approved` on `02_discovery_v<N>.md` gates Stage 3. Approval-gate hook (DESIGN-06) enforces `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 2 → Stage 3 row).**
+
+> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
+
+**Key v2 decisions for this stage.**
+
+1. **Raw-notes mode RETIRED** — v0.3.0's "paste meeting notes here" entry path is removed; meeting-note ingestion now belongs to Stage 1. Discovery becomes a pure transform of approved kickoff. Eliminates the "did discovery start from notes or kickoff?" ambiguity that v0.3.0 silently allowed.
+2. **Kickoff-as-input forces explicit `based_on_kickoff:`** — frontmatter field is mandatory (no v0.3.0 lenient absence). Approval-gate hook + frontmatter-validate hook (per DESIGN-04 plugin self-tests, D-24) refuse `02_discovery_v<N>.md` writes lacking the field.
+3. **Skip-when-draft-SOW reads `kickoff_branch:`** — single enum field on the upstream kickoff steers the skip decision. No separate "is this a draft-SOW project?" flag; reuses DESIGN-17's branch field.
+4. **Template structurally unchanged** — same v0.3.0 sections (system / users / triggers / data / rules / integrations / exceptions / failure-points). Migration path: existing v0.3.0 `02_discovery_v<N>.md` artefacts read clean against v2 readers (per DESIGN-08 frontmatter-version tolerance).
+
+**Dependencies.** DESIGN-17 (Stage 1 produces `01_kickoff_v<N>.md` with `kickoff_branch:` enum); DESIGN-01 (canonical `status:` lifecycle, `based_on_*` field-naming convention); DESIGN-06 (approval-gate enforcement); DESIGN-08 (frontmatter migration co-existence — v2 readers tolerate v0.3.0 discovery artefacts via `frontmatter_version` field).
+
+**Cross-references.** DESIGN-17 (backward — Stage 1 contract just populated above); DESIGN-19 (forward — Stage 3 SOW refactor; populated next in this plan); AUDIT.md §AUDIT-01.1 (v0.3.0 discovery-intake hand-off contract — input shape was meeting-notes-or-kickoff lenient; v2 locks to kickoff-only).
+
+---
 
 ## Stage 3: SOW refactor
-(Populated by 02-05-PLAN.md / Wave 5. Covers DESIGN-19.)
+
+> **DESIGN-19:** Stage 3 SOW refactor — single SOW covering platform AND integration; status lifecycle locked to canonical scheme (DESIGN-01); structurally unchanged from v0.3.0 otherwise.
+
+**Skill:** `generate-sow/` (UNCHANGED-structure / behaviour-modified per DESIGN-12 inventory — template body carries forward from v0.3.0; status-lifecycle and input-routing change).
+**Stage:** 3 (file prefix `03_sow_*` per DESIGN-02).
+**Complexity:** Medium (single-spec scope explicit; status-lifecycle alignment to DESIGN-01 canonical).
+
+**Inputs.**
+- **Frontmatter consumed (normal path):** `based_on_discovery: 02_discovery_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + (optional) `platform:` if known at SOW time.
+- **Frontmatter consumed (draft-SOW path):** `based_on_kickoff: 01_kickoff_v<N>` (when Stage 2 was skipped per DESIGN-17/18 dual-branch contract).
+- **Upstream artefact paths:** `02_discovery_v<N>.md` (normal) OR `01_kickoff_v<N>.md` (draft-SOW path) — must carry `status: approved`.
+- **External inputs:** none — SOW is a pure transform of the approved upstream artefact.
+
+**Outputs.**
+- **Carrier file:** `03_sow_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `based_on_discovery:` OR `based_on_kickoff:` (one or the other, not both); `client:`, `project:`, `frontmatter_version: 2`, `platform:` (if known); `status: draft → client_review → approved`. The `client_review` value is RETAINED per AUDIT.md §AUDIT-01.2 + DESIGN-08 (live in `generate-sow` today; canonical lifecycle preserves it).
+
+**Single-spec scope (DESIGN-19 contract).** ONE SOW covers BOTH platform work and integration work for a project — no Stage-3 split. The Stage 4 fnspec is where platform/integration split happens (per DESIGN-20 — forward reference, populated in Plan 02-06). Stage 3 SOW remains the unified commercial-and-scope artefact the client sees and approves.
+
+**Downstream consumer.** generate-fnspec-platform (Stage 4a — forward reference, populated in Plan 02-06); generate-fnspec-integration (Stage 4b — forward reference, populated in Plan 02-06). Whether 4a, 4b, or both run depends on `platform:` and integration-scope fields populated during Stage 3 SOW review.
+
+**Status flag(s).** `status: approved` on `03_sow_v<N>.md` (canonical) gates Stage 4. `status: client_review` retained as an interim state per DESIGN-08 (v0.3.0 SOW workflow uses it; reader tolerates it; approval-gate enforces lifecycle progression `draft → client_review → approved`).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 3 → Stage 4a row).**
+
+> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.
+
+**Key v2 decisions for this stage.**
+
+1. **Canonical 4-stage lifecycle** — `status: draft → client_review → approved → archived` (per DESIGN-01); SOW always passes through `client_review` interim state in practice. v0.3.0 `generate-sow` already does this; v2 locks the lifecycle as the canonical scheme.
+2. **`client_review` retained** — explicit retention rationale: SOW is the artefact the client signs off on; commercial-review interim state is a real workflow stage, not a v0.3.0 quirk. Per AUDIT.md §AUDIT-01.2 + DESIGN-08 status-lifecycle survey result.
+3. **Single SOW covers BOTH platform AND integration** — no Stage 3 split. Stage 4 (DESIGN-20) is where the platform-fnspec / integration-fnspec split happens. Stage 3 stays unified for client commercial review.
+4. **Structurally unchanged from v0.3.0** — same SOW template body (scope summary, deliverables, assumptions, exclusions, commercial). Migration path: existing v0.3.0 `03_sow_v<N>.md` artefacts read clean against v2 readers via `frontmatter_version` tolerance (DESIGN-08).
+
+**Dependencies.** DESIGN-17 (Stage 1 produces kickoff for draft-SOW path); DESIGN-18 (Stage 2 produces discovery for normal path); DESIGN-01 (canonical `status:` lifecycle including `client_review` retention); DESIGN-08 (frontmatter migration co-existence — `client_review` retained, v2 readers tolerate v0.3.0 SOW artefacts).
+
+**Cross-references.** DESIGN-18 (backward — Stage 2 contract above); DESIGN-20 (forward — Stage 4 fnspec split downstream; populated in Plan 02-06 / Wave 6); AUDIT.md §AUDIT-01.2 (v0.3.0 generate-sow hand-off contract + `client_review` retention rationale grounded in survey).
 
 ## Stage 4a: Functional spec — platform
 (Populated by 02-06-PLAN.md / Wave 6. Covers DESIGN-20 first half.)
