@@ -4,13 +4,39 @@
 **Branch / commit:** dydx-delivery-v2 / (record current commit at synthesis plan)
 **Phase 1 Audit (ground truth):** `.planning/AUDIT.md` (approved 2026-05-09)
 
-> **How to read this design.** This document locks the v2 architecture for the dydx-delivery plugin so the v2.1+ rebuild can execute without re-deciding. Each major section opens with a one-line success-criteria echo (`> **DESIGN-NN:** <plain-English statement>`) so reviewer can match section to REQUIREMENTS.md without cross-referencing. Inline `[OPEN: Phase 4 — ...]` markers flag undecided contracts; the closing `## Deferred to Phase 4 OPEN-QUESTIONS` section enumerates every marker for Phase 4 register handoff. Citations use `file:line` format (Phase 1 D-14 convention). DESIGN.md cites `AUDIT.md §X.Y` for v0.3.0 facts (Phase 2 D-34) — does NOT re-derive observations from v0.3.0 source.
+> **How to read this design.** This document locks the v2 architecture for the dydx-delivery plugin so the v2.1+ rebuild can execute without re-deciding. Each major section opens with a one-line success-criteria echo (`> **DESIGN-NN:** <plain-English statement>` per D-35) so reviewer can match section to REQUIREMENTS.md without cross-referencing. Inline OPEN-Phase-4 markers (square-bracketed `OPEN: Phase 4 — <subject>` strings) flag undecided contracts at point of use; the closing `## Deferred to Phase 4 OPEN-QUESTIONS` section (per D-27 / D-33) enumerates every marker for Phase 4 register handoff. Citations use `file:line` format (Phase 1 D-14 / Phase 2 D-32 convention). DESIGN.md cites `AUDIT.md §X.Y` for v0.3.0 facts (Phase 2 D-34) — does NOT re-derive observations from v0.3.0 source.
 >
-> (Preamble placeholder — finalised in synthesis plan 02-10)
+> **Reviewer flow.** Two paths through this document. (1) **Read in order** — preamble → Cross-cutting decisions → Skill layout → v2 skill inventory → Stage-by-stage hand-off contract → Platform skills → Stages 1..11 → Test bot architecture → Live status-lifecycle survey → Deferred OPEN-QUESTIONS list → Appendices A/B/C. (2) **Skip-to-contract** — open the `## Executive Summary` table below; each row's Section column links to the H2 anchor of a major design contract; the Decision summary column captures the one-line lock; Locking IDs cite the REQUIREMENTS DESIGN-NN AND CONTEXT D-NN that produced the contract. Use this table when you need a single contract's text without reading the entire design.
+>
+> **Phase boundary.** No skill files (`dydx-delivery/`) are edited in this Phase 2 design milestone. v2.1+ build phases — sequenced by Phase 3 CHANGELIST.md — execute against this design. Approval is a single gate at the end (full DESIGN.md reviewed as a whole) per ROADMAP Phase 2 approval gate; sub-section approvals during synthesis are NOT required.
 
 ## Executive Summary
 
-(Executive summary table placeholder — populated in synthesis plan 02-10. Acts as TOC: per-section page-anchor + one-line decision summary so reader can skip-to-contract.)
+This table summarises every major design contract for skip-to-contract navigation. Each row's Section column links to the full contract; Decision summary captures the one-line lock; Locking IDs cite the REQUIREMENTS DESIGN-NN AND CONTEXT D-NN that produced the contract.
+
+| Section | Decision summary | Locking IDs |
+|---------|------------------|-------------|
+| `## Cross-cutting decisions` | 10 cross-cutting contracts (frontmatter scheme, stage numbering, hard-rules SoT, plugin surfaces, /refine resolution, approval-gate, connector probe, migration co-existence, directional boundary, persona) | DESIGN-01..10; D-23, D-24, D-25, D-29 |
+| `## Skill layout` | v2 7-directory plugin layout (`commands/`, `agents/`, `hooks/`, `skills/`, `references/`, `tests/`, `.claude-plugin/`) | DESIGN-11; FOUND-01 |
+| `## v2 skill inventory` | v2 end-state inventory: 15 ship-ready skills (10 NEW stage + 5 MODIFIED + 1 UNCHANGED-structure + 3 NEW platform = 19 categorical entries; 1 RETIRED `generate-functional-spec` removed; reconciled in matrix) | DESIGN-12 |
+| `## Stage-by-stage hand-off contract` | 12-row stage-transition matrix; carrier file path + propagated frontmatter + gating status flag + verbatim hand-off message per row | DESIGN-13; D-26 |
+| `## Platform skills` | 3 platform skills (`platform-pipefy/`, `platform-wrike/`, `platform-ziflow/`) — 5-file `references/` shape; 2026-grounded native-AI capability matrix; per-platform API surface + sandbox + knowledge-ingestion | DESIGN-14, DESIGN-15, DESIGN-16 |
+| `## Stage 1: Kickoff capture` | NEW dual-branch artefact (`01_kickoff_v<N>.md`) feeding either Stage 2 discovery OR Stage 3 SOW depending on `kickoff_branch:` | DESIGN-17 |
+| `## Stage 2: Discovery refactor` | MODIFIED to consume `01_kickoff_v*` (was free-form) — `based_on_kickoff:` mandatory; output is `02_discovery_v<N>.md` | DESIGN-18 |
+| `## Stage 3: SOW refactor` | UNCHANGED-structure; behaviour-modified to fork by `kickoff_branch` (kickoff-direct vs discovery-via) and emit `03_sow_v<N>.md` with `based_on_kickoff:` AND/OR `based_on_discovery:` | DESIGN-19 |
+| `## Stage 4a: Functional spec — platform` | NEW skill `generate-fnspec-platform/` replacing RETIRED single fnspec; per-requirement `delivery: native-ai \| api` routing key | DESIGN-20 |
+| `## Stage 4b: Functional spec — integration` | NEW skill `generate-fnspec-integration/`; consumes `03_sow_v*` + (optional) `04a_*`; cross-spec consistency check vs 4a | DESIGN-20 |
+| `## Stage 5: Tech spec` | MODIFIED `generate-technical-spec/` with scope-gate (full / addendum-only / skip-entirely) + error-paths discipline | DESIGN-21 |
+| `## Stage 6: Cost estimate` | NEW `generate-cost-estimate/` with closed L/M/H risk-multiplier taxonomy STRUCTURE; numerics deferred per D-22; 4 assignee classes (dev / non-dev / QA / lead); Coda mirror via `table_rows_manage` + `keyColumns` + `mutationStatus` polling at 4 req/10s; 2-halt-point wait-for-commercial-inputs gate | DESIGN-22; D-22 |
+| `## Stage 7a: Build prompt — dev` | MODIFIED `generate-build-prompt/` (dev path) — emits `07a_build-prompt_v<N>.md` from `04b_*` + `05_techspec_v*` + `06_cost_v*` | DESIGN-23 |
+| `## Stage 7b: Build prompt — implementation per platform` | NEW `generate-implementation-prompt/` (per-platform non-dev) — emits `07b_implementation-prompt_v<N>.md` from `04a_*` + `06_cost_v*` + per-platform shape | DESIGN-23 |
+| `## Stage 8: Test bot — overview` | Persistent harness; 4 substages (8a provision-test-harness / 8b generate-test-plan / 8c generate-uat-plan / 8d execute-tests); CRIT-5 Coda sandbox extension; harness_drift failure_class; `sandbox_lock.yaml`; lifecycle states `active / quarantined / obsolete` | DESIGN-24 |
+| `## Stage 9: Documentation publishing` | Closed `doc_type` 9-enum; double-underscore naming (`<Project>__<DocSlug>`); doc-diff gate; `doc_published_at:` field; MOD-1 mitigation | DESIGN-25 |
+| `## Stage 10: Native-AI enablement` | `native_ai_path: api \| paste \| internal_skill` branching; copy-paste default; CRIT-8 + MIN-4 refusal gates with verbatim refusal language | DESIGN-26 |
+| `## Stage 11: Sign-off, brain update, archive` | Brain-mirror Coda template (7 canonical sections in canonical order: Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes); `tone_lint` MOD-9 prevention; pre-archive sanity check; one-way mirror per DESIGN-09 | DESIGN-27 |
+| `## Test bot architecture` | Tier-1 (Python deterministic HUMAN-AUTHORED) ↔ Tier-2 (AI orchestrator AI-GENERATED) layer-separation contract; `client_state.yaml` 7-key skeleton with 4 sandbox sub-blocks (incl. Coda CRIT-5) and `wrike.host:` PERSISTED per DESIGN-15; drift-detection contract (interface-only — no pseudocode per D-30) | DESIGN-28, DESIGN-29, DESIGN-30; D-30 |
+| `## Live status-lifecycle survey` | Survey methodology + result: `client_review` retained as canonical lifecycle state | DESIGN-08; D-25 |
+| `## Appendix C: Persona contract worked examples` | 3 before/after voice-rewrite examples (truncated changelog; "test sheet" residual; AI-style hedging) | DESIGN-10; D-29 |
 
 ---
 
@@ -1142,7 +1168,7 @@ Append-only; never re-orders or rewrites prior entries.
 - No orphan references in any approved artefact (every `based_on_*:` resolves to an existing file with `status: approved`).
 - No missing artefacts referenced in `doc-diff.md` (every doc listed in Stage 9's diff has actually been pushed to Drive per `doc_published_at:`).
 - No tone_lint failures in any spoke (covered by tone_lint pass above; pre-archive sanity is the gate that runs tone_lint).
-- No outstanding `[OPEN]` markers in this CR's artefacts (any `[OPEN: Phase 4 — ...]` marker introduced during this CR must have been resolved or explicitly deferred-with-justification).
+- No outstanding `[OPEN]` markers in this CR's artefacts (any `OPEN: Phase 4` marker introduced during this CR must have been resolved or explicitly deferred-with-justification).
 
 Failure halts; reviewer triages. The `pre_archive_sanity_status: passed | failed` field on `11_signoff_v<N>.md` records the outcome.
 
@@ -1396,7 +1422,92 @@ test_cases:
 ---
 
 ## Appendix A: Glossary
-(Populated by 02-10-PLAN.md / Wave 10 synthesis.)
+
+Canonical v2 vocabulary. Each entry cites the locking DESIGN-NN section. Frontmatter fields are listed first, then status-lifecycle terms, then stage-prefix conventions, then platform terms, then test-bot terms, then plugin surfaces, then doc + sign-off terms.
+
+**Frontmatter fields**
+
+**frontmatter_version** — Mandatory integer on every v2 artefact; absent value triggers v0.3.0 lenient mode per DESIGN-01 / DESIGN-08. Locked at `frontmatter_version: 2` per DESIGN-01.
+**based_on_kickoff** — Frontmatter field on `02_discovery_*` and `03_sow_*` artefacts pointing at the upstream `01_kickoff_v<N>.md` carrier; mandatory under DESIGN-18 / DESIGN-19.
+**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts (discovery-via branch) pointing at the upstream `02_discovery_v<N>.md`; per DESIGN-19.
+**based_on_sow** — Frontmatter field on `04a_*` / `04b_*` fnspec artefacts pointing at the upstream `03_sow_v<N>.md`; per DESIGN-20.
+**based_on_fnspec_platform / based_on_fnspec_integration** — Frontmatter fields on `06_cost_*` and downstream artefacts pointing at the upstream `04a_*` / `04b_*` carriers; at least one mandatory per DESIGN-22.
+**based_on_techspec** — Frontmatter field on `06_cost_*` and `07a_*` artefacts pointing at the upstream `05_techspec_v<N>.md`; per DESIGN-21 / DESIGN-22 / DESIGN-23.
+**status** — Lifecycle state of an artefact; canonical 4-value enum `draft → client_review → approved → archived` per DESIGN-01. `client_review` is retained per AUDIT.md §AUDIT-01.2 live-survey result locked under DESIGN-08.
+**client** — Frontmatter scalar naming the client; participates in `<Client> Brain/` directory naming per DESIGN-09.
+**project** — Frontmatter scalar naming the project / CR within a client's brain per DESIGN-09.
+**platform** — Closed-enum frontmatter field naming the platform an artefact belongs to (`pipefy | wrike | ziflow`); gates platform-specific identifier presence per DESIGN-01.
+**pipe_id** — Pipefy-only frontmatter identifier; presence on a non-Pipefy artefact is a `validate-frontmatter` hook failure per DESIGN-01 / DESIGN-04.
+**space_id** — Wrike-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-15.
+**project_id** — Ziflow-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-16.
+**delivery** — Per-requirement routing key on `04a_fnspec-platform_v<N>.md` rows; closed enum `native-ai | api`; drives Stage 5 scope-gate, Stage 7b implementation-prompt path, and Stage 10 native-AI ingestion per DESIGN-20 / DESIGN-21 / DESIGN-26.
+**kickoff_branch** — Routing key on `01_kickoff_v<N>.md` selecting the downstream path: `kickoff-direct` (skip Stage 2; feed Stage 3 directly) or `discovery-via` (feed Stage 2 first); per DESIGN-17 / DESIGN-19.
+**commercial_inputs_status** — Halt-gate field on `06_cost_inputs_v<N>.md`; values `pending | provided` per DESIGN-22 wait-for-commercial-inputs gate.
+**risk_multiplier_version** — Frontmatter field on `06_cost_v<N>.md` locking which numeric default set was used; values are `<TBD-deferred>` until Phase 4 OPEN-QUESTIONS resolves per D-22 / DESIGN-22.
+**tech_spec_scope** — Closed-enum field on `05_techspec_v<N>.md` capturing the scope-gate decision; values `full | addendum-only | skip-entirely` per DESIGN-21.
+**delivery_filter** — Reading-side filter used by Stage 5 / Stage 7b / Stage 10 to select rows from `04a_*` by `delivery:` value per DESIGN-21 / DESIGN-23 / DESIGN-26.
+**doc_type** — Closed-enum field on Stage 9 documentation artefacts; 9-value enum locked per DESIGN-25 (operating-runbook | platform-shape | integration-shape | brain-spoke | brain-index | onboarding | safety-rules | hand-off | release-notes).
+**doc_version** — Frontmatter integer on Stage 9 documentation artefacts; bumped per `bump-artefact-version.py` hook per DESIGN-04.
+**doc_published_at** — ISO-timestamp field on `<CR>/doc-diff.md` recording when a doc was actually pushed to Drive; pre-archive sanity check requires every diff-listed doc has this field per DESIGN-25 / DESIGN-27.
+**last_diff_review_at** — Field on Stage 9 docs recording when the last diff was reviewer-approved per DESIGN-25.
+**ingested_at** — ISO-timestamp field on Stage 10 native-AI artefacts recording when content was last pushed to a platform's native-AI surface per DESIGN-26.
+**target_id** — Stage 10 / `push-native-ai-knowledge` field naming the platform-side ingestion target (Pipefy KB id / Wrike AI Studio reference / Ziflow ReviewAI Checklist id) per DESIGN-26.
+**native_ai_path** — Closed-enum routing key on `04a_*` rows; values `api | paste | internal_skill` per DESIGN-26 + per-platform DESIGN-14 / DESIGN-15 / DESIGN-16.
+**tier_claims_last_verified** — ISO-date field on platform-skill `references/native-ai-inventory.md` artefacts; the v2.x build's hook for re-verifying native-AI capability matrices per DESIGN-14 / DESIGN-15 / DESIGN-16.
+**targets_artefact** — Field on test-case artefacts in `<Client> Brain/test-bot/test_cases/` naming the upstream artefact a TC verifies; obsolescence detection compares against approved upstream artefacts per DESIGN-29.
+**last_passed_at** — ISO-timestamp field on test-case artefacts recording the most recent successful run per DESIGN-29.
+**failure_class** — Closed-enum field on `08d_test-results_v<N>.md` per-TC failure rows; canonical 5-value enum `ingest_lag | agent_skip | log_silence | unknown | harness_drift` per DESIGN-24 / DESIGN-30.
+**cr_id** — Change-Request identifier; appears in `<Client> Brain/00_Index.md` Change History entries and in `Archive/<CR>/` directory naming per DESIGN-27.
+**approved_by / approved_at** — Mandatory frontmatter fields on `status: approved` writes; `validate-frontmatter` hook refuses approval-write lacking either per DESIGN-06.
+**client_state_version** — Top-level integer in `<Client> Brain/test-bot/client_state.yaml`; bumped on Stage 8a schema-refresh acknowledge path per DESIGN-29 / DESIGN-30.
+
+**Status lifecycle**
+
+**draft** — Initial status of a newly written artefact; pre-reviewer per DESIGN-01.
+**client_review** — Status indicating an artefact is in client / reviewer hands; retained per DESIGN-08 live-survey result.
+**approved** — Status indicating reviewer approval; mandatory `approved_by` + `approved_at` per DESIGN-06.
+**archived** — Terminal status applied to artefacts moved into `Archive/<CR>/` by Stage 11 per DESIGN-27.
+
+**Stage-prefix conventions**
+
+**Stage prefix** — Filename prefix encoding stage number per DESIGN-02 (`01_kickoff_*` through `11_signoff_*`).
+**Substage** — Letter suffix on stage prefix indicating sub-step within a stage; canonical substages are `4a / 4b` (fnspec split per DESIGN-20), `7a / 7b` (build-prompt dual per DESIGN-23), and `8a / 8b / 8c / 8d` (test-bot four-substage per DESIGN-24).
+
+**Platform terms**
+
+**Pipe / Phase / Card / Behaviors** — Pipefy domain vocabulary (a Pipe is a workflow; Phases are columns; Cards are work items; Behaviors are workflow-rule automations) per DESIGN-14.
+**Space / Folder / Task / Custom Field** — Wrike domain vocabulary (Space contains Folders; Folders contain Tasks; Custom Fields are tenant-extensible) per DESIGN-15.
+**Project / Proof / ReviewAI / Checklist** — Ziflow domain vocabulary (a Project contains Proofs; ReviewAI is the AI suite; Checklists are the Public-Preview ReviewAI feature) per DESIGN-16.
+
+**Test-bot terms**
+
+**tier-1** — Python deterministic test layer; HUMAN-AUTHORED `test_runner.py` per DESIGN-28.
+**tier-2** — AI orchestrator test layer; AI-GENERATED via `test-bot-orchestrator` agent per DESIGN-04 / DESIGN-28.
+**harness_drift** — Failure-class enum value emitted by Stage 8d when drift detection halts; per DESIGN-24 / DESIGN-30.
+**sandbox_lock.yaml** — Sandbox concurrency-lock artefact in `<Client> Brain/test-bot/`; Stage 8a writes; Stage 8d reads; per DESIGN-24.
+**schema_drift_report.md** — Drift-detection halt artefact; frontmatter (`previous_schema_hash` / `current_schema_hash` / `detected_at`) + body (per-column diff + recommended human action) per DESIGN-30.
+**acknowledge** — Drift-resolution path 1: human runs Stage 8a to refresh `last_known_schema.<platform>`; quarantines affected TCs; bumps `client_state_version:` per DESIGN-30.
+**revert** — Drift-resolution path 2: human reverts the sandbox to match `last_known_schema`; reruns Stage 8d; no `client_state.yaml` change required per DESIGN-30.
+**quarantined** — TC lifecycle state indicating the TC is suspended pending tier-1 update; per DESIGN-24.
+**obsolete** — TC lifecycle state indicating the TC's `targets_artefact:` no longer resolves; per DESIGN-24.
+
+**Plugin surfaces**
+
+**commands/** — Plugin slash-command directory; ships 1 parameterised `refine.md` plus 4 GSD-prefixed shortcuts per DESIGN-04 / DESIGN-05.
+**agents/** — Plugin agent directory; ships 1 `test-bot-orchestrator.md` per DESIGN-04.
+**hooks/** — Plugin hooks directory; ships 2 hooks (`validate-frontmatter.py`, `bump-artefact-version.py`) per DESIGN-04. Auto-progression hooks are an explicit non-goal.
+**tests/** — Plugin self-test directory at `dydx-delivery/tests/`; pytest smoke tests per DESIGN-04 / D-24.
+**references/** — Plugin reference directory at `dydx-delivery/references/`; canonical `safety-rules.md` (DESIGN-03) and `stage-numbering.md` (DESIGN-02) live here.
+**mcpServers** — Field in `dydx-delivery/.claude-plugin/plugin.json` listing the 5 wired MCPs per DESIGN-04.
+
+**Doc + sign-off terms**
+
+**doc-diff** — Stage 9 artefact (`<CR>/doc-diff.md`) listing every doc updated this CR; gates Stage 11 per DESIGN-25 / DESIGN-27.
+**brain-mirror** — Stage 11 one-way Coda push of canonical `<Client> Brain/` content into the brain-mirror Coda doc per DESIGN-27 / DESIGN-09.
+**spoke** — Top-level subdirectory of `<Client> Brain/` (e.g. Overview, Workflows, Platforms, Integrations, Operating Model, Change History); brain-mirror Coda template has 7 canonical spoke-shaped sections per DESIGN-27.
+**00_Index.md** — Append-only index file at `<Client> Brain/00_Index.md` carrying the Change History entries per DESIGN-27.
+**Field Notes** — Coda input-only triage queue read by Stage 1 (`kickoff-capture`); never overwritten by Stage 11 per DESIGN-09 / DESIGN-27.
+**tone_lint** — Pre-publish check enforcing the DESIGN-10 forbidden-phrasings list against any client-visible artefact; MOD-9 prevention per DESIGN-27.
 
 ---
 
