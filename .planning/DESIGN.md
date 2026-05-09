@@ -425,10 +425,86 @@ dydx-delivery/skills/platform-pipefy/
 **Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
 
 ### platform-wrike
-(populated by 02-04-PLAN.md)
+
+> **DESIGN-15:** `platform-wrike/` skill structure — 5-file `references/` shape; 2026-grounded native-AI capability matrix (Copilot + 16 MCP tools); API surface for the gap (REST; `host` from OAuth token persisted, NOT hardcoded `www.wrike.com`); sandbox access; knowledge-ingestion via attach-doc-via-MCP.
+
+**Skill folder layout (5-file references/ shape per DESIGN-15):**
+
+```text
+dydx-delivery/skills/platform-wrike/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # REST endpoints, host persistence rule, rate-limit handling
+    ├── native-ai-inventory.md    # Copilot + 16 MCP tools capability matrix
+    ├── knowledge-ingestion.md    # attach-doc-via-MCP path + AI Studio API gap (see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client space shape variations + custom field IDs
+    └── vocabulary.md             # Wrike-specific terms (space, folder, project, task, custom field)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| Copilot (chat-style assistant) | yes | Wrike Copilot | HIGH |
+| MCP tools (16 tools) | yes | Wrike MCP integration — 16 tools | HIGH |
+| Knowledge ingestion via attach-doc-via-MCP | yes | MCP attach-doc tool | MEDIUM |
+| AI Studio knowledge-ingestion API | unknown | `[OPEN: Phase 4 — Wrike AI Studio knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: REST.
+- **CRITICAL — `host` persistence rule.** The `host` field MUST be persisted from the OAuth token response and used as the API base URL for every subsequent call. Hardcoding `www.wrike.com` is the v0.3.0 bug per RESEARCH.md / PITFALLS.md (Wrike returns a tenant-specific host per OAuth handshake; the persisted `host` differs per client and is NOT always `www.wrike.com`). The `wrike_host:` field in `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries the per-client host string.
+- Rate limit: `[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]`
+- Auth: OAuth token; sandbox space distinct from production space.
+
+**Sandbox access pattern:** Sandbox space per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `wrike_sandbox_space_id:` AND `wrike_host:` per client. Both fields are mandatory — `wrike_sandbox_space_id:` without `wrike_host:` triggers the v0.3.0 hardcode bug.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `api` for Copilot + 16 MCP tools (HIGH-confidence). `paste` fallback for AI Studio knowledge ingestion UNTIL the `[OPEN]` resolves; downgrade keeps Stage 10 functional even with the AI Studio API row unsettled.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: wrike`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the Copilot + MCP tool inventory against then-current Wrike reality.
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); DESIGN-29 (`wrike_host:` field — forward reference, populated in Plan 02-09); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
 
 ### platform-ziflow
-(populated by 02-04-PLAN.md)
+
+> **DESIGN-16:** `platform-ziflow/` skill structure — 5-file `references/` shape; 2026-grounded native-AI capability matrix (ReviewAI Checklists Public Preview; Change Verification + Brand Standards Coming Soon); API surface for the gap (REST; `wait_for_proof` helper for eventual consistency); sandbox access; knowledge-ingestion path = Checklist generation primarily + copy-paste fallback.
+
+**Skill folder layout (5-file references/ shape per DESIGN-16):**
+
+```text
+dydx-delivery/skills/platform-ziflow/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # REST endpoints, wait_for_proof helper, rate-limit handling
+    ├── native-ai-inventory.md    # ReviewAI capability matrix (Checklists / Change Verification / Brand Standards)
+    ├── knowledge-ingestion.md    # Checklist generation path + copy-paste fallback (see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client project shape variations + workflow stage names
+    └── vocabulary.md             # Ziflow-specific terms (proof, review, decision, stage, version)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| ReviewAI Checklists (Public Preview) | yes | ReviewAI → Checklists | HIGH |
+| Change Verification | coming soon | ReviewAI → Change Verification (announced; not yet GA) | MEDIUM |
+| Brand Standards | coming soon | ReviewAI → Brand Standards (announced; not yet GA) | MEDIUM |
+| ReviewAI knowledge-ingestion API | unknown | `[OPEN: Phase 4 — Ziflow ReviewAI knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: REST.
+- Helper: `wait_for_proof(proof_id, max_wait_s)` for eventual consistency — Ziflow's proof-create call returns before the proof is fully readable; subsequent reads against the new proof_id may 404 within the read-after-create window. The helper polls until the proof becomes readable or the max-wait expires.
+- Read-after-create consistency window: `[OPEN: Phase 4 — Ziflow read-after-create consistency window unverified per OPEN-01; Phase 2 owner per CHANGE-04. Conservative default in helper: 30 second poll with 2s interval.]`
+- Auth: API key in header; sandbox project distinct from production project.
+
+**Sandbox access pattern:** Sandbox project per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `ziflow_sandbox_project_id:` per client.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste` (DEFAULT). Checklists Public Preview is documented but the knowledge-ingestion path is copy-paste fallback first; `api` upgrade IF the `[OPEN]` resolves an ingestion API. Defaulting to `paste` keeps Stage 10 functional without depending on the LOW-confidence ingestion row.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: ziflow`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying ReviewAI feature availability (Change Verification / Brand Standards GA status) against then-current Ziflow reality.
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
 
 ---
 
