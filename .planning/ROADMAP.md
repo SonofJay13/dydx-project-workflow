@@ -41,10 +41,10 @@ Plans:
 **Wave 3** *(complete)*
 - [x] 01-03-PLAN.md — AUDIT-03: per-stage × per-connector dependency table + PITFALLS-cited fallback hint with DESIGN-07 pointer *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-03-SUMMARY.md`)*
 
-**Wave 4** *(unblocked)*
-- [ ] 01-04-PLAN.md — AUDIT-04: 5 missing-artefact subsections + 1 verified-clean negative-finding subsection
+**Wave 4** *(complete)*
+- [x] 01-04-PLAN.md — AUDIT-04: 5 missing-artefact subsections + 1 verified-clean negative-finding subsection *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-04-SUMMARY.md`)*
 
-**Wave 5** *(blocked on Wave 4 completion)*
+**Wave 5** *(unblocked)*
 - [ ] 01-05-PLAN.md — AUDIT-05: 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision
 
 **Wave 6** *(blocked on Wave 5 completion)*

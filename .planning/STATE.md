@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 03 complete — AUDIT-03 per-stage connector dependency table + PITFALLS-cited fallback hint sub-table populated; ready for Plan 04 (Wave 4 — AUDIT-04 missing-artefact inventory)
-last_updated: "2026-05-09T17:00:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 03 complete (Wave 3 — AUDIT-03)
+stopped_at: Phase 1 Plan 04 complete — AUDIT-04 missing-artefact inventory (5 subsections + 1 verified-clean) populated; ready for Plan 05 (Wave 5 — AUDIT-05 duplicated content blocks)
+last_updated: "2026-05-09T18:00:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 04 complete (Wave 4 — AUDIT-04)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 3
-  percent: 8
+  completed_plans: 4
+  percent: 11
 ---
 
 # STATE
@@ -27,25 +27,25 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 (Audit) — EXECUTING
-Plan: 4 of 9 (Plan 03 complete; AUDIT-03 per-stage connector dependency table + PITFALLS-cited fallback hint populated)
-Status: Executing Phase 1 — Wave 4 (AUDIT-04 missing-artefact inventory) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 03 complete (Wave 3 — AUDIT-03: 7×9 dependency table + 4-row fallback hint)
+Plan: 5 of 9 (Plan 04 complete; AUDIT-04 5 missing-artefact subsections + 1 verified-clean populated)
+Status: Executing Phase 1 — Wave 5 (AUDIT-05 duplicated content blocks) is next
+Last activity: 2026-05-09 -- Phase 1 Plan 04 complete (Wave 4 — AUDIT-04: 6 H3 subsections; 18 citations; 1 BLOCKING + 4 STRUCTURAL + 1 negative-finding)
 
-Progress: [█░░░░░░░░░] 8% (0/4 phases complete; 3/9 Phase 1 plans complete)
+Progress: [█░░░░░░░░░] 11% (0/4 phases complete; 4/9 Phase 1 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 3
-- Average duration: ~13 min
-- Total execution time: ~40 min
+- Total plans completed: 4
+- Average duration: ~12 min
+- Total execution time: ~50 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 3 | ~40 min | ~13 min |
+| 1. Audit | 4 | ~50 min | ~12 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -57,6 +57,7 @@ Progress: [█░░░░░░░░░] 8% (0/4 phases complete; 3/9 Phase 1 
 | 1 | 01 (Wave 1 scaffold) | ~5 min | 3 | 2 | 2026-05-09 |
 | 1 | 02 (Wave 2 — AUDIT-01) | ~25 min | 2 | 1 | 2026-05-09 |
 | 1 | 03 (Wave 3 — AUDIT-03) | ~10 min | 2 | 1 | 2026-05-09 |
+| 1 | 04 (Wave 4 — AUDIT-04) | ~10 min | 2 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -81,6 +82,8 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 03: AUDIT-03 cell vocabulary fixed at 4 enum values (`(none)` / `(referenced in artefact only)` / `optional (graceful)` / `REQUIRED`) — keeps observation precision tight without leaking design proposals
 - Phase 1 Plan 03: live-MCP probe results (working/broken/missing) deferred to AUDIT-08; AUDIT-03 inventories *dependency*, AUDIT-08 inventories *connectivity* — split prevents conflating "stage uses connector X" with "X is currently working"
 - Phase 1 Plan 03: PITFALLS-cited fallback hint sub-table is a 4-row sample, not a transcription of the full PITFALLS matrix — honours D-13 (no design proposals); full matrix is DESIGN-07's territory in Phase 2
+- Phase 1 Plan 04: AUDIT-04 opener uses "the named DESIGN-* requirement carries the fix" instead of the PLAN-drafted "design proposes the fix" — D-13 banned-phrase ERE bans the literal token `propose`, so PLAN's own gate forced the rewording (same meaning; Rule 1 fix to PLAN's drafted text)
+- Phase 1 Plan 04: subsection 4.6 (verified-clean negative finding) deliberately carries NO severity tag and NO Closes via trailer per Pattern 7 — observation of cleanliness, not a gap; structural-check assertion #4 (CONCERNS absorption) catches silent drop
 
 ### Pending Todos
 
@@ -99,5 +102,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 03 complete — AUDIT-03 per-stage connector dependency table (7×9 matrix) + PITFALLS-cited fallback hint sub-table populated; ready for Plan 04 (Wave 4 — AUDIT-04 missing-artefact inventory)
-Resume file: .planning/phases/01-audit/01-04-PLAN.md
+Stopped at: Phase 1 Plan 04 complete — AUDIT-04 missing-artefact inventory (6 H3 subsections; 18 citations; 1 BLOCKING + 4 STRUCTURAL + 1 verified-clean negative-finding) populated; ready for Plan 05 (Wave 5 — AUDIT-05 duplicated content blocks)
+Resume file: .planning/phases/01-audit/01-05-PLAN.md
