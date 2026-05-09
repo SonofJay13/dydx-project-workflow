@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: ready-to-execute
-stopped_at: Phase 2 planned — 10 PLAN.md files written under `.planning/phases/02-design/` (02-01 scaffold + 02-02..02-09 content slices + 02-10 synthesis); plan-checker VERIFICATION PASSED; ready for `/gsd-execute-phase 2`
-last_updated: "2026-05-09T23:55:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 planning complete — 10 plans across 10 sequential waves (forced serialization on shared `.planning/DESIGN.md` deliverable); all 30 DESIGN-* IDs and all 18 D-18..D-35 CONTEXT decisions covered; plan-checker passed
+stopped_at: Phase 2 planned + reviewed + revised — 10 PLAN.md files revised in reviews-mode incorporating gemini+codex cross-AI feedback (3 HIGH, 5 MEDIUM, 2 LOW concerns addressed); plan-checker re-verification PASSED after BLOCKER-01 fix (02-03 frontmatter); ready for `/gsd-execute-phase 2`
+last_updated: "2026-05-10T00:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 reviews-mode revision complete — cross-AI review (gemini-2.5-flash + codex/gpt-5.5) ran via /gsd-review --phase 2 --all; replan via /gsd-plan-phase 2 --reviews modified all 10 plans; plan-checker found 1 BLOCKER (fixed inline) then re-verification PASSED
 progress:
   total_phases: 4
   completed_phases: 1
@@ -26,10 +26,10 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 2 (Design) — PLANNED ✓
-Plan: 0 of 10 (10 plans created 02-01 through 02-10; 10 sequential waves due to shared `.planning/DESIGN.md` deliverable forcing serialization). D-31 hinted ~8; final shape is 10 (scaffold split + test-bot detail split + synthesis as own plan).
-Status: Phase 2 plans locked 2026-05-09. 10 PLAN.md files written under `.planning/phases/02-design/`. All 30 DESIGN-* requirement IDs distributed across plans (no orphans). All 18 D-18..D-35 CONTEXT decisions referenced by at least one plan. Plan-checker `## VERIFICATION PASSED` (with 2 INFO observations: D-22 inline marker text varies slightly between 02-01 seed and 02-07 body — 02-10 reconciliation handles dedup; ROADMAP SC4 numerics example superseded by CONTEXT D-22 deferral lock — plans correctly follow CONTEXT). Next: `/gsd-execute-phase 2`.
-Last activity: 2026-05-09 -- Phase 2 planning complete. gsd-planner returned `## PLANNING COMPLETE` with 10 plans / 10 waves; gsd-plan-checker returned `## VERIFICATION PASSED`.
+Phase: 2 (Design) — PLANNED + REVIEWED + REVISED ✓
+Plan: 0 of 10 (10 plans created 02-01 through 02-10; 10 sequential waves due to shared `.planning/DESIGN.md` deliverable forcing serialization).
+Status: Phase 2 plans hardened 2026-05-09 via cross-AI review cycle. Initial plan-checker passed; cross-AI review (gemini-2.5-flash + codex/gpt-5.5) raised 3 HIGH (broken awk section-range, missing SUMMARY.md in files_modified, fragile [OPEN] reconciliation), 5 MEDIUM (skill-count framing, persona scope, forward refs, 02-09 wording, marker ownership), 2 LOW (script comment mismatch, encoding artefacts) concerns. All addressed via reviews-mode replan; plan-checker re-verification found 1 BLOCKER (02-03 frontmatter missing script path) — fixed inline; final re-verification PASSED. All 30 DESIGN-* IDs and all 18 D-18..D-35 CONTEXT decisions still covered. Next: `/gsd-execute-phase 2`.
+Last activity: 2026-05-09 -- Phase 2 reviews-mode revision complete. /gsd-review produced 02-REVIEWS.md; /gsd-plan-phase 2 --reviews modified all 10 plans; plan-checker BLOCKER fixed; ready for execution.
 
 Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 ready to execute)
 
