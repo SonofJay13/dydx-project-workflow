@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
-status: ready-to-execute
-stopped_at: Phase 2 planned + reviewed + revised — 10 PLAN.md files revised in reviews-mode incorporating gemini+codex cross-AI feedback (3 HIGH, 5 MEDIUM, 2 LOW concerns addressed); plan-checker re-verification PASSED after BLOCKER-01 fix (02-03 frontmatter); ready for `/gsd-execute-phase 2`
-last_updated: "2026-05-10T00:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 reviews-mode revision complete — cross-AI review (gemini-2.5-flash + codex/gpt-5.5) ran via /gsd-review --phase 2 --all; replan via /gsd-plan-phase 2 --reviews modified all 10 plans; plan-checker found 1 BLOCKER (fixed inline) then re-verification PASSED
+status: executing
+stopped_at: Phase 2 Plan 01 complete — Wave 1 scaffold landed (design-structure-check.sh + DESIGN.md skeleton at .planning/DESIGN.md). Structural-check exits 1 by design against empty skeleton (assertion #4 short-circuits). Plans 02-02..02-10 now have anchored sections to populate.
+last_updated: "2026-05-09T22:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 Plan 01 executed — 2 commits (8469bd9 script; bb13937 skeleton); Wave 1 invariant verified (script live, helper extraction returns 0 against empty skeleton — cross-AI HIGH #1 fix confirmed working).
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 19
-  completed_plans: 9
-  percent: 25
+  completed_plans: 10
+  percent: 26
 ---
 
 # STATE
@@ -22,31 +22,31 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 **Core value:** Plugin behaves as a senior implementation partner end-to-end — every stage produces an artefact polished enough to send to a client or hand to a developer without rework, and every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
 
-**Current focus:** Phase 2 — Design (planned 2026-05-09; ready to execute)
+**Current focus:** Phase 2 — Design (Plan 01 complete; 9 plans remaining)
 
 ## Current Position
 
-Phase: 2 (Design) — PLANNED + REVIEWED + REVISED ✓
-Plan: 0 of 10 (10 plans created 02-01 through 02-10; 10 sequential waves due to shared `.planning/DESIGN.md` deliverable forcing serialization).
-Status: Phase 2 plans hardened 2026-05-09 via cross-AI review cycle. Initial plan-checker passed; cross-AI review (gemini-2.5-flash + codex/gpt-5.5) raised 3 HIGH (broken awk section-range, missing SUMMARY.md in files_modified, fragile [OPEN] reconciliation), 5 MEDIUM (skill-count framing, persona scope, forward refs, 02-09 wording, marker ownership), 2 LOW (script comment mismatch, encoding artefacts) concerns. All addressed via reviews-mode replan; plan-checker re-verification found 1 BLOCKER (02-03 frontmatter missing script path) — fixed inline; final re-verification PASSED. All 30 DESIGN-* IDs and all 18 D-18..D-35 CONTEXT decisions still covered. Next: `/gsd-execute-phase 2`.
-Last activity: 2026-05-09 -- Phase 2 reviews-mode revision complete. /gsd-review produced 02-REVIEWS.md; /gsd-plan-phase 2 --reviews modified all 10 plans; plan-checker BLOCKER fixed; ready for execution.
+Phase: 2 (Design) — EXECUTING (1/10 plans complete)
+Plan: 1 of 10 complete (Wave 1 scaffold landed). Plans 02-02..02-10 each populate their DESIGN-* slice into the skeleton.
+Status: Wave 1 scaffold complete. `.planning/phases/02-design/scripts/design-structure-check.sh` (9 assertions, stateful section_between helper) and `.planning/DESIGN.md` skeleton (143 lines, all H2/H3 anchors, seed [OPEN] marker, frontmatter_version: 2 sentinel) shipped. Structural-check exits 1 against empty skeleton — invariant verified. Next: `/gsd-execute-phase 2` continues with Plan 02-02 (Cross-cutting decisions DESIGN-01..10 + status-lifecycle survey + Appendix C persona examples).
+Last activity: 2026-05-09 -- Phase 2 Plan 01 executed — 2 commits (8469bd9 script; bb13937 skeleton); Wave 1 invariant confirmed.
 
-Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 ready to execute)
+Progress: [██▋░░░░░░░] 26% (1 phase complete + Phase 2 Wave 1 scaffold)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
-- Average duration: ~11 min
-- Total execution time: ~101 min
+- Total plans completed: 10
+- Average duration: ~10 min
+- Total execution time: ~107 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Audit | 9 | ~101 min | ~11 min |
-| 2. Design | 0 of 10 planned | — | — |
+| 2. Design | 1 of 10 planned | ~6 min | ~6 min |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
 
@@ -63,6 +63,7 @@ Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 
 | 1 | 07 (Wave 7 — AUDIT-07) | ~7 min | 1 | 1 | 2026-05-09 |
 | 1 | 08 (Wave 8 — AUDIT-08) | ~12 min | 2 | 1 | 2026-05-09 |
 | 1 | 09 (Wave 9 — synthesis) | ~10 min | 5 | 2 | 2026-05-09 |
+| 2 | 01 (Wave 1 scaffold) | ~6 min | 3 | 3 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -104,6 +105,12 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 09: AUDIT-02 carries BOTH the running-prose form `All 15 CONCERNS.md sections absorbed` (visible count for reviewers) AND the canonical no-count sentinel `**All CONCERNS.md sections absorbed; zero entries dropped silently.**` on its own line (must_haves.contains literal-substring gate is robust to count drift in CONCERNS.md).
 - Phase 1 Plan 09: Appendix B uses numeric-index column-1 (`| 1 |`...`| 15 |`); structural-check assertion #7 tolerant regex `^\| [^\|]+ \|` matches 16 rows (15 data + 1 header) — passes the >= 14 gate with margin.
 - Phase 1 Plan 09: structural-check 8/8 assertions pass (file exists; 8 AUDIT-0N H2 sections; D-16 v2.1 sentinel present; CONCERNS absorption claim present; Executive Summary header present; Appendix B header present; >= 14 Appendix B rows; `2.0.0` D-17 sync target literal present); Phase 1 deliverable structurally complete.
+- Phase 2 Plan 01: design-structure-check.sh defines stateful `section_between()` awk helper instead of broken `awk '/^## X/,/^## /'` range pattern (cross-AI review HIGH #1 fix) — start H2 cannot be re-matched as end H2 on the same line; helper extracts body only up to NEXT H2.
+- Phase 2 Plan 01: script header comments accurately describe case-sensitive `grep -qF` (literal sentinels) and `grep -cE` (case-sensitive ERE) behaviour — script does NOT use `-i` flag (cross-AI review LOW #8 fix).
+- Phase 2 Plan 01: DESIGN.md lives at `.planning/DESIGN.md` (NOT under phase folder) per CONTEXT.md Integration Points and D-18 — same convention as Phase 1 AUDIT.md.
+- Phase 2 Plan 01: Wave 1 skeleton intentionally fails 2 of 9 assertions (#4 DESIGN-NN echo count = 0; #9 hand-off matrix data rows = 0) — proves the structural-check is live end-to-end. Phase 1 Plan 01 set the precedent.
+- Phase 2 Plan 01: stateful-helper extraction confirmed against empty skeleton — `section_between "## Stage-by-stage hand-off contract"` returned 0 lines matching `^| Stage`, proving the helper does NOT spuriously match the header row (T-02-01-02 mitigation honoured).
+- Phase 2 Plan 01: 13 Stage-N H2 anchors created (Stages 1, 2, 3, 4a, 4b, 5, 6, 7a, 7b, 8, 9, 10, 11) — exceeds the >= 11 floor; accommodates Stage 4 fnspec split (DESIGN-20) and Stage 7 dual build prompts (DESIGN-23).
 
 ### Pending Todos
 
@@ -122,5 +129,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 2 discuss complete — 12 gray areas locked in CONTEXT.md (D-18..D-35); user took recommended option on all 12. Indicative plan groupings per D-31: 02-01 Cross-cutting (DESIGN-01..10 + status-lifecycle survey appendix) → 02-02 Skill inventory + hand-offs (DESIGN-11..13) → 02-03 Platform skills (DESIGN-14..16) → 02-04 Stage skills 1–4 (DESIGN-17..20) → 02-05 Stage skills 5–8 (DESIGN-21..24) → 02-06 Stage skills 9–11 (DESIGN-25..27) → 02-07 Test bot (DESIGN-28..30) → 02-08 Synthesis. Single approval gate on assembled DESIGN.md.
-Resume file: `.planning/phases/02-design/02-CONTEXT.md`
+Stopped at: Phase 2 Plan 01 (Wave 1 scaffold) complete — 2 commits (8469bd9 design-structure-check.sh; bb13937 DESIGN.md skeleton); structural-check exits 1 against empty skeleton (Wave 1 invariant verified). Plans 02-02..02-10 next; resume execution via `/gsd-execute-phase 2`.
+Resume file: `.planning/phases/02-design/02-02-PLAN.md`
