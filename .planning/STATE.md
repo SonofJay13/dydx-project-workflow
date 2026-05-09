@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 Plan 04 complete — Wave 4 platform skills DESIGN-14/15/16 landed (3-row platform-comparison matrix opening `## Platform skills` per D-19; 3 H3 subsections each with identical 5-file `references/` ASCII tree + 2026-grounded native-AI capability matrix with HIGH/MEDIUM/LOW Confidence column + API surface + sandbox pattern + `native_ai_path: api|paste|none` flag + `tier_claims_last_verified` frontmatter contract; Wrike `host` OAuth-persistence rule triple-mentioned as CRITICAL bug-prevention; 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format). 16 of 30 DESIGN-NN echo lines added; structural-check exits 1 (assertion #4 short-circuits at 16 < 30 — mid-phase invariant). Plans 02-05..02-09 add remaining 14 echoes.
+stopped_at: Phase 2 Plan 05 complete — Wave 5 Stages 1-3 skills DESIGN-17/18/19 landed (Stage 1 Kickoff capture dual-branch routing via `kickoff_branch:` enum [discovery-ready -> Stage 2; draft-sow -> SKIP Stage 2 -> Stage 3] + Field Notes triage filter `processed_at IS NULL` per DESIGN-09 + Miro paste fallback per DESIGN-07 + auto-classification with `[unknown — needs human classification]` inline markers; Stage 2 Discovery refactor — raw-notes mode RETIRED + mandatory `based_on_kickoff:` field + explicit skip-when-draft-SOW behaviour reading upstream `kickoff_branch:`; Stage 3 SOW refactor — single SOW covering platform AND integration + canonical 4-stage lifecycle with `client_review` retained per AUDIT.md §AUDIT-01.2 + DESIGN-08; 3 echo blockquotes added; per-stage decision contract shape per D-20; hand-off messages verbatim restate per D-26 with literal-substring grep verified 2 occurrences each for Stage 1->2, Stage 2->3, Stage 3->4a). 19 of 30 DESIGN-NN echo lines added; structural-check exits 1 (assertion #4 short-circuits at 19 < 30 — mid-phase invariant). Plans 02-06..02-09 add remaining 11 echoes.
 last_updated: "2026-05-09T00:00:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 Plan 04 executed — 2 commits (e7495b3 Platform skills opening matrix + DESIGN-14 platform-pipefy; e14a8e4 DESIGN-15 platform-wrike + DESIGN-16 platform-ziflow + structural-check run); echo count progressed 13 -> 16/30; total inline `[OPEN: Phase 4]` count = 13 across DESIGN.md (>= 8 floor with margin); structural-check correctly exits 1 (assertion #4 echo count short-circuit at 16/30 — Plans 02-05..02-09 close remaining 14).
+last_activity: 2026-05-09 -- Phase 2 Plan 05 executed — 2 commits (7644a36 Stage 1 Kickoff capture DESIGN-17; e8f903f Stage 2 Discovery DESIGN-18 + Stage 3 SOW DESIGN-19 + structural-check run); echo count progressed 16 -> 19/30; no new `[OPEN: Phase 4]` markers added (DESIGN-17/18/19 contracts LOCKED — Stage 1 Miro swimlane-reconstruction algorithm remains build-phase research per CONTEXT.md `<deferred>`, NOT a fresh `[OPEN]`); total inline `[OPEN: Phase 4]` count across DESIGN.md unchanged from Plan 02-04 (= 13, >= 8 floor with margin); structural-check correctly exits 1 (assertion #4 echo count short-circuit at 19/30 — Plans 02-06..02-09 close remaining 11); cross-AI MEDIUM #6 forward-reference guardrails honoured — DESIGN-20 cited as anchor placeholder only with explicit `forward — populated in Plan 02-06` inline at every cite site (Stage 1 + 2 + 3 cross-references); acceptance criteria did NOT assert DESIGN-20 body content exists; deferred to Plan 02-10 Appendix B traceability synthesis (T-02-05-06 mitigation).
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 19
-  completed_plans: 13
-  percent: 42
+  completed_plans: 14
+  percent: 47
 ---
 
 # STATE
@@ -22,31 +22,31 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 **Core value:** Plugin behaves as a senior implementation partner end-to-end — every stage produces an artefact polished enough to send to a client or hand to a developer without rework, and every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
 
-**Current focus:** Phase 2 — Design (Plan 01 complete; 9 plans remaining)
+**Current focus:** Phase 2 — Design (Plans 01-05 complete; 5 plans remaining)
 
 ## Current Position
 
-Phase: 2 (Design) — EXECUTING (4/10 plans complete)
-Plan: 4 of 10 complete (Wave 4 platform skills landed). Plans 02-05..02-10 each populate their DESIGN-* slice.
-Status: Wave 4 complete. DESIGN.md now has populated `## Platform skills` H2 with framing paragraph + 3-row platform-comparison matrix (D-19 — pipefy/wrike/ziflow x 6 columns: Platform | Native-AI surface 2026 | API protocol | Sandbox access | `native_ai_path` default | Known research-blocked items); populated `### platform-pipefy` (DESIGN-14 echo + 5-file `references/` ASCII tree + 7-row native-AI capability matrix [KB/Skills/MCP/IDP/Web Search/BYO-LLM all HIGH; KB content-upload via API LOW with [OPEN]] + GraphQL API surface with `paginate_all` helper + sandbox tenant pattern + `native_ai_path: api` default + `tier_claims_last_verified` frontmatter); populated `### platform-wrike` (DESIGN-15 echo + 5-file ASCII tree + 4-row native-AI matrix [Copilot HIGH; 16 MCP tools HIGH; attach-doc-via-MCP MEDIUM; AI Studio knowledge-ingestion API LOW with [OPEN]] + REST API surface with CRITICAL `wrike_host` OAuth-persistence rule + sandbox space pattern with both `wrike_sandbox_space_id` and `wrike_host` mandatory + `native_ai_path: api` default + frontmatter); populated `### platform-ziflow` (DESIGN-16 echo + 5-file ASCII tree + 4-row native-AI matrix [Checklists Public Preview HIGH; Change Verification + Brand Standards Coming Soon MEDIUM; ReviewAI knowledge-ingestion API LOW with [OPEN]] + REST API surface with `wait_for_proof` helper for read-after-create eventual consistency + sandbox project pattern + `native_ai_path: paste` DEFAULT + frontmatter). Echo count progressed 13 -> 16/30; total inline `[OPEN: Phase 4]` markers across DESIGN.md = 13 (>= 8 floor with margin); structural-check assertion #4 (echo count) short-circuits at 16/30 — expected mid-phase invariant. Next: `/gsd-execute-phase 2` continues with Plan 02-05 (Stages 1-3 skills DESIGN-17/18/19; running echo total after 02-05 = 19/30).
-Last activity: 2026-05-09 -- Phase 2 Plan 04 executed — 2 commits (e7495b3 Platform skills opening matrix + DESIGN-14 platform-pipefy; e14a8e4 DESIGN-15 platform-wrike + DESIGN-16 platform-ziflow + structural-check run); 3 DESIGN-NN echo lines added (DESIGN-14/15/16); 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format; structural-check correctly exits 1 (assertion #4 echo count short-circuit at 16/30).
+Phase: 2 (Design) — EXECUTING (5/10 plans complete)
+Plan: 5 of 10 complete (Wave 5 Stages 1-3 skills landed). Plans 02-06..02-10 each populate their DESIGN-* slice.
+Status: Wave 5 complete. DESIGN.md now has populated `## Stage 1: Kickoff capture` (DESIGN-17 echo + per-stage decision contract per D-20: skill `kickoff-capture/` NEW + Stage 1 + Medium complexity; inputs = client/project frontmatter + Field Notes Coda read-only + Miro paste fallback + meeting-notes/requirements-docs/internal-feedback paste; outputs = `01_kickoff_v<N>.md` carrying `kickoff_branch: discovery-ready | draft-sow` enum + `field_notes_processed_count:` + `frontmatter_version: 2` + `status: draft`; dual-branch routing rules — `discovery-ready` -> Stage 2, `draft-sow` -> SKIP Stage 2 -> Stage 3; auto-classification with `[unknown — needs human classification]` inline markers; hand-off message verbatim from matrix Stage 1 -> Stage 2 row per D-26; 4 key v2 decisions; deps DESIGN-09/07/01/06; cross-refs DESIGN-18/19 forward + AUDIT.md §AUDIT-08/§AUDIT-01.1 backward); populated `## Stage 2: Discovery refactor` (DESIGN-18 echo + skill `discovery-intake/` MODIFIED + Low complexity; raw-notes mode RETIRED; `based_on_kickoff:` field MANDATORY; explicit skip-when-draft-SOW behaviour reading upstream `kickoff_branch:`; hand-off verbatim from matrix Stage 2 -> Stage 3; 4 key v2 decisions); populated `## Stage 3: SOW refactor` (DESIGN-19 echo + skill `generate-sow/` UNCHANGED-structure / behaviour-modified + Medium complexity; single SOW covering platform AND integration explicit; canonical 4-stage lifecycle including `client_review` retained per AUDIT-01.2 + DESIGN-08; inputs = `based_on_discovery:` normal OR `based_on_kickoff:` draft-SOW path; hand-off verbatim from matrix Stage 3 -> Stage 4a; cross-refs DESIGN-20 forward as anchor placeholder only per cross-AI MEDIUM #6). Echo count progressed 16 -> 19/30; total inline `[OPEN: Phase 4]` markers across DESIGN.md unchanged at 13 (no new ones — DESIGN-17/18/19 contracts are LOCKED); structural-check assertion #4 (echo count) short-circuits at 19/30 — expected mid-phase invariant. Next: `/gsd-execute-phase 2` continues with Plan 02-06 (Stages 4a/4b/5 DESIGN-20/21; running echo total after 02-06 = 21/30).
+Last activity: 2026-05-09 -- Phase 2 Plan 05 executed — 2 commits (7644a36 Stage 1 Kickoff capture DESIGN-17; e8f903f Stage 2 Discovery DESIGN-18 + Stage 3 SOW DESIGN-19 + structural-check run); 3 DESIGN-NN echo lines added (DESIGN-17/18/19); no new inline `[OPEN: Phase 4]` markers (LOCKED contracts); structural-check correctly exits 1 (assertion #4 echo count short-circuit at 19/30).
 
-Progress: [████▏░░░░░] 42% (1 phase complete + Phase 2 Waves 1-4 — 13 of 19 plans)
+Progress: [████▋░░░░░] 47% (1 phase complete + Phase 2 Waves 1-5 — 14 of 19 plans)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: ~11 min
-- Total execution time: ~141 min
+- Total execution time: ~149 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Audit | 9 | ~101 min | ~11 min |
-| 2. Design | 4 of 10 planned | ~40 min | ~10 min |
+| 2. Design | 5 of 10 planned | ~48 min | ~10 min |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
 
@@ -67,6 +67,7 @@ Progress: [████▏░░░░░] 42% (1 phase complete + Phase 2 Waves
 | 2 | 02 (Wave 2 — DESIGN-01..10 + survey + Appendix C) | ~14 min | 3 | 1 | 2026-05-09 |
 | 2 | 03 (Wave 3 — DESIGN-11/12/13 + H2 rename) | ~10 min | 2 | 2 | 2026-05-09 |
 | 2 | 04 (Wave 4 — DESIGN-14/15/16 platform skills) | ~10 min | 2 | 1 | 2026-05-09 |
+| 2 | 05 (Wave 5 — DESIGN-17/18/19 Stages 1-3 skills) | ~8 min | 2 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -132,6 +133,12 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 2 Plan 04: 7 new inline [OPEN: Phase 4 — ...] markers added with uniform OPEN-01 + Phase-N citation format per CHANGE-04 (3 pipefy: KB content-upload + GraphQL cursor field names + 2026 rate-limit currency; 2 wrike: AI Studio knowledge-ingestion API + 2026 rate-limit currency; 2 ziflow: ReviewAI knowledge-ingestion API + read-after-create consistency window); total inline `[OPEN: Phase 4]` count across DESIGN.md = 13 (>= 8 floor with margin); ready for Plan 02-10 enumeration.
 - Phase 2 Plan 04: Forward-reference guardrails per cross-AI review MEDIUM #6 — DESIGN-22/23/24/26 cited as anchor placeholders only with explicit 'forward reference, populated in Plan 02-0X' inline at every cite site; acceptance criteria verified anchor IDs cited but did NOT assert body content exists (deferred to Plan 02-10 Appendix B traceability synthesis); T-02-04-07 mitigation honoured — no false-fail on not-yet-written content.
 - Phase 2 Plan 04: Echo line count progresses 13 -> 16/30 (DESIGN-14/15/16 added); structural-check assertion #4 (echo count >= 30) short-circuits at 16/30 — expected mid-phase invariant; Plans 02-05..02-09 close remaining 14.
+- Phase 2 Plan 05: Stage 1 dual-branch contract locked — single `kickoff_branch:` enum field on `01_kickoff_v<N>.md` steers downstream stages (`discovery-ready` -> Stage 2; `draft-sow` -> SKIP Stage 2 -> Stage 3); DESIGN-18 + DESIGN-19 both read this same field — no separate routing flags; Field Notes triage filter locked at `processed_at IS NULL` per DESIGN-09 directional boundary; Miro paste fallback locked per DESIGN-07 + AUDIT-08; auto-classification with `[unknown — needs human classification]` inline markers forces visible reviewer triage instead of silent guesswork.
+- Phase 2 Plan 05: Stage 2 raw-notes mode RETIRED — v0.3.0's "paste meeting notes here" entry path removed; discovery becomes pure transform of approved kickoff; eliminates "did discovery start from notes or kickoff?" ambiguity v0.3.0 silently allowed; `based_on_kickoff:` field MANDATORY (no v0.3.0 lenient absence); skip behaviour explicit (not silent) — when `kickoff_branch: draft-sow`, skill emits "Stage 2 SKIPPED" hand-off and exits without writing artefact.
+- Phase 2 Plan 05: Stage 3 single-SOW scope locked — ONE SOW covers BOTH platform AND integration; Stage 4 (DESIGN-20 forward ref) is where platform/integration split happens; Stage 3 stays unified for client commercial review; `client_review` retained explicitly per AUDIT.md §AUDIT-01.2 + DESIGN-08 status-lifecycle survey result — interim commercial-review state is real workflow stage, not v0.3.0 quirk.
+- Phase 2 Plan 05: Hand-off message verbatim restate verified per D-26 — both Stage 2 -> Stage 3 and Stage 3 -> Stage 4a strings appear exactly twice in DESIGN.md (matrix row + per-stage subsection); literal-substring grep matches pass; T-02-05-01 mitigation honoured.
+- Phase 2 Plan 05: Echo count progresses 16 -> 19/30 (DESIGN-17 + DESIGN-18 + DESIGN-19 added); structural-check exits 1 with assertion #4 short-circuit at 19 < 30 — expected mid-phase invariant; Plans 02-06..02-09 close remaining 11; no new `[OPEN: Phase 4]` markers added (LOCKED contracts) — total inline `[OPEN]` count across DESIGN.md unchanged from Plan 02-04 (= 13).
+- Phase 2 Plan 05: Forward-reference guardrails per cross-AI review MEDIUM #6 honoured — DESIGN-20 (Stage 4 split downstream) cited as anchor placeholder only with explicit `forward — populated in Plan 02-06` inline at every cite site (Stage 1 + Stage 2 + Stage 3 cross-references); acceptance criteria did NOT assert DESIGN-20 body content exists; deferred to Plan 02-10 Appendix B traceability synthesis (T-02-05-06 mitigation).
 
 ### Pending Todos
 
@@ -150,5 +157,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 2 Plan 04 (Wave 4 — Platform skills DESIGN-14/15/16) complete — 2 commits (e7495b3 Platform skills opening matrix + ### platform-pipefy DESIGN-14; e14a8e4 ### platform-wrike DESIGN-15 + ### platform-ziflow DESIGN-16 + structural-check run). Echo line count progressed 13 -> 16. 7 new inline `[OPEN: Phase 4 — ...]` markers added with uniform OPEN-01 + Phase-N citation format; total inline `[OPEN]` count across DESIGN.md = 13 (>= 8 floor with margin). Structural-check assertion #4 (echo count >= 30) short-circuits at 16/30 — expected mid-phase invariant. Plans 02-05..02-10 next; resume execution via `/gsd-execute-phase 2`.
-Resume file: `.planning/phases/02-design/02-05-PLAN.md`
+Stopped at: Phase 2 Plan 05 (Wave 5 — Stages 1-3 skills DESIGN-17/18/19) complete — 2 commits (7644a36 Stage 1 Kickoff capture DESIGN-17; e8f903f Stage 2 Discovery DESIGN-18 + Stage 3 SOW DESIGN-19 + structural-check run). Echo line count progressed 16 -> 19. No new inline `[OPEN: Phase 4]` markers added (LOCKED contracts — DESIGN-17/18/19); total inline `[OPEN]` count across DESIGN.md unchanged at 13 (>= 8 floor with margin). Structural-check assertion #4 (echo count >= 30) short-circuits at 19/30 — expected mid-phase invariant. Plans 02-06..02-10 next; resume execution via `/gsd-execute-phase 2`.
+Resume file: `.planning/phases/02-design/02-06-PLAN.md`

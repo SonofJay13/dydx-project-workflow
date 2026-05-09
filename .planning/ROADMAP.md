@@ -87,7 +87,7 @@ Plans:
 - [x] 02-04-PLAN.md — Platform skills: platform-pipefy / -wrike / -ziflow (DESIGN-14, 15, 16) + per-platform [OPEN] markers *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-04-SUMMARY.md`)*
 
 **Wave 5**
-- [ ] 02-05-PLAN.md — Stages 1-3 skills (DESIGN-17 Kickoff dual-branch + DESIGN-18 Discovery refactor + DESIGN-19 SOW refactor)
+- [x] 02-05-PLAN.md — Stages 1-3 skills (DESIGN-17 Kickoff dual-branch + DESIGN-18 Discovery refactor + DESIGN-19 SOW refactor) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-05-SUMMARY.md`)*
 
 **Wave 6**
 - [ ] 02-06-PLAN.md — Stages 4a/4b/5 skills (DESIGN-20 Fnspec split + delivery routing key + cross-spec consistency check + DESIGN-21 Tech spec scope gate)
@@ -140,11 +140,11 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
-| 2. Design | 4/10 | In progress (Waves 1-4 done; Wave 5 next) | - |
+| 2. Design | 5/10 | In progress (Waves 1-5 done; Wave 6 next) | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 2 Plan 04 complete (Wave 4 — Platform skills DESIGN-14/15/16: 3-row platform-comparison matrix + 3 H3 subsections each with 5-file references/ shape + native-AI capability matrix + API surface + sandbox pattern + native_ai_path flag + tier_claims_last_verified frontmatter; 7 new inline [OPEN: Phase 4 — ...] markers; echo count 13 → 16/30; structural-check exits 1 with assertion #4 short-circuit at 16/30 mid-phase invariant)*
+*Last updated: 2026-05-09 — Phase 2 Plan 05 complete (Wave 5 — Stages 1-3 skills DESIGN-17/18/19: Stage 1 Kickoff capture dual-branch routing via `kickoff_branch:` enum + Field Notes triage filter `processed_at IS NULL` + Miro paste fallback + auto-classification with `[unknown]` markers; Stage 2 Discovery refactor — raw-notes mode RETIRED + mandatory `based_on_kickoff:` + skip-when-draft-SOW; Stage 3 SOW refactor — single SOW covering platform AND integration + canonical 4-stage lifecycle with `client_review` retained; 3 echo blockquotes added; echo count 16 → 19/30; structural-check exits 1 with assertion #4 short-circuit at 19/30 mid-phase invariant; cross-AI MEDIUM #6 forward-reference guardrails honoured — DESIGN-20 cited as anchor placeholder only)*

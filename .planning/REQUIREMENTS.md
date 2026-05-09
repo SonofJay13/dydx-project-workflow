@@ -55,9 +55,9 @@ Plugin v2 architecture decisions locked. Each requirement names a decision the d
 
 #### Stage skill designs
 
-- [ ] **DESIGN-17**: DESIGN.md specifies **Stage 1 Kickoff capture skill** — inputs (meeting notes / client requirements / internal feedback / Miro workflow map); dual artefact branching (discovery-ready vs draft SOW); Field Notes triage from Coda brain doc (defaults to `processed_at IS NULL`, never auto-merges); Miro paste fallback when API ingest unavailable; auto-classification into kickoff template sections with explicit "unknown" markers.
-- [ ] **DESIGN-18**: DESIGN.md specifies **Stage 2 Discovery intake refactor** — consume `01_kickoff_v*` artefact (skip raw-notes mode); skip the entire stage when kickoff produced a draft SOW; same template structure as v0.3.0 otherwise.
-- [ ] **DESIGN-19**: DESIGN.md specifies **Stage 3 SOW refactor** — single SOW covering platform AND integration; status lifecycle locked to canonical scheme (DESIGN-01); structurally unchanged from v0.3.0 otherwise.
+- [x] **DESIGN-17**: DESIGN.md specifies **Stage 1 Kickoff capture skill** — inputs (meeting notes / client requirements / internal feedback / Miro workflow map); dual artefact branching (discovery-ready vs draft SOW); Field Notes triage from Coda brain doc (defaults to `processed_at IS NULL`, never auto-merges); Miro paste fallback when API ingest unavailable; auto-classification into kickoff template sections with explicit "unknown" markers.
+- [x] **DESIGN-18**: DESIGN.md specifies **Stage 2 Discovery intake refactor** — consume `01_kickoff_v*` artefact (skip raw-notes mode); skip the entire stage when kickoff produced a draft SOW; same template structure as v0.3.0 otherwise.
+- [x] **DESIGN-19**: DESIGN.md specifies **Stage 3 SOW refactor** — single SOW covering platform AND integration; status lifecycle locked to canonical scheme (DESIGN-01); structurally unchanged from v0.3.0 otherwise.
 - [ ] **DESIGN-20**: DESIGN.md specifies **Stage 4 Fnspec split** — `generate-fnspec-platform` (4a) + `generate-fnspec-integration` (4b); per-requirement `delivery: native-ai | api` tagging (the routing key for downstream stages); per-platform capability matrix as classifier input; cross-spec consistency check; either spec optional for single-track projects; legacy single fnspec retired.
 - [ ] **DESIGN-21**: DESIGN.md specifies **Stage 5 Tech spec scope gate** — required only when Stage 4b exists; lightweight platform-API addendum on Stage 4a when API-required portions exist on a platform-only build; covers error handling + observability + retries + idempotency for API portions; never hand-waves error paths.
 - [ ] **DESIGN-22**: DESIGN.md specifies **Stage 6 Cost estimate design** — per-assignee task breakdown (dev / non-dev / QA / lead); `estimated_hours` + `risk_adjusted_hours` columns with mandatory `rationale` field; closed risk-multiplier taxonomy (default L=1.1 / M=1.3 / H=1.6 — flagged for dYdX-historical validation); schema-introspection of existing client task table cached in `00_HUB.md`; Coda writes via `rows/upsert` with `keyColumns` for idempotency, `mutationStatus` polling, rate-limit at 4 req/10s; wait-for-commercial-inputs gate before client-facing cost estimate generation.
@@ -192,9 +192,9 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | DESIGN-14 | Phase 2 | Pending |
 | DESIGN-15 | Phase 2 | Pending |
 | DESIGN-16 | Phase 2 | Pending |
-| DESIGN-17 | Phase 2 | Pending |
-| DESIGN-18 | Phase 2 | Pending |
-| DESIGN-19 | Phase 2 | Pending |
+| DESIGN-17 | Phase 2 | Complete (Plan 02-05) |
+| DESIGN-18 | Phase 2 | Complete (Plan 02-05) |
+| DESIGN-19 | Phase 2 | Complete (Plan 02-05) |
 | DESIGN-20 | Phase 2 | Pending |
 | DESIGN-21 | Phase 2 | Pending |
 | DESIGN-22 | Phase 2 | Pending |
