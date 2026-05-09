@@ -226,7 +226,85 @@ The v0.3.0 pipeline is **artefact-driven** — each skill reads a markdown file 
 
 ## AUDIT-04: Referenced-but-Missing Artefacts
 
-(populated by 01-04-PLAN.md / Wave 4)
+Catalogues every artefact that v0.3.0 docs reference but does not exist in the repo. Each subsection lists the exact references with `file:line` citations and points at the DESIGN-* requirement that closes the gap (audit names the gap; the named DESIGN-* requirement carries the fix per D-13). Subsection 4.6 collects verified-clean cross-references so absence-of-mention isn't read as untested.
+
+### 4.1 platform-pipefy / platform-wrike skills
+
+Three downstream skills dispatch on `platform:` frontmatter and dynamically load `platform-pipefy` or `platform-wrike` — neither directory exists under `dydx-delivery/skills/`.
+
+| Reference | Citation | Context |
+|---|---|---|
+| Plugin README "Platform handling" | `` `dydx-delivery/README.md:89` `` | "Downstream skills...read this and dynamically load the matching platform skill (`platform-pipefy` or `platform-wrike`)" |
+| `generate-build-prompt` SKILL | `` `dydx-delivery/skills/generate-build-prompt/SKILL.md:47` `` | "Based on `platform:` frontmatter, load `platform-pipefy`, `platform-wrike`, etc." |
+| `execute-tests` SKILL | `` `dydx-delivery/skills/execute-tests/SKILL.md:55` `` | "load the matching skill (`platform-pipefy`, `platform-wrike`, etc.)" |
+| `generate-technical-spec` SKILL | `` `dydx-delivery/skills/generate-technical-spec/SKILL.md:38-39` `` | "`platform: pipefy` → load the `platform-pipefy` skill"; "`platform: wrike` → load the `platform-wrike` skill" |
+
+**Severity:** **[BLOCKING]** — three downstream skills dispatch on `platform:`; the contract is broken in-repo today.
+
+**Closes via:** DESIGN-14 (`platform-pipefy/`); DESIGN-15 (`platform-wrike/`); DESIGN-16 (`platform-ziflow/`).
+
+---
+
+### 4.2 /refine-<skill> slash commands
+
+Three orphan references to a `/refine-<skill>` command pattern; no `commands/` directory exists in the plugin and no `refine-*` skill exists.
+
+| Reference | Citation | Context |
+|---|---|---|
+| Root README "How to publish" | `` `README.md:56` `` | "Example commit message: `feat(dydx-delivery): add refine-<skill> counterparts`" |
+| Plugin README pipeline-loop step 5 | `` `dydx-delivery/README.md:51` `` | "Reviewer either edits in place...or runs `/refine-<skill>` to regenerate" |
+| Plugin README versioning Option B | `` `dydx-delivery/README.md:85` `` | "Optional sibling `_review.md` for major iteration notes (used by `/refine-<skill>` if added later)" |
+
+**Severity:** **[STRUCTURAL]** — orphan references; reader can't act on them.
+
+**Closes via:** DESIGN-05 (refine pattern resolution) → Phase 4 OPEN-06.
+
+---
+
+### 4.3 Workspace hub.md
+
+Workspace-level client index referenced in plugin README and discovery-intake; not present in this repo.
+
+| Reference | Citation | Context |
+|---|---|---|
+| Plugin README file-locations | `` `dydx-delivery/README.md:57` `` | "Artefacts land in the standard client folder shape (see workspace `hub.md`)" |
+| `discovery-intake` SKILL Step 1 | `` `dydx-delivery/skills/discovery-intake/SKILL.md:27` `` | "match it against the workspace `hub.md` client index" |
+| `discovery-intake` SKILL Step 1 (second) | `` `dydx-delivery/skills/discovery-intake/SKILL.md:28` `` | "see `hub.md`" |
+
+**Severity:** **[STRUCTURAL]** — orphan reference. v2 names a per-client `00_HUB.md` (different artefact, lives inside client folders) but the workspace-level `hub.md` reference does not match that.
+
+**Closes via:** No single DESIGN-* requirement closes this directly; OPEN-04 (hub-link backfill) addresses per-client `00_HUB.md`. Workspace-level `hub.md` resolution is deferred to Phase 4 OPEN-QUESTIONS.
+
+---
+
+### 4.4 Client folder .env.example
+
+Per-client `.env.example` referenced as the canonical list of required env-var names; this is a *per-client* artefact (lives outside this repo by design), but the gap is that v2 may need to specify a canonical shape.
+
+| Reference | Citation | Context |
+|---|---|---|
+| `when-to-open-claude-code.md` setup-step 3 | `` `dydx-delivery/skills/generate-build-prompt/references/when-to-open-claude-code.md:88` `` | "Set up env vars for sandbox API access...see your client folder's `.env.example`" |
+| `build-prompt-template.md` env-var section | `` `dydx-delivery/skills/generate-build-prompt/references/build-prompt-template.md:120` `` (per `` `.planning/codebase/CONCERNS.md:48` ``) | Per-client `.env.example` referenced as the source for required env-var names |
+
+**Severity:** **[STRUCTURAL]** — orphan reference (per-client artefact, missing in *this* repo is correct; the gap is canonical-shape spec for v2).
+
+**Closes via:** Adjacent to DESIGN-09 (directional-boundary contract); not a direct match. Likely Phase 4 OPEN-QUESTIONS.
+
+---
+
+### 4.5 Missing scaffold directories (commands/, agents/, hooks/)
+
+Plugin scaffold directories absent; v2 architecture introduces all three.
+
+| Reference | Citation | Context |
+|---|---|---|
+| `dydx-delivery/commands/` | `` `.planning/codebase/CONCERNS.md:99` `` | "No `commands/` directory exists in the plugin"; v2 introduces 1 parameterised `refine.md` + 4 GSD-prefixed shortcuts (DESIGN-04) |
+| `dydx-delivery/agents/` | `` `.planning/codebase/CONCERNS.md:100` `` | "No `agents/` directory exists in the plugin"; v2 introduces 1 (`test-bot-orchestrator`) (DESIGN-04) |
+| `dydx-delivery/hooks/` | `` `.planning/codebase/CONCERNS.md:101` `` | "No `hooks/` directory exists in the plugin"; v2 introduces 2 (`validate-frontmatter`, `bump-artefact-version`); explicitly NOT auto-progression (DESIGN-04) |
+
+**Severity:** **[STRUCTURAL]** — scaffold absence; v2 adds these surfaces.
+
+**Closes via:** DESIGN-04 (plugin surfaces).
 
 ---
 
