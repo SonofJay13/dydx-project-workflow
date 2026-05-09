@@ -176,54 +176,54 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | AUDIT-06 | Phase 1 | Pending |
 | AUDIT-07 | Phase 1 | Pending |
 | AUDIT-08 | Phase 1 | Pending |
-| DESIGN-01 | TBD | Pending |
-| DESIGN-02 | TBD | Pending |
-| DESIGN-03 | TBD | Pending |
-| DESIGN-04 | TBD | Pending |
-| DESIGN-05 | TBD | Pending |
-| DESIGN-06 | TBD | Pending |
-| DESIGN-07 | TBD | Pending |
-| DESIGN-08 | TBD | Pending |
-| DESIGN-09 | TBD | Pending |
-| DESIGN-10 | TBD | Pending |
-| DESIGN-11 | TBD | Pending |
-| DESIGN-12 | TBD | Pending |
-| DESIGN-13 | TBD | Pending |
-| DESIGN-14 | TBD | Pending |
-| DESIGN-15 | TBD | Pending |
-| DESIGN-16 | TBD | Pending |
-| DESIGN-17 | TBD | Pending |
-| DESIGN-18 | TBD | Pending |
-| DESIGN-19 | TBD | Pending |
-| DESIGN-20 | TBD | Pending |
-| DESIGN-21 | TBD | Pending |
-| DESIGN-22 | TBD | Pending |
-| DESIGN-23 | TBD | Pending |
-| DESIGN-24 | TBD | Pending |
-| DESIGN-25 | TBD | Pending |
-| DESIGN-26 | TBD | Pending |
-| DESIGN-27 | TBD | Pending |
-| DESIGN-28 | TBD | Pending |
-| DESIGN-29 | TBD | Pending |
-| DESIGN-30 | TBD | Pending |
-| CHANGE-01 | TBD | Pending |
-| CHANGE-02 | TBD | Pending |
-| CHANGE-03 | TBD | Pending |
-| CHANGE-04 | TBD | Pending |
-| CHANGE-05 | TBD | Pending |
-| OPEN-01 | TBD | Pending |
-| OPEN-02 | TBD | Pending |
-| OPEN-03 | TBD | Pending |
-| OPEN-04 | TBD | Pending |
-| OPEN-05 | TBD | Pending |
-| OPEN-06 | TBD | Pending |
-| OPEN-07 | TBD | Pending |
+| DESIGN-01 | Phase 2 | Pending |
+| DESIGN-02 | Phase 2 | Pending |
+| DESIGN-03 | Phase 2 | Pending |
+| DESIGN-04 | Phase 2 | Pending |
+| DESIGN-05 | Phase 2 | Pending |
+| DESIGN-06 | Phase 2 | Pending |
+| DESIGN-07 | Phase 2 | Pending |
+| DESIGN-08 | Phase 2 | Pending |
+| DESIGN-09 | Phase 2 | Pending |
+| DESIGN-10 | Phase 2 | Pending |
+| DESIGN-11 | Phase 2 | Pending |
+| DESIGN-12 | Phase 2 | Pending |
+| DESIGN-13 | Phase 2 | Pending |
+| DESIGN-14 | Phase 2 | Pending |
+| DESIGN-15 | Phase 2 | Pending |
+| DESIGN-16 | Phase 2 | Pending |
+| DESIGN-17 | Phase 2 | Pending |
+| DESIGN-18 | Phase 2 | Pending |
+| DESIGN-19 | Phase 2 | Pending |
+| DESIGN-20 | Phase 2 | Pending |
+| DESIGN-21 | Phase 2 | Pending |
+| DESIGN-22 | Phase 2 | Pending |
+| DESIGN-23 | Phase 2 | Pending |
+| DESIGN-24 | Phase 2 | Pending |
+| DESIGN-25 | Phase 2 | Pending |
+| DESIGN-26 | Phase 2 | Pending |
+| DESIGN-27 | Phase 2 | Pending |
+| DESIGN-28 | Phase 2 | Pending |
+| DESIGN-29 | Phase 2 | Pending |
+| DESIGN-30 | Phase 2 | Pending |
+| CHANGE-01 | Phase 3 | Pending |
+| CHANGE-02 | Phase 3 | Pending |
+| CHANGE-03 | Phase 3 | Pending |
+| CHANGE-04 | Phase 3 | Pending |
+| CHANGE-05 | Phase 3 | Pending |
+| OPEN-01 | Phase 4 | Pending |
+| OPEN-02 | Phase 4 | Pending |
+| OPEN-03 | Phase 4 | Pending |
+| OPEN-04 | Phase 4 | Pending |
+| OPEN-05 | Phase 4 | Pending |
+| OPEN-06 | Phase 4 | Pending |
+| OPEN-07 | Phase 4 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 50 total (8 AUDIT + 30 DESIGN + 5 CHANGE + 7 OPEN)
-- Mapped to phases: 8 (AUDIT placeholder; rest TBD by roadmapper)
-- Unmapped: 42 ⚠️ (filled in by `gsd-roadmapper` during ROADMAP.md creation)
+- Mapped to phases: 50 (8 → Phase 1 / 30 → Phase 2 / 5 → Phase 3 / 7 → Phase 4)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-09*
-*Last updated: 2026-05-09 after milestone v2.0 kickoff + research synthesis*
+*Last updated: 2026-05-09 after roadmap lock — 4 phases, 50/50 mapped*
