@@ -836,10 +836,84 @@ Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `0
 **Cross-references.** DESIGN-20 (`delivery: native-ai | api` routing key feeds task breakdown); DESIGN-21 (Stage 5 tech spec / `## Platform-API Addendum` informs API-portion estimates); DESIGN-23 Stage 7a (forward — same wave below); DESIGN-23 Stage 7b (forward — same wave below); AUDIT.md §AUDIT-08 (Coda MCP wiring confirmed working); Phase 4 OPEN-QUESTIONS register (risk-multiplier numeric defaults — pending dYdX-historical validation per D-22).
 
 ## Stage 7a: Build prompt — dev
-(Populated by 02-07-PLAN.md / Wave 7. Covers DESIGN-23 first half.)
+
+> **DESIGN-23:** Stage 7a Build prompt — dev — `generate-build-prompt` skill (MODIFIED, carries forward from v0.3.0); pulls `delivery: native-ai | api` from Stage 4a per DESIGN-20 routing key; Stage 7a covers `delivery: api` requirements (dev-implementation territory) + Stage 5 tech-spec details for API endpoints.
+
+**Skill:** `generate-build-prompt/` (MODIFIED per DESIGN-12 inventory — carries forward from v0.3.0 v0.3.0 baseline; modified to filter on `delivery: api` rows only and to read `delivery_filter: api` frontmatter as its scope contract). Stage 7a is the dev-implementation-prompt path; the per-platform implementation-prompt path lives in Stage 7b below.
+**Stage:** 7a (file prefix `07a_build-prompt_*` per DESIGN-02).
+**Complexity:** Medium (the skill itself carries forward; the modification is limited to the `delivery_filter:` scope contract and the per-row consumption of `delivery: api` tagging).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (REQUIRED — Stage 7a primary input is the integration fnspec) + `based_on_techspec: 05_techspec_v<N>` (REQUIRED for full path; absent on the skip-with-addendum branch where API endpoints live in 4a's `## Platform-API Addendum` H2 instead) + `based_on_cost: 06_cost_v<N>` (REQUIRED — locks costed scope before build prompt) + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (consumed when 4a has any `delivery: api` rows requiring API implementation work).
+- **Upstream artefact paths:** `04b_fnspec-integration_v<N>.md` + `05_techspec_v<N>.md` (full path) OR `04a_fnspec-platform_v<N>.md` carrying `## Platform-API Addendum` (skip-with-addendum path) + `06_cost_v<N>.md` (must carry `status: approved` per Stage 6 hand-off).
+- **External inputs:** none — Stage 7a is a pure transform of the approved upstream artefacts.
+
+**Outputs.**
+- **Carrier file:** `07a_build-prompt_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** standard set (`client:`, `project:`, `frontmatter_version: 2`, `based_on_fnspec_integration:`, `based_on_techspec:`, `based_on_cost:`, optional `based_on_fnspec_platform:`) + `delivery_filter: api` (the DESIGN-23 scope-tag — locks 7a to `delivery: api` rows only); `status: draft → approved`.
+
+**What Stage 7a does NOT cover.** `delivery: native-ai` requirements (those route to Stage 7b — see below). The `delivery_filter: api` frontmatter is the explicit complement to Stage 7b's `delivery_filter: native-ai`; the two filters are disjoint.
+
+**Downstream consumer.** dev (human implementer) — Stage 7a's output is a developer-facing build prompt for API / integration work.
+
+**Status flag(s).** `status: approved` on `07a_build-prompt_v<N>.md` gates Stage 8a (provision-test-harness). Approval-gate hook (per DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 7a / 7b → Stage 8a row).**
+
+> Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing.
+
+**Key v2 decisions for this stage.**
+
+1. **Reads `delivery: api` rows only — `delivery_filter: api` frontmatter** — Stage 7a scopes itself by the DESIGN-20 routing key. No re-classification; Stage 4a / 4b's `delivery:` tagging flows straight through.
+2. **Carries forward from v0.3.0 `generate-build-prompt`** — same skill, same template body, only the `delivery_filter:` scope-tag and per-row `delivery: api` consumption are new. Migration path: existing v0.3.0 build-prompt artefacts read clean against v2 readers via `frontmatter_version` lenient mode (DESIGN-08).
+3. **7a + 7b complementary, never overlapping** — Stage 7a `delivery_filter: api` and Stage 7b `delivery_filter: native-ai` are explicit disjoint sets; reviewer can grep both filters for the same project to verify no requirement falls through cracks (and no requirement is double-counted).
+
+**Dependencies.** DESIGN-20 (`delivery: native-ai | api` routing key — Stage 7a reads `delivery: api` rows); DESIGN-21 (Stage 5 tech spec / `## Platform-API Addendum` provides API-endpoint details for the build prompt); DESIGN-22 (Stage 6 cost estimate locks costed scope before build prompt — `based_on_cost:` REQUIRED).
+
+**Cross-references.** DESIGN-19 Stage 3 (SOW upstream); DESIGN-20 Stage 4a / 4b (routing key); DESIGN-21 Stage 5 (tech spec); DESIGN-22 Stage 6 (cost — same wave above); DESIGN-23 Stage 7b (complement — same wave below); DESIGN-24 Stage 8a (forward — anchor placeholder, populated in Plan 02-08); AUDIT.md §AUDIT-01.6 (v0.3.0 generate-build-prompt baseline).
 
 ## Stage 7b: Build prompt — implementation per platform
-(Populated by 02-07-PLAN.md / Wave 7. Covers DESIGN-23 second half.)
+
+> **DESIGN-23:** Stage 7b Build prompt — implementation per platform — `generate-implementation-prompt` skill (NEW); per-platform shape (Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = checklist/criteria spec); explicitly NOT a universal template (per `## Out of Scope`); reads `delivery: native-ai` rows from Stage 4a per DESIGN-20 routing key.
+
+**Skill:** `generate-implementation-prompt/` (NEW per DESIGN-12 inventory — net-new skill; no v0.3.0 ancestor). Stage 7b is the per-platform implementation-prompt path; complement to Stage 7a above. The skill dispatches on the upstream `platform:` frontmatter to one of three template paths (pipefy / wrike / ziflow); a single universal template is explicitly forbidden per `## Out of Scope`.
+**Stage:** 7b (file prefix `07b_implementation-prompt_*` per DESIGN-02).
+**Complexity:** Medium (per-platform dispatch adds branching; per-platform body shapes are concrete but bounded by the platform skill's `references/` shape from DESIGN-14/15/16).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (REQUIRED — Stage 7b reads platform fnspec) + `based_on_cost: 06_cost_v<N>` (REQUIRED — locks costed scope) + `platform: pipefy | wrike | ziflow` (REQUIRED — drives per-platform dispatch); standard `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` (must carry `status: approved`); `06_cost_v<N>.md` (must carry `status: approved`).
+- **External inputs:** per-platform `references/api-contract.md` + `references/native-ai-inventory.md` from the matching `platform-pipefy/` / `platform-wrike/` / `platform-ziflow/` skill (per DESIGN-14 / DESIGN-15 / DESIGN-16). The native-AI capability matrix in `native-ai-inventory.md` directly drives the per-platform implementation shape (which Behaviors / Copilot workflows / ReviewAI checklists are HIGH/MEDIUM confidence vs LOW with `[OPEN]` flags).
+
+**Outputs.**
+- **Carrier file:** `07b_implementation-prompt_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** standard set + `delivery_filter: native-ai` (the DESIGN-23 scope-tag — locks 7b to `delivery: native-ai` rows only); `platform: <pipefy | wrike | ziflow>` (carried from upstream); `status: draft → approved`.
+
+**Per-platform shape (DESIGN-23 contract — NOT a universal template).** The skill dispatches on `platform:` frontmatter to one of three concrete template paths. Each platform's implementation prompt has its own H2 structure; consolidating these into a single template that "fits all platforms" is FORBIDDEN per `## Out of Scope`.
+
+- **Pipefy** (`platform: pipefy`): Behaviors instructions block + KB upload list. The artefact body opens with `## Behaviors instructions` H2 (per-Behavior natural-language instructions for Pipefy's AI Behaviors feature, grouped by Pipe stage) followed by `## KB documents to upload` H2 (enumerated list of KB documents the implementer manually uploads via the Pipefy UI; cites the source doc path in `<Client> Brain/<Project>/` for each). Grounded in `platform-pipefy/references/native-ai-inventory.md` HIGH-confidence Behaviors + KB rows; LOW-confidence rows ship with explicit `[OPEN]` markers per OPEN-01.
+- **Wrike** (`platform: wrike`): Copilot workflow narrative. The artefact body opens with `## Copilot workflow narrative` H2 (prose narrative describing the per-stage Copilot workflow the implementer configures via the Wrike UI; grounded in `platform-wrike/references/native-ai-inventory.md` Copilot HIGH-confidence rows + 16 MCP tools matrix) followed by `## MCP tools required` H2 (enumerated list of Wrike MCP tools the workflow consumes; the OAuth `host` persistence rule per DESIGN-15 is the CRITICAL bug-prevention callout repeated here).
+- **Ziflow** (`platform: ziflow`): checklist/criteria spec. The artefact body opens with `## ReviewAI checklists` H2 (per-checklist criteria spec for ReviewAI Checklists Public Preview; grounded in `platform-ziflow/references/native-ai-inventory.md` HIGH-confidence rows; Change Verification + Brand Standards MEDIUM-confidence rows ship with `[Coming Soon]` markers) followed by `## Manual paste fallback` H2 (the copy-paste fallback when ReviewAI knowledge-ingestion API is unavailable per OPEN-01 — read-after-create eventual consistency window also flagged here).
+- **Universal anti-pattern (per `## Out of Scope`).** A single template that "fits all platforms" is FORBIDDEN. The skill MUST dispatch on `platform:` frontmatter to one of three template paths; reviewer can grep `^## (Behaviors instructions|Copilot workflow narrative|ReviewAI checklists)` in the artefact to confirm the dispatch landed on the right path.
+
+**Downstream consumer.** non-dev (human implementer per platform) — Stage 7b's output is a non-developer-facing implementation prompt for native-AI / platform-config work. The implementer reads the per-platform shape and configures the platform via UI (Pipefy AI Behaviors / Wrike Copilot / Ziflow ReviewAI Checklists).
+
+**Status flag(s).** `status: approved` on `07b_implementation-prompt_v<N>.md` gates Stage 8a (provision-test-harness). Both 7a and 7b approval are required when both run; either's absence (when its `delivery:` filter has no matching rows) is acceptable.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 7a / 7b → Stage 8a row).**
+
+> Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing.
+
+**Key v2 decisions for this stage.**
+
+1. **NEW skill — no v0.3.0 ancestor** — `generate-implementation-prompt/` is net-new per DESIGN-12 inventory. v0.3.0 had only the dev-build-prompt path; the per-platform implementation-prompt path is a v2 addition addressing AUDIT.md §AUDIT-01.6 brittleness (build prompt blurred dev / platform-config implementation lines).
+2. **Per-platform shape — NOT a universal template** — three concrete shapes (Pipefy Behaviors instructions + KB upload list / Wrike Copilot workflow narrative / Ziflow ReviewAI checklists) explicitly diverge per platform. A consolidated universal template is forbidden per `## Out of Scope`. Reviewer-grep `^## (Behaviors instructions|Copilot workflow narrative|ReviewAI checklists)` confirms the dispatch.
+3. **Reads `delivery: native-ai` rows only — `delivery_filter: native-ai` frontmatter** — Stage 7b scopes itself by the DESIGN-20 routing key (complement to Stage 7a's `delivery_filter: api`). No re-classification.
+4. **Per-platform reference docs drive affordances** — each platform skill's `references/native-ai-inventory.md` drives which native-AI affordances are HIGH/MEDIUM/LOW confidence; LOW-confidence rows ship with explicit `[OPEN]` markers per OPEN-01 (Pipefy KB content-upload API; Wrike AI Studio knowledge-ingestion API; Ziflow ReviewAI knowledge-ingestion API). Reviewer triages `[OPEN]` markers before approval.
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform skills — Stage 7b consumes `references/native-ai-inventory.md` from the matching platform skill); DESIGN-20 (`delivery: native-ai | api` routing key — Stage 7b reads `delivery: native-ai` rows).
+
+**Cross-references.** DESIGN-19 Stage 3 (SOW upstream); DESIGN-20 Stage 4a (routing key + native-AI rows); DESIGN-22 Stage 6 (cost — same wave above); DESIGN-23 Stage 7a (complement — same wave above); DESIGN-24 Stage 8a (forward — anchor placeholder, populated in Plan 02-08); platform-pipefy / platform-wrike / platform-ziflow (per-platform `references/` consumed); REQUIREMENTS `## Out of Scope` (universal-template anti-pattern callout — backward, populated).
 
 ## Stage 8: Test bot — overview
 (Populated by 02-08-PLAN.md / Wave 8. Covers DESIGN-24.)
