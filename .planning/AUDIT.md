@@ -308,6 +308,18 @@ Plugin scaffold directories absent; v2 architecture introduces all three.
 
 ---
 
+### 4.6 Verified working cross-references (negative finding)
+
+Beyond the missing artefacts above, several cross-references in v0.3.0 docs DO resolve correctly. Listed here so reviewers do not conflate "not flagged" with "not checked".
+
+- `` `dydx-delivery/README.md:95` `` → points at `skills/generate-build-prompt/references/when-to-open-claude-code.md` — file resolves.
+- `` `dydx-delivery/skills/execute-tests/SKILL.md:23` `` → points at `references/safety-rules.md` — file resolves.
+- `` `dydx-delivery/skills/generate-test-plan/SKILL.md:49` `` → points at `references/test-plan-template.md` — file resolves.
+
+(No broken intra-plugin references found beyond the 5 categories above. Verified by directory listings during the 2026-05-09 audit pass.)
+
+---
+
 ## AUDIT-05: Duplicated Content Blocks
 
 (populated by 01-05-PLAN.md / Wave 5)
