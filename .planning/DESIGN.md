@@ -509,7 +509,44 @@ dydx-delivery/skills/platform-ziflow/
 ---
 
 ## Stage 1: Kickoff capture
-(Populated by 02-05-PLAN.md / Wave 5. Covers DESIGN-17.)
+
+> **DESIGN-17:** Stage 1 Kickoff capture — inputs (meeting notes / client requirements / internal feedback / Miro workflow map); dual artefact branching (discovery-ready vs draft SOW); Field Notes triage from Coda brain doc (defaults to `processed_at IS NULL`, never auto-merges per DESIGN-09); Miro paste fallback when API ingest unavailable; auto-classification into kickoff template sections with explicit "unknown" markers.
+
+**Skill:** `kickoff-capture/` (NEW per DESIGN-12 inventory).
+**Stage:** 1 (file prefix `01_kickoff_*` per DESIGN-02).
+**Complexity:** Medium.
+
+**Inputs.**
+- **Frontmatter consumed:** `client:` + `project:` + (optional) `frontmatter_version: 2`. New artefact (no `based_on_*` upstream).
+- **Upstream artefact paths:** N/A (Stage 1 is the entry point).
+- **External inputs:** meeting notes (paste), client requirements docs, internal feedback, Miro workflow map (paste — see Miro paste fallback below); Field Notes from `<Client> Brain` Coda doc (read-only via Coda MCP per AUDIT.md §AUDIT-08).
+
+**Outputs.**
+- **Carrier file:** `01_kickoff_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `client:`, `project:`, `frontmatter_version: 2`, `kickoff_branch: discovery-ready | draft-sow`, `field_notes_processed_count: <N>`, `status: draft`.
+- **Branch routing (DESIGN-17 dual-branch contract).** The single `kickoff_branch:` enum field steers downstream stages:
+  - `kickoff_branch: discovery-ready` → Stage 2 (Discovery) consumes `01_kickoff_v<N>.md`.
+  - `kickoff_branch: draft-sow` → Stage 2 SKIPS entirely; Stage 3 (SOW) consumes `01_kickoff_v<N>.md` directly.
+- **Auto-classification markers.** Where the Stage 1 skill cannot confidently assign a section in the kickoff template (e.g., a meeting note ambiguous between "users" and "triggers"), it emits an inline `[unknown — needs human classification]` marker rather than guessing or dropping. Reviewer triages markers before writing `status: approved`.
+
+**Downstream consumer.** discovery-intake (Stage 2) IF `kickoff_branch: discovery-ready`; OR generate-sow (Stage 3) IF `kickoff_branch: draft-sow` (skips Stage 2).
+
+**Status flag(s).** `status: approved` on `01_kickoff_v<N>.md` gates either downstream stage. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 1 → Stage 2 row).**
+
+> Awaiting status: approved write to 01_kickoff_v<N>.md. Branch routing on kickoff_branch: value (discovery-ready -> Stage 2; draft-sow -> SKIP Stage 2 -> Stage 3).
+
+**Key v2 decisions for this stage.**
+
+1. **Dual-branch artefact** — single Stage 1 produces either a discovery-ready kickoff (Stage 2 consumes) OR a draft SOW kickoff (Stage 2 SKIPS, Stage 3 consumes). Branch encoded in `kickoff_branch:` enum frontmatter; Stage 2 / Stage 3 skills read this field directly.
+2. **Field Notes triage filter** — Stage 1 reads the `<Client> Brain` Coda doc Field Notes table filtered on `processed_at IS NULL` (per DESIGN-09 directional boundary — Coda is read-only triage queue; Field Notes are NEVER auto-merged into the local brain). Reviewer human-classifies each surfaced row during kickoff approval; only then does the row's `processed_at` get written back.
+3. **Miro paste fallback** — Miro MCP is currently MISSING per AUDIT.md §AUDIT-08; Stage 1 falls back to a paste-the-workflow-map mode (per DESIGN-07 connector probe + graceful-degradation matrix). When Miro MCP comes online (Phase 1 of v2.x build), API ingest replaces paste fallback without contract change.
+4. **Auto-classification with `[unknown — needs human classification]` inline markers** — Stage 1 attempts auto-classification into the kickoff template's canonical sections (system / users / triggers / data / rules / integrations / exceptions / failure-points), but emits explicit `[unknown — needs human classification]` markers wherever confidence is low. Forces visible reviewer triage instead of silent guesswork.
+
+**Dependencies.** DESIGN-09 (Field Notes never auto-merged — directional boundary); DESIGN-07 (Miro probe — paste fallback when API unavailable); DESIGN-01 (canonical frontmatter scheme — `kickoff_branch:` enum, `status:` lifecycle, `frontmatter_version: 2`); DESIGN-06 (approval gate — `approved_by` + `approved_at` required for `status: approved`).
+
+**Cross-references.** DESIGN-18 (forward — Stage 2 reads `kickoff_branch:` to skip when `draft-sow`; populated next in this plan); DESIGN-19 (forward — Stage 3 reads same `kickoff_branch:` field for direct-from-kickoff path; populated next); AUDIT.md §AUDIT-08 (Miro MCP currently MISSING — Phase 1 connector probe owner); AUDIT.md §AUDIT-01.1 (Field Notes triage flow grounded in v0.3.0 brain pattern).
 
 ## Stage 2: Discovery refactor
 (Populated by 02-05-PLAN.md / Wave 5. Covers DESIGN-18.)
