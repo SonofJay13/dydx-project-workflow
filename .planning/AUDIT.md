@@ -503,7 +503,45 @@ Catalogues every cosmetic-but-client-visible issue in v0.3.0 — README truncati
 
 ## AUDIT-08: Live MCP Wiring Probe
 
-(populated by 01-08-PLAN.md / Wave 8)
+Records the live MCP probe state in this Claude Code workspace at probe time. Probe methodology per D-04 / D-05: one cheap-read endpoint per MCP; outcome captured (status / response code / item count). Probe results are timestamped — re-probing later may differ as MCP wiring evolves.
+
+**Probe time:** `2026-05-09T16:30:53Z`; **Workspace:** `dydx-project-workflow` (branch `dydx-delivery-v2`); **Operator:** Claude Code CLI session (sub-agent execution context, executor model = Opus 4.7).
+
+**Probe transport:** `claude mcp list` was invoked at the timestamp above; the verbatim transport-level health output is the canonical "Connected" signal for each row's `Probed status` column. Per-endpoint cheap-read invocation outcomes are recorded in the `Result` column — see the per-row note where the `mcp__claude_ai_*` tool function for a Connected server is not exposed as a callable tool inside this sub-agent's tool set (an honest reporting boundary, not a server-side failure).
+
+**Wired and connected — the 5 canonical MCPs**
+
+| MCP | Server identity (per D-05) | Endpoint | Probe call (per D-04) | Probed status | Result | Version pin |
+|---|---|---|---|---|---|---|
+| Coda | `claude.ai Coda` (tool prefix expected `mcp__claude_ai_Coda__*`) | `https://coda.io/apis/mcp` | `listDocs` (read-only — returns user's accessible docs) | working (transport ✓ Connected); cheap-read **not invocable from this sub-agent** | `claude mcp list` reported `✓ Connected` at probe time. The `mcp__claude_ai_Coda__listDocs` tool function was not exposed in this sub-agent's tool registry (parent-session-only); recorded as honest reporting boundary per CRITICAL HONESTY RULE. **Reviewer re-probe MUST run `listDocs` directly per VALIDATION.md Manual-Only Verification.** | Endpoint version `apis/v1` (per Coda public API path; not exposed in MCP capability response) |
+| Miro | `claude.ai Miro` (tool prefix expected `mcp__claude_ai_Miro__*`) | `https://mcp.miro.com` | `board_search_boards` / `listBoards` (read-only — returns user's boards) | working (transport ✓ Connected); cheap-read **not invocable from this sub-agent** | `claude mcp list` reported `✓ Connected`. Miro MCP tool functions not exposed in sub-agent tool registry. **Reviewer re-probe MUST run `listBoards` directly.** | Endpoint pin not exposed by server; treat as currently-served version |
+| Google Drive | `claude.ai Google Drive` (tool prefix expected `mcp__claude_ai_Google_Drive__*`) | `https://drivemcp.googleapis.com/mcp/v1` | `searchFiles` with empty query / `list_recent_files` (read-only) | working (transport ✓ Connected); cheap-read **not invocable from this sub-agent** | `claude mcp list` reported `✓ Connected`. Google Drive MCP tool functions not exposed in sub-agent tool registry. **Reviewer re-probe MUST run `searchFiles` directly.** | `mcp/v1` from URL path |
+| Gmail | `claude.ai Gmail` (tool prefix expected `mcp__claude_ai_Gmail__*`) | `https://gmailmcp.googleapis.com/mcp/v1` | `listLabels` (read-only — returns mailbox labels) | working (transport ✓ Connected); cheap-read **not invocable from this sub-agent** | `claude mcp list` reported `✓ Connected`. Gmail MCP tool functions not exposed in sub-agent tool registry. **Reviewer re-probe MUST run `listLabels` directly.** | `mcp/v1` from URL path |
+| Google Calendar | `claude.ai Google Calendar` (tool prefix expected `mcp__claude_ai_Google_Calendar__*`) | `https://calendarmcp.googleapis.com/mcp/v1` | `listCalendars` (read-only — returns user's calendars) | working (transport ✓ Connected); cheap-read **not invocable from this sub-agent** | `claude mcp list` reported `✓ Connected`. Google Calendar MCP tool functions not exposed in sub-agent tool registry. **Reviewer re-probe MUST run `listCalendars` directly.** | `mcp/v1` from URL path |
+
+**Honest reporting note (per CRITICAL HONESTY RULE / T-01-08-01 mitigation):** The five rows above carry `Probed status = working (transport ✓ Connected); cheap-read not invocable from this sub-agent` because the `mcp__claude_ai_*` tool functions are wired at the parent Claude Code session level but are not propagated into the spawned sub-agent's tool registry. Transport-level connectivity is empirically confirmed (`claude mcp list` output verbatim above the table). Per-endpoint response codes are deferred to **reviewer manual re-probe** per VALIDATION.md Manual-Only Verification — at least 3 of the 5 rows must be re-probed by the reviewer with the documented cheap-read calls and the actual response codes / item counts recorded back into this section before sign-off. Fabricating `200 OK / N items returned` here without the calls actually executing would poison the audit (T-01-08-01).
+
+**Wired but out-of-scope per D-06**
+
+| MCP | Status | Why out-of-scope |
+|---|---|---|
+| **Slack** | wired, unauthenticated — `! Needs authentication` (per `claude mcp list` 2026-05-09T16:30:53Z) | Wired but unauthenticated. Slack is referenced in v0.3.0 only as a notification target inside generated artefacts (e.g. `#ops-alerts` in `dydx-delivery/skills/generate-technical-spec/references/technical-spec-template.md:119`); not a delivery-pipeline MCP. **[NEW]** **[STRUCTURAL]** — flagged to Phase 4 OPEN-QUESTIONS. |
+
+**Not wired — verification deferred per D-06**
+
+| Connector | Why not probed | Where it surfaces in v0.3.0 | Verification path |
+|---|---|---|---|
+| **Pipefy API** (GraphQL) | No MCP for Pipefy in this workspace; sandbox-tenant credentials unavailable in design phase | `dydx-delivery/skills/execute-tests/references/safety-rules.md:75`; `platform: pipefy` route in `dydx-delivery/skills/discovery-intake/SKILL.md:86`, `dydx-delivery/skills/generate-technical-spec/SKILL.md:38`, etc. | "verification deferred" per D-06; v2.1+ build phase per CHANGE-04 |
+| **Wrike API** (REST) | Same — no MCP, no creds | `dydx-delivery/skills/execute-tests/references/safety-rules.md:76`; `platform: wrike` routes in `dydx-delivery/skills/generate-technical-spec/SKILL.md:39` | "verification deferred" per D-06 |
+| **Ziflow API** (REST) | Same | `dydx-delivery/skills/generate-technical-spec/references/technical-spec-template.md:113` (`POST /api/v2/projects`) | "verification deferred" per D-06 |
+| **Claude in Chrome** | Canonical product naming uncertain in 2026 | Referenced in `.planning/PROJECT.md` "Connectors expected to be wired"; not in repo skill files | Phase 4 OPEN-01 per `.planning/REQUIREMENTS.md` |
+
+**Coda integration risk surface (PITFALLS cross-ref):** Coda MCP is wired and connected, but using it correctly for v2 Stage 6 / Stage 11 is gated by four research-side pitfalls — these are research-input to DESIGN-22 (Stage 6 cost estimate) and DESIGN-27 (Stage 11 sign-off + brain mirror):
+
+- **CRIT-1** — formula column overwrite (writes against formula columns silently no-op or corrupt rows).
+- **CRIT-2** — async-202 (mutating endpoints return 202 with a request ID; reads must poll for actual landing).
+- **CRIT-3** — rate-limit (per-doc and per-token quotas; bulk operations need throttle-and-retry).
+- **CRIT-9** — token scope (doc-scoped vs workspace-scoped tokens behave differently for cross-doc reads).
 
 ---
 
