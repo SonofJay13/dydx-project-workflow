@@ -15,7 +15,7 @@
 
 Coverage of the v0.3.0 plugin so the v2 design rests on accurate observation, not memory.
 
-- [ ] **AUDIT-01**: AUDIT.md catalogues every v0.3.0 skill (`discovery-intake`, `generate-sow`, `generate-functional-spec`, `generate-technical-spec`, `generate-test-plan`, `generate-build-prompt`, `execute-tests`) with purpose, inputs, outputs, hand-off contract, dependencies, observed brittleness, and what's missing for v2.
+- [x] **AUDIT-01**: AUDIT.md catalogues every v0.3.0 skill (`discovery-intake`, `generate-sow`, `generate-functional-spec`, `generate-technical-spec`, `generate-test-plan`, `generate-build-prompt`, `execute-tests`) with purpose, inputs, outputs, hand-off contract, dependencies, observed brittleness, and what's missing for v2. *(complete 2026-05-09 in Phase 1 Plan 02)*
 - [ ] **AUDIT-02**: AUDIT.md absorbs every entry in `.planning/codebase/CONCERNS.md` and adds any new structural issues found during the audit pass — the audit is a superset of CONCERNS.md, never less.
 - [ ] **AUDIT-03**: AUDIT.md inventories per-stage connector dependencies (Miro, Coda, Drive, Gmail, Calendar, Claude in Chrome, Pipefy/Wrike/Ziflow APIs) and identifies which connectors are *required* vs *graceful-degradation* per stage.
 - [ ] **AUDIT-04**: AUDIT.md catalogues referenced-but-missing artefacts (`platform-pipefy`/`platform-wrike` skills, `/refine-<skill>` slash commands, workspace `hub.md`, client-folder `.env.example`) with exact citations from the v0.3.0 docs.
@@ -168,7 +168,7 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 
 | Requirement | Phase | Status |
 |---|---|---|
-| AUDIT-01 | Phase 1 | Pending |
+| AUDIT-01 | Phase 1 | Complete (2026-05-09 — Plan 02) |
 | AUDIT-02 | Phase 1 | Pending |
 | AUDIT-03 | Phase 1 | Pending |
 | AUDIT-04 | Phase 1 | Pending |

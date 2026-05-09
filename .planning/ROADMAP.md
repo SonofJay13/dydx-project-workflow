@@ -35,8 +35,8 @@ Plans:
 **Wave 1**
 - [x] 01-01-PLAN.md — Wave 1 scaffold: structural-check script + AUDIT.md skeleton with all 8 H2 anchors *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-01-SUMMARY.md`)*
 
-**Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 01-02-PLAN.md — AUDIT-01: 7-row skill matrix + 7 prose subsections (per-skill brittleness + DESIGN-* closures)
+**Wave 2** *(complete)*
+- [x] 01-02-PLAN.md — AUDIT-01: 7-row skill matrix + 7 prose subsections (per-skill brittleness + DESIGN-* closures) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-02-SUMMARY.md`)*
 
 **Wave 3** *(blocked on Wave 2 completion)*
 - [ ] 01-03-PLAN.md — AUDIT-03: per-stage × per-connector dependency table + PITFALLS-cited fallback hint with DESIGN-07 pointer
@@ -108,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 1/9 | In progress (Wave 1 done; Wave 2 next) | - |
+| 1. Audit | 2/9 | In progress (Waves 1-2 done; Wave 3 next) | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
@@ -116,4 +116,4 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 1 plans created (9 plans across 9 waves)*
+*Last updated: 2026-05-09 — Phase 1 Plan 02 complete (Wave 2 — AUDIT-01 inventory populated)*
