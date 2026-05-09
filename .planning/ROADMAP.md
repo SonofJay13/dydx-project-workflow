@@ -96,7 +96,7 @@ Plans:
 - [x] 02-07-PLAN.md — Stages 6/7a/7b skills (DESIGN-22 Cost estimate Coda mechanics + risk-multiplier structure + DESIGN-23 dual build prompts) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-07-SUMMARY.md`)*
 
 **Wave 8**
-- [ ] 02-08-PLAN.md — Stages 8 overview/9/10/11 skills (DESIGN-24/25/26/27 — closed doc_type enum + native_ai_path branching + brain-mirror template)
+- [x] 02-08-PLAN.md — Stages 8 overview/9/10/11 skills (DESIGN-24/25/26/27 — closed doc_type enum + native_ai_path branching + brain-mirror template) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-08-SUMMARY.md`)*
 
 **Wave 9**
 - [ ] 02-09-PLAN.md — Test bot architecture: tier boundary (DESIGN-28) + client_state.yaml skeleton (DESIGN-29) + drift-detection contract (DESIGN-30)
