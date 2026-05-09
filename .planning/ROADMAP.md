@@ -93,7 +93,7 @@ Plans:
 - [x] 02-06-PLAN.md — Stages 4a/4b/5 skills (DESIGN-20 Fnspec split + delivery routing key + cross-spec consistency check + DESIGN-21 Tech spec scope gate) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-06-SUMMARY.md`)*
 
 **Wave 7**
-- [ ] 02-07-PLAN.md — Stages 6/7a/7b skills (DESIGN-22 Cost estimate Coda mechanics + risk-multiplier structure + DESIGN-23 dual build prompts)
+- [x] 02-07-PLAN.md — Stages 6/7a/7b skills (DESIGN-22 Cost estimate Coda mechanics + risk-multiplier structure + DESIGN-23 dual build prompts) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-07-SUMMARY.md`)*
 
 **Wave 8**
 - [ ] 02-08-PLAN.md — Stages 8 overview/9/10/11 skills (DESIGN-24/25/26/27 — closed doc_type enum + native_ai_path branching + brain-mirror template)
@@ -140,7 +140,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
-| 2. Design | 6/10 | In progress (Waves 1-6 done; Wave 7 next) | - |
+| 2. Design | 7/10 | In progress (Waves 1-7 done; Wave 8 next) | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
