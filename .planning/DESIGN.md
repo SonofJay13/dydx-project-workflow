@@ -251,13 +251,96 @@ Forbidden phrasings (verbatim — these strings MUST NOT appear in v2 prose auth
 
 ## Skill layout
 
-(Populated by 02-03-PLAN.md / Wave 3. Covers DESIGN-11 — v2 folder layout: `skills/`, `commands/`, `agents/`, `hooks/`, `.claude-plugin/`, plugin-level `references/`.)
+> **DESIGN-11:** v2 folder layout — `skills/`, `commands/`, `agents/`, `hooks/`, `.claude-plugin/`, plus the new plugin-level `references/` directory.
+
+The v2 plugin folder layout extends the v0.3.0 shape (which had `skills/` + `.claude-plugin/` only — per AUDIT.md §AUDIT-01 + §AUDIT-08) with the surfaces locked in DESIGN-04 plus a plugin-level `references/` directory for canonical SoT documents per DESIGN-02 / DESIGN-03. The four canonical reference files (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`) land per FOUND-01 in the v2.1 Foundations build; skills cite them via relative path (`../../references/<file>.md`) rather than copy the content. The `tests/` directory (NEW per D-24) holds plugin-level pytest smoke tests run on every PR.
+
+```text
+dydx-delivery/
+├── .claude-plugin/
+│   ├── plugin.json                       # manifest version 2.0.0 (DESIGN-04, AUDIT-06)
+│   └── marketplace.json                  # marketplace metadata synced 2.0.0 (AUDIT-06)
+├── references/                           # NEW in v2 — plugin-level canonical SoT docs (FOUND-01)
+│   ├── safety-rules.md                   # canonical hard-rules SoT (DESIGN-03, AUDIT-05)
+│   ├── stage-numbering.md                # canonical stage→file-prefix mapping (DESIGN-02)
+│   ├── frontmatter-scheme.md             # canonical frontmatter scheme (DESIGN-01)
+│   └── glossary.md                       # canonical vocabulary (FOUND-01)
+├── skills/                               # 15 v2 end-state skill folders (DESIGN-12)
+│   ├── kickoff-capture/                  # NEW (Stage 1) — DESIGN-17
+│   ├── discovery-intake/                 # MODIFIED (Stage 2) — DESIGN-18
+│   ├── generate-sow/                     # UNCHANGED-structure (Stage 3) — DESIGN-19
+│   ├── generate-fnspec-platform/         # NEW (Stage 4a) — DESIGN-20
+│   ├── generate-fnspec-integration/      # NEW (Stage 4b) — DESIGN-20
+│   ├── generate-technical-spec/          # MODIFIED (Stage 5) — DESIGN-21
+│   ├── generate-cost-estimate/           # NEW (Stage 6) — DESIGN-22
+│   ├── generate-build-prompt/            # MODIFIED (Stage 7a) — DESIGN-23
+│   ├── generate-implementation-prompt/   # NEW (Stage 7b) — DESIGN-23
+│   ├── provision-test-harness/           # NEW (Stage 8a) — DESIGN-24
+│   ├── generate-test-plan/               # MODIFIED (Stage 8b) — DESIGN-24
+│   ├── generate-uat-plan/                # NEW (Stage 8c) — DESIGN-24
+│   ├── execute-tests/                    # MODIFIED (Stage 8d) — DESIGN-24
+│   ├── update-documentation/             # NEW (Stage 9) — DESIGN-25
+│   ├── push-native-ai-knowledge/         # NEW (Stage 10) — DESIGN-26
+│   ├── sign-off-and-archive/             # NEW (Stage 11) — DESIGN-27
+│   ├── platform-pipefy/                  # NEW platform — DESIGN-14
+│   ├── platform-wrike/                   # NEW platform — DESIGN-15
+│   └── platform-ziflow/                  # NEW platform — DESIGN-16
+├── commands/                             # NEW in v2 (DESIGN-04)
+│   ├── refine.md                         # parameterised — takes skill name as $1 (DESIGN-05, D-23)
+│   ├── gsd-research-phase.md             # GSD shortcut (namespace /dydx-*)
+│   ├── gsd-plan-phase.md                 # GSD shortcut
+│   ├── gsd-execute-phase.md              # GSD shortcut
+│   └── gsd-review-phase.md               # GSD shortcut
+├── agents/                               # NEW in v2 (DESIGN-04, DESIGN-24)
+│   └── test-bot-orchestrator.md          # drives Stage 8 tier-2 AI orchestration (DESIGN-28)
+├── hooks/                                # NEW in v2 (DESIGN-04) — NOT auto-progression hooks
+│   ├── validate-frontmatter.py           # enforces DESIGN-01/06 frontmatter rules
+│   └── bump-artefact-version.py          # enforces Option B versioning idempotently
+└── tests/                                # NEW in v2 (D-24) — plugin-level pytest smoke tests
+    ├── test_validate_frontmatter.py      # positive + negative hook coverage
+    ├── test_bump_artefact_version.py     # idempotency + version-bump correctness
+    └── test_frontmatter_parser.py        # lifecycle / platform-gated / lenient mode
+```
+
+**RETIRED in v2:** `skills/generate-functional-spec/` (replaced by `generate-fnspec-platform/` + `generate-fnspec-integration/` per Stage 4 split / DESIGN-20).
 
 ---
 
-## 13-skill inventory
+## v2 skill inventory
 
-(Populated by 02-03-PLAN.md / Wave 3. Covers DESIGN-12 — 13-skill inventory matrix-then-prose: 6 NEW stage + 3 NEW platform + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED.)
+> **DESIGN-12:** v2 skill inventory — 6 NEW stage + 3 NEW platform + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED per REQUIREMENTS DESIGN-12 categorical breakdown. End-state count = 15 skill folders that ship in v2 (the 1 RETIRED is removed; logged separately for migration mapping). Each skill carries purpose, inputs, outputs, downstream consumer, complexity, dependencies, hand-off message shape per D-20.
+
+**Reconciliation (per cross-AI review MEDIUM #4).** REQUIREMENTS.md DESIGN-12 sub-bullet describes the v2 inventory in 5 categories totalling 16 categorical items: 6 NEW stage skills + 3 NEW platform skills + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED. The "X skills total" headline figure in different framings (legacy "13", categorical "16") is reconciled here against the actual end-state count of skill folders that ship: **15 v2 end-state skills** (16 categorical items minus the 1 RETIRED `generate-functional-spec` which is removed and replaced by the Stage 4 split — `generate-fnspec-platform` + `generate-fnspec-integration`). The matrix below lists the 15 v2 end-state skills; the migration-mapping note at the bottom captures the RETIRED skill. Per Phase 1 D-32 / D-34 honesty precedent: this reconciliation cites architecture research (`.planning/research/SUMMARY.md` + `.planning/research/ARCHITECTURE.md`) as the source of truth for the count; AUDIT.md §AUDIT-01 grounds the v0.3.0 starting state (7 existing skills); the section title uses neutral "v2 skill inventory" (no number) so the H2 anchor is resilient if the count adjusts in v2.x.
+
+**Inventory matrix.**
+
+| # | Skill name | Tag | Stage | Inputs (frontmatter + upstream artefact) | Outputs | Downstream consumer | Complexity | Dependencies | Detailed contract section |
+|---|------------|-----|-------|------------------------------------------|---------|---------------------|------------|--------------|---------------------------|
+| 1 | `kickoff-capture/` | NEW | 1 | meeting notes / requirements / Field Notes; `client:` `project:` | `01_kickoff_v<N>.md` | `discovery-intake` OR `generate-sow` | Medium | Miro paste fallback; Field Notes triage | `## Stage 1: Kickoff capture` |
+| 2 | `discovery-intake/` | MODIFIED | 2 | `01_kickoff_v*` artefact; `based_on_kickoff:` | `02_discovery_v<N>.md` | `generate-sow` | Low | none new | `## Stage 2: Discovery refactor` |
+| 3 | `generate-sow/` | UNCHANGED-structure / behaviour-modified | 3 | `02_discovery_v*` OR `01_kickoff_v*`; `based_on_discovery:` | `03_sow_v<N>.md` | `generate-fnspec-platform` AND/OR `generate-fnspec-integration` | Medium | none new | `## Stage 3: SOW refactor` |
+| 4 | `generate-fnspec-platform/` | NEW | 4a | `03_sow_v*`; `based_on_sow:` | `04a_fnspec-platform_v<N>.md` with `delivery: native-ai \| api` per requirement | `generate-fnspec-integration` AND `generate-cost-estimate` AND `generate-implementation-prompt` AND `push-native-ai-knowledge` | Medium-high | per-platform capability matrix | `## Stage 4a: Functional spec — platform` |
+| 5 | `generate-fnspec-integration/` | NEW | 4b | `03_sow_v*` + (optional) `04a_fnspec-platform_v*` | `04b_fnspec-integration_v<N>.md` | `generate-technical-spec` AND `generate-cost-estimate` AND `generate-build-prompt` | Medium-high | cross-spec consistency check vs 4a | `## Stage 4b: Functional spec — integration` |
+| 6 | `generate-technical-spec/` | MODIFIED | 5 | `04b_fnspec-integration_v*` + (optional) `04a_*` | `05_techspec_v<N>.md` | `generate-cost-estimate`; `generate-build-prompt` | Medium | none new | `## Stage 5: Tech spec` |
+| 7 | `generate-cost-estimate/` | NEW | 6 | `04a_*` AND/OR `04b_*` AND `05_techspec_v*` | `06_cost_v<N>.md` + Coda task-table rows | client-facing cost estimate | High (Coda) | `platform-<X>` for schema introspection | `## Stage 6: Cost estimate` |
+| 8 | `generate-build-prompt/` | MODIFIED | 7a | `04b_*` AND `05_techspec_v*` AND `06_cost_v*` | `07a_build-prompt_v<N>.md` | dev | Medium | none new | `## Stage 7a: Build prompt — dev` |
+| 9 | `generate-implementation-prompt/` | NEW | 7b | `04a_*` AND `06_cost_v*`; per-platform shape | `07b_implementation-prompt_v<N>.md` | non-dev per platform | Medium | `platform-<X>` reference | `## Stage 7b: Build prompt — implementation per platform` |
+| 10 | `provision-test-harness/` | NEW | 8a | `04a_*` AND `04b_*` AND `client_state.yaml` | `08a_test-harness_v<N>.md` + persistent harness | `execute-tests` | High | `platform-<X>` + `sandbox_lock` | `## Stage 8: Test bot — overview` |
+| 11 | `generate-test-plan/` | MODIFIED | 8b | `04b_*` AND `05_techspec_v*` AND `08a_*` | `08b_test-plan_v<N>.md` | `execute-tests` | Medium | DESIGN-28 layer boundary | `## Stage 8: Test bot — overview` |
+| 12 | `generate-uat-plan/` | NEW | 8c | `04a_*` AND `04b_*` AND `08b_*` | `08c_uat-plan_v<N>.md` | client | Low-medium | none new | `## Stage 8: Test bot — overview` |
+| 13 | `execute-tests/` | MODIFIED | 8d | `08a_*` AND `08b_*` AND `08c_*` | `08d_test-results_v<N>.md` | `update-documentation` | High (sandbox + AI orchestrator) | `test-bot-orchestrator` agent | `## Stage 8: Test bot — overview` |
+| 14 | `update-documentation/` | NEW | 9 | `08d_test-results_v*` (approved) AND all upstream | `ChangeRequests/<CR>/doc-diff.md` + Drive doc | reviewer; `push-native-ai-knowledge` | Medium | Drive MCP | `## Stage 9: Documentation publishing` |
+| 15 | `push-native-ai-knowledge/` | NEW | 10 | `04a_*` AND approved `09_doc-diff_v*` AND per-platform `native-ai-inventory.md` | per-platform native-AI ingestion + `doc_version:` `ingested_at:` | client native-AI surface | High | `platform-<X>`; CRIT-8 + MIN-4 refusal gates | `## Stage 10: Native-AI enablement` |
+| 16 | `sign-off-and-archive/` | NEW | 11 | All approved upstream artefacts; `tone_lint` pass | `<Client> Brain/<spokes>/` updated + Coda mirror push + CR archived | Field Notes preserved; next CR's Stage 1 | Medium | brain-mirror Coda template | `## Stage 11: Sign-off, brain update, archive` |
+| 17 | `platform-pipefy/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: pipefy` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Pipefy GraphQL pagination cursor + 2026 rate-limit currency `[OPEN: Phase 4]` | `## platform-pipefy` |
+| 18 | `platform-wrike/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: wrike` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Wrike OAuth `host` persistence + AI Studio knowledge-ingestion API `[OPEN: Phase 4]` | `## platform-wrike` |
+| 19 | `platform-ziflow/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: ziflow` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Ziflow read-after-create consistency + ReviewAI knowledge-ingestion API `[OPEN: Phase 4]` | `## platform-ziflow` |
+
+**Tag breakdown reconciliation against REQUIREMENTS DESIGN-12 categorical totals.** Counting matrix tags above: NEW (stage) = rows 1, 4, 5, 7, 9, 10, 12, 14, 15, 16 = 10; MODIFIED (stage) = rows 2, 6, 8, 11, 13 = 5; UNCHANGED-structure / behaviour-modified = row 3 = 1; NEW (platform) = rows 17, 18, 19 = 3. Plus 1 RETIRED-AND-REPLACED (`generate-functional-spec/`, NOT shipped — see migration mapping note below). REQUIREMENTS DESIGN-12 sub-bullet ("6 NEW + 3 NEW platform + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED") describes a tighter scoping; the matrix's 10 NEW / 5 MODIFIED / 1 UNCHANGED / 3 NEW-platform / 1 RETIRED follows architecture research's enumeration (Stage 4 split + Stage 7 dual + Stage 8 four-substage + Stage 11 NEW skills push the NEW count above 6). Honesty precedent (Phase 1 D-32 / D-34): the matrix follows the research enumeration; the discrepancy is logged here rather than padded or trimmed.
+
+**Per-skill prose subsections.** Per-skill decision contracts (purpose, inputs, outputs, downstream consumer, complexity tag, dependencies, hand-off message shape) live in their respective sections per the "Detailed contract section" column. Per D-20, full SKILL.md prose is NOT drafted in this milestone; v2.1+ build phases authoring each skill produce its `SKILL.md` against the contract laid here.
+
+**Migration mapping note (RETIRED skill).** RETIRED `generate-functional-spec/` maps to the new Stage 4a + Stage 4b skills per DESIGN-20. v0.3.0 artefacts using the old skill name (`02_functional-spec_v*.md`) remain readable per DESIGN-08 lenient mode; CR-driven opt-in upgrades them to the new names (`04a_fnspec-platform_v*.md` / `04b_fnspec-integration_v*.md` per DESIGN-02 stage-numbering scheme) during their owning CR. v0.3.0 references to the retired skill in `generate-technical-spec/SKILL.md` and `generate-build-prompt/SKILL.md` (per AUDIT.md §AUDIT-01) update to the new pair as part of the v2.1 Foundations build.
 
 ---
 

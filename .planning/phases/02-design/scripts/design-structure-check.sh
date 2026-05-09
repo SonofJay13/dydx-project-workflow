@@ -35,7 +35,7 @@ section_between() {
 declare -a required_h2=(
   "## Cross-cutting decisions"
   "## Skill layout"
-  "## 13-skill inventory"
+  "## v2 skill inventory"
   "## Stage-by-stage hand-off contract"
   "## Platform skills"
   "## Test bot architecture"
