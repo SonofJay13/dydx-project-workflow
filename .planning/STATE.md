@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 Plan 05 complete — AUDIT-05 duplicated-content inventory (5 H3 subsections; 4 confirmed dups + 1 [NEW] Stage-N label collision) populated; ready for Plan 06 (Wave 6 — AUDIT-06 version-string mismatches)
-last_updated: "2026-05-09T19:00:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 Plan 05 complete (Wave 5 — AUDIT-05)
+stopped_at: Phase 1 Plan 06 complete — AUDIT-06 version-string mismatches (8-row table + 2.0.0 synced-target recommendation per D-17) populated; structural-check assertion #8 now passes; ready for Plan 07 (Wave 7 — AUDIT-07 cosmetic-but-client-visible issues)
+last_updated: "2026-05-09T19:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 1 Plan 06 complete (Wave 6 — AUDIT-06)
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 9
-  completed_plans: 5
-  percent: 14
+  completed_plans: 6
+  percent: 17
 ---
 
 # STATE
@@ -27,25 +27,25 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 ## Current Position
 
 Phase: 1 (Audit) — EXECUTING
-Plan: 6 of 9 (Plan 05 complete; AUDIT-05 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision populated)
-Status: Executing Phase 1 — Wave 6 (AUDIT-06 version-string mismatches) is next
-Last activity: 2026-05-09 -- Phase 1 Plan 05 complete (Wave 5 — AUDIT-05: 5 H3 subsections; 17 citations; 5 STRUCTURAL + 1 NEW)
+Plan: 7 of 9 (Plan 06 complete; AUDIT-06 8-row version-mismatch table + 2.0.0 synced-target recommendation populated)
+Status: Executing Phase 1 — Wave 7 (AUDIT-07 cosmetic-but-client-visible issues) is next
+Last activity: 2026-05-09 -- Phase 1 Plan 06 complete (Wave 6 — AUDIT-06: 8-row table; 9 path citations; 3 STRUCTURAL; structural-check assertion #8 passes)
 
-Progress: [█░░░░░░░░░] 14% (0/4 phases complete; 5/9 Phase 1 plans complete)
+Progress: [██░░░░░░░░] 17% (0/4 phases complete; 6/9 Phase 1 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: ~12 min
-- Total execution time: ~62 min
+- Total execution time: ~72 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Audit | 5 | ~62 min | ~12 min |
+| 1. Audit | 6 | ~72 min | ~12 min |
 | 2. Design | 0 | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
@@ -59,6 +59,7 @@ Progress: [█░░░░░░░░░] 14% (0/4 phases complete; 5/9 Phase 1
 | 1 | 03 (Wave 3 — AUDIT-03) | ~10 min | 2 | 1 | 2026-05-09 |
 | 1 | 04 (Wave 4 — AUDIT-04) | ~10 min | 2 | 1 | 2026-05-09 |
 | 1 | 05 (Wave 5 — AUDIT-05) | ~12 min | 2 | 1 | 2026-05-09 |
+| 1 | 06 (Wave 6 — AUDIT-06) | ~10 min | 1 | 1 | 2026-05-09 |
 
 **Recent Trend:** —
 
@@ -88,6 +89,9 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - Phase 1 Plan 05: hard-rules duplication framing locked at "4 mentions; 3 duplicates of 1 canonical" per RESEARCH.md §12 Open Q6 — corrects CONCERNS.md's "three places" wording (CONCERNS missed counting the canonical itself); reviewers can now triage all 4 surfaces from a single subsection
 - Phase 1 Plan 05: 5.5 [NEW] Stage-N label collision uses split-bullet citation form (not inline semicolon-separated) — Task 2 acceptance regex is line-counted, so each `file:line` citation must occupy its own line for the grep-c assertion to score correctly (Rule 1 fix during Task 2 verification)
 - Phase 1 Plan 05: 5.4 pipeline diagram retains BOTH copies as canonical for distinct lenses (high-level overview vs tool-transition swimlane) — audit logs visual-drift risk without prescribing consolidation; CONCERNS-classified-as-dup but the two serve different purposes per RESEARCH §6.4
+- Phase 1 Plan 06: AUDIT-06 summary observations split into 3 separate bullets (one `**[STRUCTURAL]**` per line) — initial single-paragraph form failed `grep -c '\*\*\[STRUCTURAL\]\*\*' >= 3` because grep -c counts matching **lines**, not occurrences (Rule 1 fix; same pattern as Plan 05's 5.5 split-citation fix)
+- Phase 1 Plan 06: live-source transcription discipline applied (T-01-06-01 mitigation) — every cited manifest line range was Read at the cited line BEFORE table transcription; values verbatim from `plugin.json:3` (0.3.0), `marketplace.json:9` (1.2.0), `marketplace.json:16` (0.3.0), `README.md:9` (0.1.0), `results-template.md:9` (v0.1.0), `safety-rules.md:93` (v1 reference)
+- Phase 1 Plan 06: D-17 "Recommended sync target: `2.0.0`" phrasing chosen over alternatives — confirmed against banned-phrase ERE that this token sequence is NOT matched (no `propose`; `recommend that v2` requires literal contiguous tokens which "Recommended sync target" does not contain)
 
 ### Pending Todos
 
@@ -106,5 +110,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 05 complete — AUDIT-05 duplicated-content inventory (5 H3 subsections; 17 citations; 5 STRUCTURAL + 1 NEW; canonical-source recommendation per dup; DESIGN-02/03/10/11/12 closures anchored) populated; ready for Plan 06 (Wave 6 — AUDIT-06 version-string mismatches with D-17 2.0.0 synced target)
-Resume file: .planning/phases/01-audit/01-06-PLAN.md
+Stopped at: Phase 1 Plan 06 complete — AUDIT-06 version-string mismatches (8-row table; 9 path citations; 3 STRUCTURAL; 2.0.0 synced-target recommendation per D-17; FOUND-04 named as v2.1 build target; structural-check assertion #8 passes) populated; ready for Plan 07 (Wave 7 — AUDIT-07 cosmetic-but-client-visible issues)
+Resume file: .planning/phases/01-audit/01-07-PLAN.md

@@ -47,10 +47,10 @@ Plans:
 **Wave 5** *(complete)*
 - [x] 01-05-PLAN.md — AUDIT-05: 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-05-SUMMARY.md`)*
 
-**Wave 6** *(unblocked)*
-- [ ] 01-06-PLAN.md — AUDIT-06: 8-row version-mismatch table + 2.0.0 synced-target recommendation (D-17)
+**Wave 6** *(complete)*
+- [x] 01-06-PLAN.md — AUDIT-06: 8-row version-mismatch table + 2.0.0 synced-target recommendation (D-17) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-06-SUMMARY.md`)*
 
-**Wave 7** *(blocked on Wave 6 completion)*
+**Wave 7** *(unblocked)*
 - [ ] 01-07-PLAN.md — AUDIT-07: 6 cosmetic-fix subsections, each with per-bullet "scheduled for v2.1 build, NOT this milestone" (D-16)
 
 **Wave 8** *(blocked on Wave 7 completion)*
@@ -108,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 3/9 | In progress (Waves 1-3 done; Wave 4 next) | - |
+| 1. Audit | 6/9 | In progress (Waves 1-6 done; Wave 7 next) | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
@@ -116,4 +116,4 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 1 Plan 03 complete (Wave 3 — AUDIT-03 per-stage connector dependency table populated)*
+*Last updated: 2026-05-09 — Phase 1 Plan 06 complete (Wave 6 — AUDIT-06 version-string mismatches: 8-row table + 2.0.0 synced-target recommendation per D-17)*
