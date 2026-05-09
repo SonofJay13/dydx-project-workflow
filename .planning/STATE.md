@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
-status: context-gathered
-stopped_at: Phase 2 context gathered — `.planning/phases/02-design/02-CONTEXT.md` written with D-18..D-35 decisions; ready for `/gsd-plan-phase 2`
-last_updated: "2026-05-09T23:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 2 discuss complete — 12 gray areas surfaced, all 12 selected by user, all locked in recommended direction; CONTEXT.md + DISCUSSION-LOG.md written
+status: ready-to-execute
+stopped_at: Phase 2 planned — 10 PLAN.md files written under `.planning/phases/02-design/` (02-01 scaffold + 02-02..02-09 content slices + 02-10 synthesis); plan-checker VERIFICATION PASSED; ready for `/gsd-execute-phase 2`
+last_updated: "2026-05-09T23:55:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 planning complete — 10 plans across 10 sequential waves (forced serialization on shared `.planning/DESIGN.md` deliverable); all 30 DESIGN-* IDs and all 18 D-18..D-35 CONTEXT decisions covered; plan-checker passed
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 9
+  total_plans: 19
   completed_plans: 9
   percent: 25
 ---
@@ -22,16 +22,16 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 **Core value:** Plugin behaves as a senior implementation partner end-to-end — every stage produces an artefact polished enough to send to a client or hand to a developer without rework, and every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
 
-**Current focus:** Phase 2 — Design (Phase 1 approved 2026-05-09; ready to begin)
+**Current focus:** Phase 2 — Design (planned 2026-05-09; ready to execute)
 
 ## Current Position
 
-Phase: 2 (Design) — CONTEXT GATHERED ✓
-Plan: 0 of N (planning not yet started; planner sets N — D-31 indicates ~8 plans 02-01 through 02-08)
-Status: Phase 2 context locked 2026-05-09. CONTEXT.md captures 18 decisions (D-18..D-35) covering doc structure, per-stage skill depth, risk-multiplier deferral, /refine resolution, plugin self-tests, migration cutover policy + survey, hand-off matrix shape, [OPEN] marker discipline, decision-ID convention, persona contract, test-bot detail, author flow. Next: `/gsd-plan-phase 2`.
-Last activity: 2026-05-09 -- Phase 2 discuss complete. All 12 gray areas locked in recommended direction. `.planning/phases/02-design/02-CONTEXT.md` and `02-DISCUSSION-LOG.md` written.
+Phase: 2 (Design) — PLANNED ✓
+Plan: 0 of 10 (10 plans created 02-01 through 02-10; 10 sequential waves due to shared `.planning/DESIGN.md` deliverable forcing serialization). D-31 hinted ~8; final shape is 10 (scaffold split + test-bot detail split + synthesis as own plan).
+Status: Phase 2 plans locked 2026-05-09. 10 PLAN.md files written under `.planning/phases/02-design/`. All 30 DESIGN-* requirement IDs distributed across plans (no orphans). All 18 D-18..D-35 CONTEXT decisions referenced by at least one plan. Plan-checker `## VERIFICATION PASSED` (with 2 INFO observations: D-22 inline marker text varies slightly between 02-01 seed and 02-07 body — 02-10 reconciliation handles dedup; ROADMAP SC4 numerics example superseded by CONTEXT D-22 deferral lock — plans correctly follow CONTEXT). Next: `/gsd-execute-phase 2`.
+Last activity: 2026-05-09 -- Phase 2 planning complete. gsd-planner returned `## PLANNING COMPLETE` with 10 plans / 10 waves; gsd-plan-checker returned `## VERIFICATION PASSED`.
 
-Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 ready to plan)
+Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 ready to execute)
 
 ## Performance Metrics
 
@@ -46,7 +46,7 @@ Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Audit | 9 | ~101 min | ~11 min |
-| 2. Design | 0 | — | — |
+| 2. Design | 0 of 10 planned | — | — |
 | 3. Change list | 0 | — | — |
 | 4. Open questions register | 0 | — | — |
 
