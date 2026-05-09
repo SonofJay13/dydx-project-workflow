@@ -1041,6 +1041,134 @@ Adding a new doc_type requires updating this enum + the Stage 9 quality gate + t
 
 **Cross-references.** DESIGN-26 (CRIT-8 paired contract — Stage 10 refuses ingest if `doc_published_at < last_diff_review_at`); AUDIT.md §AUDIT-04 (v0.3.0 ad-hoc documentation drop catalogued); PITFALLS MOD-1 (graceful halt discipline); PITFALLS CRIT-8 (publish-before-review race).
 
+## Stage 10: Native-AI enablement
+
+> **DESIGN-26:** Stage 10 Native-AI enablement — `push-native-ai-knowledge` skill reads Stage 4a + approved Stage 9 doc fragments + per-platform `native-ai-inventory.md`; branches on `native_ai_path: api | paste | none`; copy-paste fallback is the default; refuses to ingest if `doc_published_at < last_diff_review_at` (CRIT-8 fix); per-client target ID in `00_HUB.md` `Pipefy AI:` / `Wrike AI:` / `Ziflow AI:` blocks; refuses ingest if target mismatches `client:` frontmatter (MIN-4 fix); `doc_version: <semver>` + `ingested_at: <ISO>` per ingested doc.
+
+**Skill:** `push-native-ai-knowledge/` (NEW per DESIGN-12 inventory — net-new skill; v0.3.0 had no native-AI ingestion path). Stage 10 is the per-platform native-AI knowledge ingestion path; consumes approved Stage 9 doc fragments and pushes them into per-platform AI surfaces (Pipefy AI Agents KB / Wrike Copilot knowledge / Ziflow ReviewAI knowledge) per `native_ai_path:` branching.
+**Stage:** 10 (file prefix `10_native-ai_*` per DESIGN-02).
+**Complexity:** **High** — three branching paths (`api | paste | none`); two distinct refusal contracts (CRIT-8 + MIN-4); per-platform target-ID validation; copy-paste fallback default with HALT-and-resume protocol when human paste action is required.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (REQUIRED — Stage 10 reads platform fnspec for the per-requirement `delivery: native-ai` rows that drive ingestion targets) + `based_on_doc_diff: ChangeRequests/<CR>/doc-diff.md` (REQUIRED — must carry `status: approved`) + `client:` (REQUIRED — Stage 10 validates against per-platform target IDs per MIN-4) + `platform: pipefy | wrike | ziflow` (REQUIRED — drives per-platform dispatch); standard `frontmatter_version: 2`, `cr_id:`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` (`status: approved`); `ChangeRequests/<CR>/doc-diff.md` (`status: approved` AND `last_diff_review_at:` set); per-doc Drive uploads from Stage 9 (each carrying `doc_published_at: <ISO>` >= `last_diff_review_at: <ISO>` per DESIGN-25 invariant).
+- **External inputs:** per-platform `<platform-skill>/references/native-ai-inventory.md` (per DESIGN-14/15/16) for the capability matrix that drives `native_ai_path:` branching; client `<Client> Brain/00_HUB.md` `Pipefy AI:` / `Wrike AI:` / `Ziflow AI:` blocks for the per-platform target ID (the per-client AI tenant identifier).
+
+**Outputs.**
+- **Carrier file (local — canonical):** `10_native-ai-push_v<N>.md` in `<Client> Brain/<Project>/` — the per-CR ingestion record listing every fragment ingested + its target ID + status.
+- **Per-ingested-doc records:** Each ingested doc fragment carries `doc_version: <semver>` (carried forward from Stage 9 `doc_version:`) + `ingested_at: <ISO>` (set by Stage 10 at the moment of ingestion) + `target_id: <platform-specific>` (the per-platform AI target identifier from `00_HUB.md`).
+- **Frontmatter set on `10_native-ai-push_v<N>.md`:** standard set + `native_ai_path: api | paste | none` (the branch taken per fragment) + `target_id:` (the per-platform AI target ID validated against `client:` per MIN-4) + per-fragment `doc_version:` + `ingested_at:`; `status: draft → approved`.
+
+**Branching on `native_ai_path` (DESIGN-26 contract — exact enum, canonical order).** Skill reads per-platform `native-ai-inventory.md` capability matrix and per-fragment `delivery: native-ai` row to decide branch:
+
+- **`native_ai_path: api`** — Direct API ingestion. HIGH-confidence path. Used when the per-platform native-AI surface has a verified ingestion API (e.g., Pipefy AI Agents Behaviors via API; Wrike Copilot config via MCP attach-doc; Ziflow ReviewAI Checklists via API where Public Preview supports it). Skill writes the doc fragment via the platform's API; logs `target_id:` + `ingested_at:`.
+- **`native_ai_path: paste`** — Copy-paste fallback. Skill emits the doc fragment formatted for human paste (per-platform paste shape — Pipefy KB upload via UI / Wrike attach-doc via UI / Ziflow ReviewAI manual paste); HALTS; prompts human to paste into the per-platform native-AI surface; resumes when human writes `paste_confirmed: <ISO>` into `10_native-ai-push_v<N>.md`. THIS IS THE DEFAULT per `## Out of Scope` (LOW-confidence native-AI ingestion APIs default to paste, not optimistic API claims).
+- **`native_ai_path: none`** — Skip — no native-AI surface exists for this fragment (e.g., a `delivery: api` row that has no `delivery: native-ai` complement; or a fragment whose `doc_type:` is not in the per-platform ingestion-target set). Skill records "no ingestion target" in `10_native-ai-push_v<N>.md` and continues to next fragment.
+
+**CRIT-8 refusal contract.** Stage 10 REFUSES to ingest any doc fragment whose source Drive doc carries `doc_published_at < last_diff_review_at`. This is a hard halt, not a warning. The invariant is set by Stage 9 (DESIGN-25) at push time — `doc_published_at >= last_diff_review_at` must always hold by construction. If Stage 10 reads a fragment violating the invariant (e.g., a manually-edited Drive doc that bypassed Stage 9), the skill halts with an explicit error in `10_native-ai-push_v<N>.md` naming the violating fragment + the violating timestamps. Reviewer must triage — either re-run Stage 9 to re-publish the fragment cleanly, or surface a CR amendment.
+
+**MIN-4 refusal contract.** Stage 10 reads the per-platform target ID from `<Client> Brain/00_HUB.md` (Pipefy AI: / Wrike AI: / Ziflow AI: blocks). REFUSES to ingest if the resolved `target_id:` does not match the artefact's `client:` frontmatter — i.e., if the per-platform AI target configured in `00_HUB.md` belongs to a different client than the artefact under ingestion. This prevents cross-client contamination (a v2 design contract addressing MIN-4: "wrong tenant ingestion" historic risk). Hard halt; reviewer must triage `00_HUB.md` configuration.
+
+**Default: copy-paste fallback (DESIGN-26 contract — per `## Out of Scope`).** Native-AI ingestion APIs are LOW-confidence per DESIGN-14/15/16 (Pipefy KB content-upload API `[OPEN]`; Wrike AI Studio knowledge-ingestion API `[OPEN]`; Ziflow ReviewAI knowledge-ingestion API `[OPEN]`). v2 design defaults to `native_ai_path: paste` — copy-paste fallback. Optimistic-API anti-pattern is FORBIDDEN: Stage 10 does NOT claim API ingestion for unverified APIs; defaults to paste; only upgrades to `api` when the per-platform `native-ai-inventory.md` row is HIGH-confidence (verified API).
+
+**Downstream consumer.** Stage 11 — `sign-off-and-archive` (DESIGN-27 below) reads `10_native-ai-push_v<N>.md` (`status: approved` required) along with all upstream approved artefacts before archiving the CR.
+
+**Status flag(s).** `status: approved` on `10_native-ai-push_v<N>.md` gates Stage 11. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. CRIT-8 refusal + MIN-4 refusal halt the skill BEFORE writing `status: approved` — both refusals are skill-internal hard halts, not approval-gate violations.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 10 → Stage 11 row).**
+
+> Awaiting status: approved on per-platform native-AI ingestion records; sign-off-and-archive runs only after all push-native-ai-knowledge runs succeed (or native_ai_path: none).
+
+**Key v2 decisions for this stage.**
+
+1. **`native_ai_path: api | paste | none` branching** — three explicit branches; canonical enum order (api, paste, none); per-fragment branch is recorded in the ingestion artefact for traceability.
+2. **CRIT-8 refusal — `doc_published_at < last_diff_review_at` halts ingest** — paired contract with DESIGN-25's invariant; Stage 10 will not ingest fragments that violate the publish-after-review ordering.
+3. **MIN-4 refusal — per-platform target ID must match `client:` frontmatter** — prevents cross-client contamination via mis-configured `00_HUB.md` AI targets.
+4. **Copy-paste fallback IS the default per `## Out of Scope`** — LOW-confidence native-AI ingestion APIs default to `paste`; optimistic-API claims FORBIDDEN.
+5. **Per-doc traceability — `doc_version:` + `ingested_at:` + `target_id:`** — every ingested fragment carries these three fields so a downstream audit can reconstruct what version of which doc was pushed to which target at what time.
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform `native-ai-inventory.md` capability matrices); DESIGN-25 (Stage 9 `doc_published_at:` + `last_diff_review_at:` fields — CRIT-8 paired contract); platform-pipefy / platform-wrike / platform-ziflow (per-platform target ID + ingestion shape).
+
+**Cross-references.** DESIGN-25 (CRIT-8 paired contract — `doc_published_at >= last_diff_review_at` invariant set in Stage 9, refused-on-violation in Stage 10); DESIGN-27 (downstream — Stage 11 reads `10_native-ai-push_v<N>.md` approval before archive); PITFALLS CRIT-8 (publish-before-review race); PITFALLS MIN-4 (cross-client AI tenant contamination); AUDIT.md §AUDIT-04 (v0.3.0 native-AI ingestion absence catalogued).
+
+## Stage 11: Sign-off, brain update, archive
+
+> **DESIGN-27:** Stage 11 Sign-off, brain update, archive — `sign-off-and-archive` skill updates local `<Client> Brain/<spokes>/`; one-way push to Coda mirror with brain-mirror Coda doc template (Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes); `tone_lint` pass before publish (MOD-9 prevention); CR move to `Archive/`; `00_Index.md` version bump; Field Notes table preserved (input-only, never overwritten); pre-archive sanity check (no orphan refs, no missing artefacts).
+
+**Skill:** `sign-off-and-archive/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc CR closeout that lacked a canonical brain-update + archive step). Stage 11 is the terminal stage in the pipeline; closes out the CR by updating local brain spokes, mirroring to Coda, archiving the CR folder, and bumping the per-project index.
+**Stage:** 11 (file prefix `11_signoff_*` per DESIGN-02).
+**Complexity:** Medium (multiple distinct sub-actions — local spoke update, Coda mirror push with template, CR move, index bump, pre-archive sanity check; each is bounded but the orchestration must be idempotent).
+
+**Inputs.**
+- **Frontmatter consumed:** all upstream artefacts in this CR — every approved artefact from Stages 1–10 must carry `status: approved` before Stage 11 can run; `cr_id:` (the change-request identifier); `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** the entire CR's artefact set — `02_discovery_v<N>.md` / `03_sow_v<N>.md` / `04a_fnspec-platform_v<N>.md` / `04b_fnspec-integration_v<N>.md` / `05_techspec_v<N>.md` / `06_cost_v<N>.md` / `07a_build-prompt_v<N>.md` / `07b_implementation-prompt_v<N>.md` / `08a_test-harness_v<N>.md` / `08b_test-plan_v<N>.md` / `08c_uat-plan_v<N>.md` / `08d_test-results_v<N>.md` / `ChangeRequests/<CR>/doc-diff.md` / `10_native-ai-push_v<N>.md` — every applicable artefact for this CR with `status: approved`.
+- **External inputs:** Coda MCP for one-way mirror push; brain-mirror Coda doc template per Phase 4 OPEN-05 (the canonical brain-mirror Coda doc template — landed by Phase 8 of the 9-phase build per CHANGE-04, drafted in v2 design as the 7-section template below).
+
+**Outputs.**
+- **Local brain update:** Updates `<Client> Brain/<spokes>/` — per-spoke markdown files (one per canonical brain spoke: workflows, platforms, integrations, operating-model, change-history). Local canonical state per DESIGN-09 directional boundary.
+- **Coda mirror update (downstream — one-way):** Per the brain-mirror Coda doc template (7 sections — see below); push direction is local → Coda only per DESIGN-09. Field Notes section is INPUT-ONLY in Coda — Stage 11 NEVER overwrites the Field Notes table (per DESIGN-09 + DESIGN-27 contract).
+- **CR archive:** Source CR folder `<Client> Brain/<Project>/ChangeRequests/<CR>/` moved to `<Client> Brain/<Project>/Archive/<CR>/`. Idempotent — re-running Stage 11 on an already-archived CR is a no-op.
+- **`00_Index.md` version bump:** Appends a new entry per archived CR (`cr_id:` + `archived_at: <ISO>` + summary line) to `<Client> Brain/<Project>/00_Index.md`. The index is the per-project version-history record.
+- **Carrier file:** `11_signoff_v<N>.md` in `<Client> Brain/<Project>/` (becomes the `<Project>/Archive/<CR>/11_signoff_v<N>.md` after the CR move). Frontmatter: standard set + `archived_at: <ISO>` + `tone_lint_status: passed | failed` + `pre_archive_sanity_status: passed | failed`.
+
+**Brain-mirror Coda doc template (DESIGN-27 contract — 7 canonical sections).** The brain-mirror Coda doc per client carries exactly seven H2 sections, in this canonical order:
+
+1. **Overview** — high-level client + project framing; one-liner per active project.
+2. **Workflows** — per-workflow narrative (Stage 2 discovery + Stage 4a/4b fnspec mirrored content); one row per workflow.
+3. **Platforms** — per-platform configuration state (Pipefy / Wrike / Ziflow per-client tenant IDs + sandbox vs production split + `native_ai_path:` defaults).
+4. **Integrations** — per-integration state (custom integrations, MCP wirings, OAuth tokens by tenant — secrets redacted).
+5. **Operating Model** — operating cadence, escalation paths, on-call coverage, communication channels.
+6. **Change History** — append-only log of archived CRs; one row per CR with `cr_id:`, `archived_at:`, summary; mirrors `00_Index.md`.
+7. **Field Notes** — INPUT-ONLY table for human notes; Stage 11 NEVER overwrites this section (per DESIGN-09 directional boundary — Field Notes is the read-only triage queue from Coda → local during Stage 1; Stage 11 explicitly preserves it).
+
+Push direction is ONE-WAY (local → Coda). Coda → local merge is OUT OF SCOPE per DESIGN-09. The brain-mirror Coda doc template is the design contract drafted here; full Coda template implementation lives in Phase 8 of the 9-phase build per CHANGE-04 (Phase 4 OPEN-05 standard Coda templates work).
+
+**`tone_lint` pass (DESIGN-27 contract — MOD-9 prevention).** Before pushing the brain-mirror Coda doc, Stage 11 runs `tone_lint` against every spoke (per DESIGN-10 forbidden-phrasings list — "we recommend", "as an AI", "I would suggest", "perhaps consider", "might want to", and the rest of the 10-item list). Failure halts; reviewer triages and re-runs. The `tone_lint_status: passed | failed` field on `11_signoff_v<N>.md` records the run outcome. MOD-9 (forbidden-phrasings leaking into client-visible Coda mirror) is the historic pitfall this contract addresses.
+
+**CR move to `Archive/` (DESIGN-27 contract).** After spoke update + Coda mirror push + tone_lint pass, the source CR folder is moved (`mv`) from `<Client> Brain/<Project>/ChangeRequests/<CR>/` to `<Client> Brain/<Project>/Archive/<CR>/`. Move is atomic (single filesystem operation); re-running Stage 11 against an already-archived CR detects the move target and is a no-op.
+
+**`00_Index.md` version bump (DESIGN-27 contract).** Append new entry to `<Client> Brain/<Project>/00_Index.md`:
+
+```markdown
+## CR <cr_id> — archived <archived_at>
+**Summary:** <one-liner from doc-diff.md>
+**Artefacts:** [list of approved artefacts]
+**Brain spokes touched:** [list of spokes updated]
+```
+
+Append-only; never re-orders or rewrites prior entries.
+
+**Pre-archive sanity check (DESIGN-27 contract).** Before any of the above sub-actions run, Stage 11 runs a pre-archive sanity check:
+- No orphan references in any approved artefact (every `based_on_*:` resolves to an existing file with `status: approved`).
+- No missing artefacts referenced in `doc-diff.md` (every doc listed in Stage 9's diff has actually been pushed to Drive per `doc_published_at:`).
+- No tone_lint failures in any spoke (covered by tone_lint pass above; pre-archive sanity is the gate that runs tone_lint).
+- No outstanding `[OPEN]` markers in this CR's artefacts (any `[OPEN: Phase 4 — ...]` marker introduced during this CR must have been resolved or explicitly deferred-with-justification).
+
+Failure halts; reviewer triages. The `pre_archive_sanity_status: passed | failed` field on `11_signoff_v<N>.md` records the outcome.
+
+**Field Notes preserved input-only (DESIGN-27 contract).** Coda Field Notes table is the input-only triage queue per DESIGN-09 — Stage 1 (`kickoff-capture`) reads `processed_at IS NULL` rows and triages them. Stage 11 NEVER overwrites the Field Notes table; the brain-mirror push explicitly excludes the Field Notes section from the write set. This preserves the directional-boundary contract — Field Notes flow Coda → local, not the reverse. Field Notes table is NEVER overwritten.
+
+**Downstream consumer.** None within v2 pipeline (Stage 11 is terminal). Stage 11's outputs (updated brain spokes + Coda mirror + archived CR + bumped index) feed back into the next CR's Stage 1 — `kickoff-capture` reads `<Client> Brain/00_HUB.md` + brain spokes + Field Notes table when starting the next CR.
+
+**Status flag(s).** `status: approved` on `11_signoff_v<N>.md` (effectively the CR completion flag). Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. The pre-archive sanity check + tone_lint pass are skill-internal hard halts BEFORE the approval-gate hook runs — both must pass before the skill emits `status: approved`-eligible output.
+
+**Hand-off message (pipeline-end — terminal).**
+
+> Pipeline complete for CR <cr_id>. Brain updated; Coda mirror published; CR archived. Next CR's Stage 1 reads from updated <Client> Brain/.
+
+**Key v2 decisions for this stage.**
+
+1. **Brain-mirror Coda doc template — 7 canonical sections in canonical order** — Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes. Section count + ordering is the contract; Phase 8 build implements the template.
+2. **One-way Coda mirror per DESIGN-09 directional boundary** — local canonical, Coda mirror; Coda → local merge OUT OF SCOPE. Field Notes is the only Coda → local channel (Stage 1, not Stage 11).
+3. **`tone_lint` pass before publish (MOD-9 prevention)** — per DESIGN-10 forbidden-phrasings list; failure halts.
+4. **CR move to `Archive/<CR>/` + `00_Index.md` version bump** — atomic move; append-only index; idempotent re-runs.
+5. **Pre-archive sanity check** — orphan refs + missing artefacts + tone_lint + outstanding `[OPEN]` markers all checked before any sub-action runs.
+6. **Field Notes preserved input-only** — Stage 11 NEVER overwrites the Field Notes table; preserves directional-boundary contract per DESIGN-09.
+
+**Dependencies.** DESIGN-09 (directional-boundary contract — local canonical, Coda one-way mirror, Field Notes input-only); DESIGN-10 (persona contract — `tone_lint` pass per forbidden-phrasings list); DESIGN-26 (upstream — Stage 10 approved before Stage 11 runs); Phase 4 OPEN-05 (standard Coda templates — brain-mirror Coda doc template lives in this register; v2 design provides the 7-section contract; Phase 8 build implements).
+
+**Cross-references.** DESIGN-09 (directional boundary); DESIGN-10 (persona contract — `tone_lint` source list); DESIGN-25 (paired upstream — `doc-diff.md` content feeds Change History summary line); PITFALLS MOD-9 (forbidden-phrasings leak into client-visible Coda mirror); Phase 4 OPEN-05 (standard Coda templates register); Phase 4 OPEN-04 (related — `00_HUB.md` schema register).
+
 ---
 
 ## Test bot architecture
