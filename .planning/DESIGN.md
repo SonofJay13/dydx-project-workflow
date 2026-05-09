@@ -916,16 +916,130 @@ Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `0
 **Cross-references.** DESIGN-19 Stage 3 (SOW upstream); DESIGN-20 Stage 4a (routing key + native-AI rows); DESIGN-22 Stage 6 (cost — same wave above); DESIGN-23 Stage 7a (complement — same wave above); DESIGN-24 Stage 8a (forward — anchor placeholder, populated in Plan 02-08); platform-pipefy / platform-wrike / platform-ziflow (per-platform `references/` consumed); REQUIREMENTS `## Out of Scope` (universal-template anti-pattern callout — backward, populated).
 
 ## Stage 8: Test bot — overview
-(Populated by 02-08-PLAN.md / Wave 8. Covers DESIGN-24.)
+
+> **DESIGN-24:** Stage 8 Test bot architecture (overview) — `provision-test-harness` skill (8a) bootstraps once + delta-updates each ship; persistent harness lives at `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` (outside this repo); tier-1 deterministic Python + tier-2 AI orchestrator with hard layer-separation contract; `harness_drift` failure class added to `spec gap | implementation gap | environment issue | unknown`; `sandbox_lock.yaml` for concurrency; sandbox allowlist extended to Coda (CRIT-5 fix); test-case lifecycle states `active | obsolete | quarantined`. Detailed tier-1/tier-2 boundary + `client_state.yaml` schema + drift-detection contract live under `## Test bot architecture` (DESIGN-28..30 — FORWARD reference, populated by Plan 02-09).
+
+**This section provides stage-level overview only.** Detailed architecture (tier-1/tier-2 boundary contract per DESIGN-28; `client_state.yaml` skeleton schema per DESIGN-29; drift-detection algorithm contract per DESIGN-30) lives under `## Test bot architecture` — populated by Plan 02-09 in Wave 9. Forward references below cite DESIGN-28/29/30 as anchor placeholders only; body verification for those H3 sections is deferred to Plan 02-09.
+
+**Skills (4 substages — per DESIGN-12 inventory + DESIGN-02 stage-numbering substages).**
+
+- **8a — `provision-test-harness/`** (NEW). Bootstraps the persistent test-bot harness for a client on first run; delta-updates the harness on every subsequent ship (no full re-bootstrap). Reads `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md` + `05_techspec_v<N>.md` (when full Stage 5 ran) + `07a_build-prompt_v<N>.md` and/or `07b_implementation-prompt_v<N>.md`; emits `08a_test-harness_v<N>.md` + writes/updates `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` (outside this repo).
+- **8b — `generate-test-plan/`** (MODIFIED — carries forward from v0.3.0 baseline per AUDIT.md §AUDIT-01.5; modification limited to test-plan path move under `<Client> Brain/test-bot/test_cases/` and consumption of `08a_test-harness_v<N>.md` as its harness contract). Emits `08b_test-plan_v<N>.md`.
+- **8c — `generate-uat-plan/`** (NEW). Generates the user-acceptance-test plan against the same upstream artefact set; emits `08c_uat-plan_v<N>.md`. Human-facing artefact (does NOT feed `execute-tests` directly); reviewer signs off in parallel with 8a/8b approval.
+- **8d — `execute-tests/`** (MODIFIED — carries forward from v0.3.0 baseline per AUDIT.md §AUDIT-01.7; modification limited to harness-path move into `<Client> Brain/test-bot/` and tier-2 AI orchestrator invocation contract per DESIGN-28 forward). Emits `08d_test-results_v<N>.md` (path moves under `<Client> Brain/test-bot/` per DESIGN-02 substage anchors).
+
+**Persistent harness location (DESIGN-24 contract).** `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` — explicitly OUTSIDE this repo. The harness is a per-client persistent artefact maintained across change requests; it lives under the client's brain folder, NOT under `dydx-delivery/` or anywhere in the plugin source tree. `provision-test-harness` (8a) bootstraps once on first run and delta-updates each ship; the harness is reused across CRs (it accumulates per-client test-case state).
+
+**Tier separation (high-level — detailed contract under DESIGN-28 FORWARD).** Hard layer-separation contract: Python tier-1 is deterministic (state assertions, schema checks, equality, regex match, retry-count check, status-code class); AI tier-2 is the orchestrator (interprets free-form output, classifies failure causes, suggests remediation). **Tier-1 tests are HUMAN-AUTHORED; AI does NOT write tier-1.** Per `## Out of Scope` — the AI orchestrator's role is interpretation + classification + remediation suggestion, never authoring deterministic assertions. Cases that fall in the boundary (mixed-layer cases) are flagged for human design rather than silently assigned. Detailed tier-1/tier-2 boundary contract + 1 worked test-case classification example lives under `## Test bot architecture` (DESIGN-28 — FORWARD reference, populated by Plan 02-09).
+
+**Failure-class enum extension (DESIGN-24 contract).** v0.3.0 `execute-tests` failure classes: `spec gap | implementation gap | environment issue | unknown` (4 classes). v2 adds `harness_drift` as a fifth canonical failure class — surfaces when the test harness itself has drifted from the live sandbox schema (per DESIGN-30 drift-detection contract — FORWARD). Total v2 enum: `spec gap | implementation gap | environment issue | harness_drift | unknown` (5 classes).
+
+**Concurrency contract (DESIGN-24).** Single per-client `sandbox_lock.yaml` at `<Client> Brain/test-bot/sandbox_lock.yaml`. Stage 8d `execute-tests` acquires the lock before running against the client sandbox; releases on completion (success or failure). Prevents two concurrent test runs from contending for the same Pipefy sandbox pipe / Wrike sandbox space / Ziflow sandbox project. Lock file content: timestamp + acquiring agent ID + expected duration; stale-lock detection halts with explicit error rather than auto-clearing.
+
+**Sandbox allowlist (DESIGN-24 — CRIT-5 fix).** v0.3.0 `dydx-delivery/skills/execute-tests/references/safety-rules.md` allowlists Pipefy / Wrike / Ziflow sandbox tenants but OMITS Coda sandbox — Stage 6 (`generate-cost-estimate/` per DESIGN-22) writes to Coda but the v0.3.0 sandbox allowlist does not cover Coda, so a strict reading of safety-rules forbids Stage 6's Coda writes against any "sandbox" framing. v2 extends the allowlist to include the Coda sandbox tenant per CRIT-5. The canonical safety-rules document (per DESIGN-03 SoT contract — `dydx-delivery/references/safety-rules.md`, promoted to plugin-level `references/`) carries the extended allowlist; v0.3.0 path `dydx-delivery/skills/execute-tests/references/safety-rules.md` is RETIRED (per DESIGN-03 collapse of 4-copy duplication catalogued at AUDIT.md §AUDIT-05).
+
+**Test-case lifecycle states (DESIGN-24 contract — 3 states).** `active | obsolete | quarantined`. Per-test-case `state:` field in `<Client> Brain/test-bot/test_cases/<case>.yaml`:
+
+- **active** — default state for newly-authored or currently-passing cases; runs in Stage 8d every ship.
+- **obsolete** — case is no longer relevant (the spec it tested has been retired or replaced); does NOT run; preserved for audit history rather than deleted.
+- **quarantined** — case is failing for reasons unrelated to the system under test (flaky external dependency, known sandbox infrastructure issue); SKIPPED in Stage 8d with explicit `quarantined` reason in `08d_test-results_v<N>.md`. Quarantine is bounded — reviewer must triage quarantined cases before each ship.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform:` and/or `based_on_fnspec_integration:` (whichever exist) + `based_on_techspec:` (when full Stage 5 ran) + `based_on_build_prompt:` and/or `based_on_implementation_prompt:` (Stage 7a / 7b carriers); `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md`; `05_techspec_v<N>.md` (when full path); `07a_build-prompt_v<N>.md` and/or `07b_implementation-prompt_v<N>.md` — all with `status: approved`.
+- **External inputs:** per-platform sandbox tenant access (Pipefy sandbox pipe / Wrike sandbox space + `wrike_host` per DESIGN-15 / Ziflow sandbox project); Coda sandbox tenant per CRIT-5 fix; `client_state.yaml` (DESIGN-29 FORWARD) for cached schema state per platform.
+
+**Outputs.**
+- **Carrier files:** `08a_test-harness_v<N>.md` (provisioning record) + `08b_test-plan_v<N>.md` (test plan) + `08c_uat-plan_v<N>.md` (UAT plan, human-facing) + `08d_test-results_v<N>.md` (test-run results, under `<Client> Brain/test-bot/`); persistent harness state at `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}`.
+- **Frontmatter set on 8a:** standard set + `harness_version:` + `client_state_version:` + `last_known_schema_version:` per platform.
+- **Frontmatter set on 8d:** standard set + `failure_classes:` (enum: `spec gap | implementation gap | environment issue | harness_drift | unknown`) + `quarantined_count:` + `obsolete_count:`.
+
+**Downstream consumer.** Stage 9 — `update-documentation` (DESIGN-25 below) reads `08d_test-results_v<N>.md` (`based_on_test_results:` REQUIRED on Stage 9 frontmatter).
+
+**Status flag(s).** `status: approved` on 8a + 8b gates 8d (execute-tests). 8c is human-facing (UAT plan); reviewer signs off in parallel. `status: approved` on 8d gates Stage 9.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 8a/b/c → Stage 8d row).**
+
+> Awaiting status: approved on 08a_test-harness_v<N>.md AND 08b_test-plan_v<N>.md; execute-tests runs against current client_state.yaml; sandbox_lock.yaml acquired before run.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 8d → Stage 9 row).**
+
+> Awaiting status: approved on 08d_test-results_v<N>.md; doc-diff generation requires test approval.
+
+**Key v2 decisions for this stage (overview-level — detailed decisions under DESIGN-28..30 FORWARD).**
+
+1. **Persistent harness lives outside this repo** — `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}`. Per-client; reused across CRs. NOT under `dydx-delivery/`.
+2. **Hard tier-1/tier-2 separation** — Python tier-1 = deterministic (human-authored); AI tier-2 = interpretation/classification/remediation (orchestrator). AI does NOT write tier-1 assertions per `## Out of Scope`.
+3. **`harness_drift` failure class added** — fifth canonical class extending v0.3.0's 4-class enum.
+4. **Sandbox allowlist extended to Coda (CRIT-5 fix)** — canonical safety-rules at `dydx-delivery/references/safety-rules.md` allowlists the Coda sandbox tenant; v0.3.0 omission resolved.
+5. **`sandbox_lock.yaml` for concurrency** — single per-client lock; stale-lock detection halts (no auto-clear).
+6. **Test-case lifecycle states `active | obsolete | quarantined`** — explicit lifecycle replaces v0.3.0 implicit "delete or keep" pattern.
+
+**Dependencies.** DESIGN-03 (canonical safety-rules — sandbox allowlist lives here per CRIT-5 fix); DESIGN-04 (test-bot-orchestrator agent runs Stage 8d tier-2 invocation); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform sandbox access); DESIGN-22 (Stage 6 Coda writes — sandbox allowlist extension covers same Coda tenant); DESIGN-28 / DESIGN-29 / DESIGN-30 (FORWARD — detailed architecture under `## Test bot architecture`, populated by Plan 02-09).
+
+**Cross-references.** DESIGN-04 (test-bot-orchestrator agent + sandbox_lock concurrency); DESIGN-25 (downstream — Stage 9 reads `08d_test-results_v<N>.md`); DESIGN-28 (FORWARD — anchor placeholder, tier-1/tier-2 boundary populated by Plan 02-09); DESIGN-29 (FORWARD — anchor placeholder, `client_state.yaml` schema populated by Plan 02-09); DESIGN-30 (FORWARD — anchor placeholder, drift-detection contract populated by Plan 02-09); AUDIT.md §AUDIT-01.5 (v0.3.0 `generate-test-plan` baseline); AUDIT.md §AUDIT-01.7 (v0.3.0 `execute-tests` baseline); PITFALLS CRIT-5 (sandbox allowlist Coda omission).
 
 ## Stage 9: Documentation publishing
-(Populated by 02-08-PLAN.md / Wave 8. Covers DESIGN-25.)
 
-## Stage 10: Native-AI enablement
-(Populated by 02-08-PLAN.md / Wave 8. Covers DESIGN-26.)
+> **DESIGN-25:** Stage 9 Documentation publishing — `update-documentation` skill writes `ChangeRequests/<CR>/doc-diff.md`; reviewer-approval gate before push; deterministic local→Drive folder/filename mapping; closed `doc_type` enum; naming `<client_slug>__<project_slug>__<doc_type>__v<N>` (double-underscore separator); `doc_published_at` timestamp invariant; halt condition if `00_HUB.md` `Documentation:` link missing (graceful — does not halt other stages per MOD-1).
 
-## Stage 11: Sign-off, brain update, archive
-(Populated by 02-08-PLAN.md / Wave 8. Covers DESIGN-27.)
+**Skill:** `update-documentation/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc documentation drops that lived implicitly in change-request workflow per AUDIT.md §AUDIT-04). Stage 9 is the publish-to-Drive path; doc-diff gate forces reviewer approval before any doc lands externally.
+**Stage:** 9 (file prefix `09_doc-diff_*` per DESIGN-02; the `doc-diff.md` artefact lives under `ChangeRequests/<CR>/` rather than the per-stage carrier path).
+**Complexity:** Medium (closed enum + deterministic naming + reviewer-approval gate; the heavy lifting is the doc-diff content, not the publishing mechanism).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_test_results: 08d_test-results_v<N>` (REQUIRED — Stage 9 reads test-results approval as upstream gate) + all upstream `04*` / `05` / `06` / `07*` artefacts referenced (transitively — Stage 9's diff reflects every artefact whose canonical version changed in this CR); `client:`, `project:`, `frontmatter_version: 2`, `cr_id:` (the change-request identifier).
+- **Upstream artefact paths:** `08d_test-results_v<N>.md` (must carry `status: approved`); all upstream artefacts whose published versions are being updated (`02_discovery_v<N>.md` / `03_sow_v<N>.md` / `04a_fnspec-platform_v<N>.md` / `04b_fnspec-integration_v<N>.md` / `05_techspec_v<N>.md` / `07a_build-prompt_v<N>.md` / `07b_implementation-prompt_v<N>.md`).
+- **External inputs:** Drive MCP for publish; client `<Client> Brain/00_HUB.md` for the `Documentation:` Drive folder link (the per-client publish target).
+
+**Outputs.**
+- **Carrier file:** `ChangeRequests/<CR>/doc-diff.md` — the per-CR diff artefact listing every doc that will be published, per-doc before/after, and a status flag.
+- **Drive uploads (downstream — one-way):** per-doc Drive uploads. Each Drive doc carries frontmatter: `doc_type:` (closed enum below), `doc_version: <semver>`, `doc_published_at: <ISO>`, `last_diff_review_at: <ISO>`, `client:`, `project:`. `doc_published_at` is set by Stage 9 at the moment of Drive push — this is the invariant downstream Stage 10 reads (per CRIT-8 fix).
+- **Frontmatter set on `doc-diff.md`:** `cr_id:`, `client:`, `project:`, `frontmatter_version: 2`, `based_on_test_results:`, `last_diff_review_at:` (set by reviewer when approving), `status: draft → approved`, plus per-doc `doc_type:` + `doc_version:` for each doc in the diff.
+
+**Closed `doc_type` enum (DESIGN-25 contract — exactly 9 values).** Skill quality gate REJECTS any doc-diff entry whose `doc_type:` is not one of:
+
+- `discovery` — Stage 2 discovery artefact
+- `sow` — Stage 3 statement of work
+- `platform_fnspec` — Stage 4a platform functional spec
+- `integration_fnspec` — Stage 4b integration functional spec
+- `tech_spec` — Stage 5 technical spec
+- `test_plan` — Stage 8b test plan
+- `build_prompt` — Stage 7a dev build prompt
+- `results` — Stage 8d test results
+- `brain_spoke` — `<Client> Brain/<spokes>/` per-spoke published mirror (Stage 11 also writes brain_spoke fragments via Coda mirror per DESIGN-27)
+
+Adding a new doc_type requires updating this enum + the Stage 9 quality gate + the Stage 10 ingestion filter (per DESIGN-26 — Stage 10 reads `doc_type:` to decide which fragments are ingestable).
+
+**Naming convention (DESIGN-25 contract — double-underscore separator).** `<client_slug>__<project_slug>__<doc_type>__v<N>` — DOUBLE-UNDERSCORE between fields (not single). Example: `acme-inc__widget-redesign__platform_fnspec__v3`. Single-underscore separators are FORBIDDEN by the skill's quality gate (single-underscores appear inside `doc_type:` enum values like `platform_fnspec`, so a single-underscore field separator would conflate field boundaries with intra-field underscores). Slugs are kebab-case lowercase per DESIGN-01 file-path convention.
+
+**doc-diff workflow (DESIGN-25 contract — reviewer-approval gate before push).**
+
+1. Stage 9 skill runs at change-request close. Computes the diff: which docs changed since the previous CR's published versions (or which docs are new in this CR). Emits `ChangeRequests/<CR>/doc-diff.md` with per-doc before/after content + per-doc `doc_type:` + `doc_version:` (incremented per semver per change kind) + status `draft`.
+2. Skill HALTS at `status: draft`. Resume condition: reviewer reviews `doc-diff.md`, writes `status: approved` + `last_diff_review_at: <ISO>` (the moment of approval). Reviewer can edit per-doc content during review; the diff artefact captures the as-published version.
+3. On `status: approved` resume, skill pushes each doc to Drive at the `Documentation:` folder per `00_HUB.md`, applying the closed-enum naming convention. Each Drive doc carries `doc_published_at: <ISO>` (set at the moment of push) AND `last_diff_review_at:` (from the doc-diff approval) — `doc_published_at:` is always >= `last_diff_review_at:` by construction. This invariant is the gate Stage 10 (DESIGN-26) refuses to violate (CRIT-8 fix).
+
+**Halt condition (DESIGN-25 — MOD-1 graceful halt).** If `<Client> Brain/00_HUB.md` `Documentation:` link is missing (no per-client Drive folder configured), Stage 9 halts with explicit error written into `doc-diff.md`. The halt is GRACEFUL per MOD-1 — only Stage 9 halts; other stages (1–8, 10–11) continue to run for unrelated artefacts in this CR. Resume condition: reviewer adds `Documentation:` link to `00_HUB.md` AND re-runs Stage 9 against the same `cr_id:`.
+
+**Downstream consumer.** Stage 10 — `push-native-ai-knowledge` (DESIGN-26 below) reads approved Stage 9 doc fragments via `doc_type:` filter and ingests them into per-platform native-AI surfaces. Stage 10 is GATED on `doc_published_at >= last_diff_review_at` per CRIT-8 fix — Stage 10 refuses to ingest any fragment violating the invariant.
+
+**Status flag(s).** `status: approved` on `ChangeRequests/<CR>/doc-diff.md` gates Stage 10. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`; AND the skill internal contract refuses to push to Drive without `last_diff_review_at:` set.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 9 → Stage 10 row).**
+
+> Awaiting status: approved on doc-diff.md AND doc_published_at set; push-native-ai-knowledge refuses ingest if doc_published_at < last_diff_review_at (CRIT-8 fix).
+
+**Key v2 decisions for this stage.**
+
+1. **Closed `doc_type` enum (9 values)** — `discovery | sow | platform_fnspec | integration_fnspec | tech_spec | test_plan | build_prompt | results | brain_spoke`. Skill rejects any doc-diff entry whose `doc_type:` is not in the enum.
+2. **Double-underscore naming convention** — `<client_slug>__<project_slug>__<doc_type>__v<N>`. Single-underscore separators FORBIDDEN (intra-field underscores in `doc_type:` values like `platform_fnspec` would conflate field boundaries with intra-field underscores).
+3. **doc-diff written + reviewed BEFORE push** — Stage 9 emits `doc-diff.md` first, halts; reviewer approves; only then does Drive push happen. No silent overwrites.
+4. **`doc_published_at` invariant set at push** — `doc_published_at: <ISO>` set at the moment of Drive push; ALWAYS >= `last_diff_review_at:` by construction. This is the gate Stage 10 refuses to violate per CRIT-8.
+5. **MOD-1 graceful halt on missing `Documentation:` link** — Stage 9 halts with explicit error; other stages continue. Reviewer adds the link to `00_HUB.md` and re-runs Stage 9.
+
+**Dependencies.** DESIGN-04 (Drive MCP — `mcpServers` field includes Drive); DESIGN-09 (directional-boundary contract — local canonical, Drive one-way mirror, Drive → local merge OUT OF SCOPE); DESIGN-26 (downstream — Stage 10 reads `doc_type:` filter + `doc_published_at`/`last_diff_review_at` invariant per CRIT-8).
+
+**Cross-references.** DESIGN-26 (CRIT-8 paired contract — Stage 10 refuses ingest if `doc_published_at < last_diff_review_at`); AUDIT.md §AUDIT-04 (v0.3.0 ad-hoc documentation drop catalogued); PITFALLS MOD-1 (graceful halt discipline); PITFALLS CRIT-8 (publish-before-review race).
 
 ---
 
