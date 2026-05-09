@@ -399,6 +399,25 @@ Two ASCII pipeline diagrams: high-level overview (plugin README) and tool-transi
 
 ---
 
+### 5.5 [NEW] Stage-N label collision (2 templates labelled "Stage 6")
+
+Two distinct templates self-label as "Stage 6" — a literal duplicate label-string conflict.
+
+| Template | Line | Self-label |
+|---|---|---|
+| build-prompt-template.md | 15 | "Stage 6 of the dydx-delivery pipeline" |
+| results-template.md | 18 | "Stage 6 of the dydx-delivery pipeline" |
+
+Citations:
+- `dydx-delivery/skills/generate-build-prompt/references/build-prompt-template.md:15`
+- `dydx-delivery/skills/execute-tests/references/results-template.md:18`
+
+**[NEW]** **[STRUCTURAL]** — already covered by `.planning/codebase/CONCERNS.md:71` under Stage-numbering inconsistencies, re-flagged here as a literal duplicate label.
+
+**Closes via:** DESIGN-02 (canonical stage-numbering scheme — substages `4a/4b/7a/7b/8a-8d` and old→new mapping table).
+
+---
+
 ## AUDIT-06: Version-String Mismatches
 
 (populated by 01-06-PLAN.md / Wave 6)
