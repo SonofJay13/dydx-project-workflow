@@ -22,7 +22,7 @@ Coverage of the v0.3.0 plugin so the v2 design rests on accurate observation, no
 - [x] **AUDIT-05**: AUDIT.md surfaces duplicated content with the canonical-source recommendation per duplicate (hard-rules across 4 files; pipeline diagram across 3 files; start-at-any-point triage block across 6 SKILL.md files; Cowork-vs-Claude-Code positioning across 3 files).
 - [ ] **AUDIT-06**: AUDIT.md inventories versioning mismatches across `plugin.json`, `marketplace.json`, root README, plugin README, and any hardcoded version strings, recommending `2.0.0` as the synced target.
 - [x] **AUDIT-07**: AUDIT.md flags every cosmetic-but-client-visible issue (README truncation, residual "test sheet" wording, missing `LICENSE`, owner-email mismatch with stated org) — fixes scheduled for the v2.1 build, NOT this design milestone.
-- [ ] **AUDIT-08**: AUDIT.md verifies connector wiring in this workspace by probing each MCP (Coda, Miro, Google Workspace, Gmail, Calendar) and recording: present-and-working / present-but-broken / missing — with version pins where present.
+- [x] **AUDIT-08**: AUDIT.md verifies connector wiring in this workspace by probing each MCP (Coda, Miro, Google Workspace, Gmail, Calendar) and recording: present-and-working / present-but-broken / missing — with version pins where present.
 
 ### Design (DESIGN.md)
 
@@ -175,7 +175,7 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | AUDIT-05 | Phase 1 | Complete (2026-05-09 — Plan 05) |
 | AUDIT-06 | Phase 1 | Pending |
 | AUDIT-07 | Phase 1 | Complete (2026-05-09 — Plan 07) |
-| AUDIT-08 | Phase 1 | Pending |
+| AUDIT-08 | Phase 1 | Complete (2026-05-09 — Plan 08) |
 | DESIGN-01 | Phase 2 | Pending |
 | DESIGN-02 | Phase 2 | Pending |
 | DESIGN-03 | Phase 2 | Pending |

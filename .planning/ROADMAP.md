@@ -53,10 +53,10 @@ Plans:
 **Wave 7** *(complete)*
 - [x] 01-07-PLAN.md — AUDIT-07: 6 cosmetic-fix subsections, each with per-bullet "scheduled for v2.1 build, NOT this milestone" (D-16) *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-07-SUMMARY.md`)*
 
-**Wave 8** *(unblocked)*
-- [ ] 01-08-PLAN.md — AUDIT-08: live MCP probe table (5 wired + Slack [NEW] + 4 deferred) with probe-time timestamp
+**Wave 8** *(complete)*
+- [x] 01-08-PLAN.md — AUDIT-08: live MCP probe table (5 wired + Slack [NEW] + 4 deferred) with probe-time timestamp *(complete 2026-05-09; SUMMARY at `.planning/phases/01-audit/01-08-SUMMARY.md`)*
 
-**Wave 9** *(blocked on Wave 8 completion)*
+**Wave 9** *(unblocked)*
 - [ ] 01-09-PLAN.md — Synthesis: AUDIT-02 absorption claim + Appendix A glossary + Appendix B trace + executive summary + preamble + reviewer coverage doc; runs structural-check (must exit 0)
 
 ### Phase 2: Design
@@ -108,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 6/9 | In progress (Waves 1-6 done; Wave 7 next) | - |
+| 1. Audit | 8/9 | In progress (Waves 1-8 done; Wave 9 next) | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
@@ -116,4 +116,4 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-09 — Phase 1 Plan 06 complete (Wave 6 — AUDIT-06 version-string mismatches: 8-row table + 2.0.0 synced-target recommendation per D-17)*
+*Last updated: 2026-05-09 — Phase 1 Plan 08 complete (Wave 8 — AUDIT-08 live MCP probe: 5-MCP table with empirically-honest "transport ✓ Connected; cheap-read not invocable from sub-agent" Result column per CRITICAL HONESTY RULE; Slack [NEW] [STRUCTURAL] row; 4 deferred connectors; CRIT-1/2/3/9 split-bullet cross-refs)*
