@@ -571,13 +571,53 @@ Records the live MCP probe state in this Claude Code workspace at probe time. Pr
 
 ## Appendix A: Glossary
 
-(populated by Wave 9)
+Quick-reference for tags, IDs, and conventions used in this audit. Reviewer can scan this if a tag or ID is unfamiliar.
+
+| Term | Meaning |
+|---|---|
+| **[BLOCKING]** | Severity tag — contract is broken; downstream skills cannot load (D-15) |
+| **[STRUCTURAL]** | Severity tag — architectural/schema/scaffold/consistency debt (D-15) |
+| **[COSMETIC]** | Severity tag — client-visible polish issue, scheduled for v2.1 build (D-15, D-16) |
+| **[NEW]** | Net-new finding beyond CONCERNS.md (D-10); precedes severity tag |
+| DESIGN-NN | Phase 2 Design requirement (`.planning/REQUIREMENTS.md` §"Design") |
+| AUDIT-NN | This audit's requirement (`.planning/REQUIREMENTS.md` §"Audit") |
+| CHANGE-NN | Phase 3 Change list requirement |
+| OPEN-NN | Phase 4 Open Questions requirement |
+| CRIT-/MOD-/MIN- | PITFALLS.md severity prefixes (`.planning/research/PITFALLS.md`) |
+| FOUND-NN | v2.1 Foundations build requirement (deferred — milestone-future) |
+| canonical | The single-source-of-truth surface for a piece of content |
+| `file:line` | Compact citation form per D-14: backtick-wrapped path + line/range with ASCII hyphen |
+| SoT | Source of truth |
+| MCP | Model Context Protocol — Claude Code's connector mechanism |
+| v0.3.0 | Current shipped plugin version (per `dydx-delivery/.claude-plugin/plugin.json:3`) |
+| v2.0 | Design-only milestone (this audit + design + change list + open questions) |
+| v2.1 | First v2 build milestone (Foundations) — deferred per `.planning/REQUIREMENTS.md` |
 
 ---
 
 ## Appendix B: CONCERNS.md → AUDIT.md trace
 
-(populated by Wave 9)
+Row-per-CONCERNS.md-section trace. Confirms every CONCERNS.md section absorbed into a primary AUDIT-* destination per D-08. Net-new findings tagged [NEW] in their respective AUDIT-* sections per D-10.
+
+| # | CONCERNS.md section | Lines | Entries | Primary AUDIT-* destination | Cross-ref | Severity |
+|---|---|---|---|---|---|---|
+| 1 | Version string mismatches across manifests and docs | `CONCERNS.md:9-24` | 5 entries | AUDIT-06 | AUDIT-07 | [STRUCTURAL] + [COSMETIC] |
+| 2 | References to skills/files that do not exist in the repo | `CONCERNS.md:28-48` | 4 categories | AUDIT-04 | AUDIT-01 | [STRUCTURAL] / [BLOCKING] |
+| 3 | Truncated / cut-off content | `CONCERNS.md:52-55` | 1 entry | AUDIT-07 §7.1 | AUDIT-06 | [COSMETIC] |
+| 4 | Pipeline stage numbering inconsistencies | `CONCERNS.md:59-76` | Two-scheme conflict | AUDIT-01 brittleness; AUDIT-05 §5.5 | DESIGN-02 | [STRUCTURAL] |
+| 5 | Naming inconsistency: "test plan" vs "test sheet" | `CONCERNS.md:80-84` | 1 entry | AUDIT-07 §7.2 | AUDIT-06 | [COSMETIC] |
+| 6 | Pipeline-step count mismatch in root README | `CONCERNS.md:88-92` | 1 entry | AUDIT-07 §7.3 | AUDIT-06 | [COSMETIC] |
+| 7 | Empty / missing scaffold directories typical of Claude Code plugins | `CONCERNS.md:96-105` | 3 missing dirs | AUDIT-04 §4.5 | AUDIT-01 | [STRUCTURAL] |
+| 8 | Cross-references between docs (negative finding) | `CONCERNS.md:109-117` | NEGATIVE — verified clean | AUDIT-04 §4.6 (verified clean) | — | (negative — clean) |
+| 9 | Duplicated content across skills | `CONCERNS.md:121-150` | 4 categories | AUDIT-05 | DESIGN-03; MOD-16 | [STRUCTURAL] |
+| 10 | TODO / FIXME / HACK / XXX markers (negative finding) | `CONCERNS.md:154-162` | NEGATIVE — clean | AUDIT-01 (template-placeholder note) / AUDIT-07 | — | (negative — clean) |
+| 11 | Frontmatter / template structural inconsistencies | `CONCERNS.md:166-187` | 3 sub-categories | AUDIT-01 brittleness per skill | DESIGN-01; CRIT-6 | [STRUCTURAL] |
+| 12 | Identifiers / contact details | `CONCERNS.md:191-199` | 2 entries | AUDIT-07 §7.5 (email); AUDIT-04 / AUDIT-07 §7.6 (homepage) | MIN-6 | [COSMETIC] / [STRUCTURAL] |
+| 13 | Build artefact path references in spec text | `CONCERNS.md:203-214` | 3 conventions | AUDIT-01 §1.6 brittleness (`generate-build-prompt`); AUDIT-04 | DESIGN-12 | [STRUCTURAL] |
+| 14 | License field | `CONCERNS.md:218-222` | 1 entry | AUDIT-07 §7.4 | — | [COSMETIC] |
+| 15 | Versioning convention vs current state | `CONCERNS.md:226-230` | 1 entry | AUDIT-06 | — | [STRUCTURAL] / [COSMETIC] |
+
+**Total CONCERNS.md sections:** 15. **All 15 sections absorbed.** Net-new findings beyond CONCERNS.md scope are tagged `[NEW]` in-line within their respective AUDIT-* sections (subsection 4.6 verified-clean cross-refs; subsection 5.5 [NEW] Stage-N label collision; subsection 7.6 [NEW] Homepage asymmetry; AUDIT-08 Slack [NEW] row).
 
 ---
 
