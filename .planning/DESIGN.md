@@ -358,8 +358,8 @@ The hand-off matrix is the single most-cited section of DESIGN.md (per CONTEXT s
 | Stage 4a | Stage 4b | `04a_fnspec-platform_v<N>.md` | `based_on_sow:` `platform:` `delivery: native-ai \| api` | `status: approved` (4a optional for integration-only) | > Awaiting `status: approved` to `04a`; cross-spec consistency check runs at start of 4b. |
 | Stage 4b | Stage 5 | `04b_fnspec-integration_v<N>.md` | `based_on_sow:` `based_on_fnspec_platform:` (if 4a exists) | `status: approved` (Stage 5 SKIPPED if no 4b) | > Awaiting `status: approved` to `04b`; Stage 5 tech spec runs (or SKIPS if no `04b`, with platform-API addendum on `04a` instead per DESIGN-21). |
 | Stage 5 | Stage 6 | `05_techspec_v<N>.md` | `based_on_fnspec_integration:` `based_on_fnspec_platform:` | `status: approved` | `> Awaiting status: approved on 05_techspec_v<N>.md AND wait-for-commercial-inputs gate before generate-cost-estimate runs (per DESIGN-22).` |
-| Stage 6 | Stage 7a | `06_cost_v<N>.md` + Coda task-table rows | `based_on_techspec:` `based_on_fnspec_*:` `risk_multiplier_version:` | `status: approved` | `> Awaiting status: approved on 06_cost_v<N>.md (locks costed scope) before build-prompt generation.` |
-| Stage 7a / 7b | Stage 8a | `07a_build-prompt_v<N>.md` AND/OR `07b_implementation-prompt_v<N>.md` | `based_on_fnspec_*:` `based_on_cost:` `delivery:` | `status: approved` (both 7a and 7b if applicable) | `> Awaiting status: approved on 07a_build-prompt_v<N>.md and/or 07b_implementation-prompt_v<N>.md; provision-test-harness reads delivery: routing.` |
+| Stage 6 | Stage 7a | `06_cost_v<N>.md` + Coda task-table rows | `based_on_techspec:` `based_on_fnspec_*:` `risk_multiplier_version:` `commercial_inputs_status:` | `status: approved` AND `commercial_inputs_status: provided` | > Awaiting `status: approved` to `06`; locks costed scope before build-prompt generation. |
+| Stage 7a / 7b | Stage 8a | `07a_build-prompt_v<N>.md` AND/OR `07b_implementation-prompt_v<N>.md` | `based_on_fnspec_*:` `based_on_cost:` `delivery_filter:` | `status: approved` on both (when both run) | > Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing. |
 | Stage 8a/b/c | Stage 8d | `08a_test-harness_v<N>.md` + `08b_test-plan_v<N>.md` + `08c_uat-plan_v<N>.md` + `client_state.yaml` | `based_on_fnspec_*:` `client_state_version:` `harness_version:` `last_known_schema_version:` | `status: approved` on 8a + 8b; 8c human-facing | `> Awaiting status: approved on 08a_test-harness_v<N>.md AND 08b_test-plan_v<N>.md; execute-tests runs against current client_state.yaml; sandbox_lock.yaml acquired before run.` |
 | Stage 8d | Stage 9 | `08d_test-results_v<N>.md` | `based_on_test_plan:` `based_on_harness:` `failure_classes:` | `status: approved` | `> Awaiting status: approved on 08d_test-results_v<N>.md; doc-diff generation requires test approval.` |
 | Stage 9 | Stage 10 | `ChangeRequests/<CR>/doc-diff.md` + Drive doc per closed `doc_type` enum | `doc_type:` `doc_version:` `doc_published_at:` `last_diff_review_at:` | `status: approved` on doc-diff | `> Awaiting status: approved on doc-diff.md AND doc_published_at set; push-native-ai-knowledge refuses ingest if doc_published_at < last_diff_review_at (CRIT-8 fix).` |
@@ -765,7 +765,75 @@ Failure of any check halts before fnspec write; emits `04b_consistency_check_v<N
 **Cross-references.** DESIGN-20 Stage 4a above (consumed for addendum routing); DESIGN-20 Stage 4b above (REQUIRED upstream for full path); DESIGN-22 (Stage 6 wait-for-commercial-inputs gate — forward reference, populated in Plan 02-07); AUDIT.md §1.4 (v0.3.0 `generate-technical-spec` brittleness — error-paths discipline rationale — backward, populated).
 
 ## Stage 6: Cost estimate
-(Populated by 02-07-PLAN.md / Wave 7. Covers DESIGN-22 — risk-multiplier taxonomy structure; numeric defaults DEFERRED per D-22.)
+
+> **DESIGN-22:** Stage 6 Cost estimate — per-assignee task breakdown (dev / non-dev / QA / lead); `estimated_hours` + `risk_adjusted_hours` columns with mandatory `rationale` field; closed risk-multiplier taxonomy (default L=<TBD-deferred> / M=<TBD-deferred> / H=<TBD-deferred> per D-22 — `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]`); schema-introspection of existing client task table cached in `00_HUB.md`; Coda writes via `table_rows_manage` with `keyColumns` for idempotency, `mutationStatus` polling, rate-limit at 4 req/10s; wait-for-commercial-inputs gate before client-facing summary.
+
+**Skill:** `generate-cost-estimate/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc cost estimation that lived implicitly in `generate-sow` commercial section per AUDIT.md §AUDIT-01.2; cost estimate is now its own stage with its own approval gate, its own carrier file, and its own Coda-mirror contract).
+**Stage:** 6 (file prefix `06_cost_*` per DESIGN-02).
+**Complexity:** **High** — heaviest single decision contract in DESIGN.md per CONTEXT specifics. Combines (a) the risk-multiplier taxonomy STRUCTURE-LOCK contract per D-22 with numerics DEFERRED, (b) the Coda integration mechanics (5 elements: schema-introspection cache, upsert with `keyColumns`, `mutationStatus` polling, rate-limit, halt-on-failure), and (c) the wait-for-commercial-inputs 2-halt-point gate. Stage 6 is also the first stage to write to a non-local mirror (Coda) per DESIGN-09 directional boundary.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` AND/OR `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (at least one MUST exist) + (optional) `based_on_techspec: 05_techspec_v<N>` (full path; absent on skip-with-addendum and skip-entirely scope-gate branches per DESIGN-21) + `client:` + `project:` + `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md` (at least one with `status: approved`); when full Stage 5 ran, `05_techspec_v<N>.md` (`status: approved`); when scope-gate took the addendum branch, `04a_fnspec-platform_v<N>.md` carries the `## Platform-API Addendum` H2 INSIDE 4a + frontmatter `has_platform_api_addendum: true` (per DESIGN-21).
+- **External inputs:** Coda MCP (per AUDIT.md §AUDIT-08 — wired and working) for schema introspection of the client's existing task table + idempotent upserts; client `<Client> Brain/00_HUB.md` for `coda_tasks_schema:` cache (re-read per Stage 6 run to detect schema drift); commercial inputs (rates, head-count availability, sandbox capacity) provided by reviewer through the wait-for-commercial-inputs gate.
+
+**Outputs.**
+- **Carrier file (local — canonical):** `06_cost_v<N>.md` in `<Client> Brain/<Project>/`. Local artefact is the canonical source of truth per DESIGN-09 directional boundary; Coda task-table rows are a one-way mirror.
+- **Intermediate carrier file:** `06_cost_inputs_v<N>.md` — the wait-for-commercial-inputs halt artefact. Lists the commercial inputs Stage 6 needs from the reviewer (rates per assignee class, head-count availability, sandbox capacity windows, any `[OPEN]`-flagged risk-multiplier numerics that need explicit reviewer override). Stage 6 halts on first run emitting this file; resumes when reviewer writes `commercial_inputs_status: provided` plus the input values into the artefact.
+- **Coda mirror (downstream — one-way):** rows in the client's existing Coda task table — one row per task on the per-assignee breakdown. Mirror direction is local → Coda only per DESIGN-09; Coda → local merge is OUT OF SCOPE.
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_fnspec_platform:` and/or `based_on_fnspec_integration:`; `based_on_techspec:` (when full path); `risk_multiplier_version:` (locks which numeric default set was used — `<TBD-deferred>` for v2 design phase; concrete values populated by Phase 4 OPEN-QUESTIONS resolution); `commercial_inputs_status: pending | provided`; `assignee_class:` (per-row on task breakdown — `dev | non-dev | QA | lead`); `status: draft → client_review → approved`.
+
+**Risk-multiplier taxonomy (THE D-22 STRUCTURE-LOCK contract — numerics DEFERRED).**
+
+Closed taxonomy: three tiers — Low (L), Medium (M), High (H). Mandatory `rationale:` field per row; reviewer cannot ship a row without naming why a specific tier was chosen. Validation owner = Stage 6 author + reviewer. Numeric defaults DEFERRED per D-22 — DESIGN.md uses placeholder syntax (`L=<TBD-deferred>`) and carries an inline `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` marker at point of use. Phase 4 OPEN-QUESTIONS owns resolution; the recommended set from research (~1.1 / ~1.3 / ~1.6) is the candidate but requires dYdX-historical validation before Stage 6 build phase locks numerics.
+
+| Tier | Multiplier | Rationale required | Validation owner | Default value |
+|------|------------|--------------------|-------------------|----------------|
+| L (Low risk) | `risk_adjusted_hours = estimated_hours × <L_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `L=<TBD-deferred>` (research-recommended ~1.1; pending dYdX-historical validation per D-22) |
+| M (Medium risk) | `risk_adjusted_hours = estimated_hours × <M_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `M=<TBD-deferred>` (research-recommended ~1.3; pending dYdX-historical validation per D-22) |
+| H (High risk) | `risk_adjusted_hours = estimated_hours × <H_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `H=<TBD-deferred>` (research-recommended ~1.6; pending dYdX-historical validation per D-22) `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` |
+
+**Per-assignee task breakdown (DESIGN-22 contract).**
+
+Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `06_cost_v<N>.md` carries an `assignee_class:` field naming exactly one of the four. The artefact opens with a per-class summary table (4 rows × 3 columns: `class | sum(estimated_hours) | sum(risk_adjusted_hours)`) for quick reviewer scan; the per-task detail table follows below. Reviewer can grep the artefact by `assignee_class:` to assemble per-class workload before commercial review.
+
+| Assignee class | Typical scope | Sum estimated_hours | Sum risk_adjusted_hours |
+|----------------|---------------|---------------------|-------------------------|
+| dev | API endpoints + integration code + automated tests | (computed) | (computed) |
+| non-dev | platform configuration (Pipefy / Wrike / Ziflow Behaviors / Copilot / ReviewAI setup), KB content authoring, native-AI ingestion runs | (computed) | (computed) |
+| QA | test-plan execution + UAT support + bug triage | (computed) | (computed) |
+| lead | discovery / SOW / fnspec authoring + reviewer + client-facing communication | (computed) | (computed) |
+
+**Coda integration mechanics (DESIGN-22 contract — exact values; never approximate).**
+
+- **Schema introspection.** First Stage 6 run per client introspects the client's existing Coda task table schema via Coda MCP `table_columns_read`. Schema cached in `<Client> Brain/00_HUB.md` `coda_tasks_schema:` block. Subsequent Stage 6 runs re-read the cache and re-introspect; on schema drift, the skill halts and emits `06_schema_drift_v<N>.md` for human triage (do NOT silently re-map columns).
+- **Upsert pattern.** Coda writes via `table_rows_manage` (Coda MCP) with `keyColumns` parameter set to the client task table's primary-key column(s). Idempotent — re-running Stage 6 against the same `06_cost_v<N>.md` produces no duplicate rows.
+- **Mutation status polling.** Each `table_rows_manage` call returns a `mutationStatus` ID. Stage 6 polls until terminal state (success or failure). Failure halts; reviewer triages from `06_cost_v<N>.md` directly (local artefact remains canonical).
+- **Rate limit.** 4 req/10 second sliding window (= 80% of Coda public ceiling 5 req/10s). Single Coda MCP client; no parallel writers from Stage 6.
+- **Wait-for-commercial-inputs gate (DESIGN-22 contract — 2 halt points).** Two distinct halt points before Stage 6 can produce its client-facing summary:
+  1. **Pre-write halt.** On first Stage 6 invocation, the skill emits `06_cost_inputs_v<N>.md` listing the commercial inputs the reviewer must provide (rates, head-count availability, sandbox capacity windows, any `[OPEN]`-flagged risk-multiplier numerics requiring reviewer override). Stage 6 halts here. Resume condition: the reviewer writes `commercial_inputs_status: provided` plus the actual input values into the artefact.
+  2. **Pre-publish halt.** After Stage 6 computes the per-task breakdown and risk-adjusted totals, the skill halts AGAIN before pushing to Coda (so the reviewer reviews the totals against the provided commercial inputs before the Coda mirror lands). Resume condition: reviewer writes `status: approved` to `06_cost_v<N>.md`. Only then does the Coda upsert + `mutationStatus` polling happen.
+
+**Downstream consumer.** generate-build-prompt (Stage 7a — same wave); generate-implementation-prompt (Stage 7b — same wave). Both read `06_cost_v<N>.md` for the costed scope before producing build / implementation prompts.
+
+**Status flag(s).** `status: approved` on `06_cost_v<N>.md` gates Stage 7a / 7b. Approval-gate hook (per DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. The pre-publish halt point is encoded as a hard gate inside the skill, not just at the approval-gate hook — Stage 6 will not run the Coda upsert until `status: approved` AND `commercial_inputs_status: provided` are both present.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 6 → Stage 7a row).**
+
+> Awaiting `status: approved` to `06`; locks costed scope before build-prompt generation.
+
+**Key v2 decisions for this stage.**
+
+1. **Closed L/M/H risk-multiplier taxonomy with mandatory `rationale:` field per row** — three tiers, no extras, rationale required for every row. Eliminates v0.3.0's implicit-cost-estimate brittleness where risk loading was author judgement without a documented multiplier.
+2. **Numeric defaults DEFERRED per D-22** — DESIGN.md uses `L=<TBD-deferred>` placeholder syntax with inline `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` marker. Phase 4 OPEN-QUESTIONS owns resolution; Stage 6 build phase cannot lock numerics without the resolution.
+3. **Per-assignee task breakdown — 4 classes locked** (`dev | non-dev | QA | lead`). Per-row `assignee_class:` field; per-class summary table at top of artefact; reviewer can grep by class for commercial review.
+4. **Schema-introspection of existing client task table cached in `00_HUB.md`** — Stage 6 reads Coda MCP `table_columns_read` once per client, caches in `coda_tasks_schema:` block; subsequent runs detect drift and halt. Eliminates "did I push to the wrong column?" silent failures.
+5. **Coda upsert via `table_rows_manage` with `keyColumns` + `mutationStatus` polling + 4 req/10s rate-limit** — exact mechanics locked. Idempotent; no duplicate rows on retry; rate-limit is 80% of public ceiling (5 req/10s) so Stage 6 stays well clear of throttling.
+6. **Wait-for-commercial-inputs 2-halt-point gate** — pre-write halt (commercial inputs required before compute) + pre-publish halt (reviewer reviews totals before Coda mirror). Two distinct halts; neither bypasses the other.
+
+**Dependencies.** DESIGN-04 (plugin surfaces — Coda MCP wired); DESIGN-09 (directional-boundary contract — local canonical, Coda one-way mirror, Coda upsert is the mirror direction); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform schema introspection — when 4a `delivery: api` rows exist, per-platform schema affects task breakdown).
+
+**Cross-references.** DESIGN-20 (`delivery: native-ai | api` routing key feeds task breakdown); DESIGN-21 (Stage 5 tech spec / `## Platform-API Addendum` informs API-portion estimates); DESIGN-23 Stage 7a (forward — same wave below); DESIGN-23 Stage 7b (forward — same wave below); AUDIT.md §AUDIT-08 (Coda MCP wiring confirmed working); Phase 4 OPEN-QUESTIONS register (risk-multiplier numeric defaults — pending dYdX-historical validation per D-22).
 
 ## Stage 7a: Build prompt — dev
 (Populated by 02-07-PLAN.md / Wave 7. Covers DESIGN-23 first half.)
