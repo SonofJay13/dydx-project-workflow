@@ -355,8 +355,8 @@ The hand-off matrix is the single most-cited section of DESIGN.md (per CONTEXT s
 | Stage 1 | Stage 2 | `01_kickoff_v<N>.md` | `client:` `project:` `frontmatter_version: 2` | `status: approved` | `> Awaiting status: approved write to 01_kickoff_v<N>.md. Branch routing on kickoff_branch: value (discovery-ready -> Stage 2; draft-sow -> SKIP Stage 2 -> Stage 3).` |
 | Stage 2 | Stage 3 | `02_discovery_v<N>.md` | `based_on_kickoff: 01_kickoff_v<N>` `client:` `project:` | `status: approved` | `> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.` |
 | Stage 3 | Stage 4a | `03_sow_v<N>.md` | `based_on_discovery:` (or `based_on_kickoff:`) `platform:` (if known) | `status: approved` AND `client_review` allowed | `> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.` |
-| Stage 4a | Stage 4b | `04a_fnspec-platform_v<N>.md` | `based_on_sow:` `platform:` `delivery: native-ai \| api` | `status: approved` (4a optional for integration-only) | `> Awaiting status: approved on 04a_fnspec-platform_v<N>.md; cross-spec consistency check runs at start of 4b.` |
-| Stage 4b | Stage 5 | `04b_fnspec-integration_v<N>.md` | `based_on_sow:` `based_on_fnspec_platform:` (if 4a exists) | `status: approved` (Stage 5 SKIPPED if no 4b) | `> Awaiting status: approved on 04b_fnspec-integration_v<N>.md before tech spec runs. Skip Stage 5 if no 4b exists.` |
+| Stage 4a | Stage 4b | `04a_fnspec-platform_v<N>.md` | `based_on_sow:` `platform:` `delivery: native-ai \| api` | `status: approved` (4a optional for integration-only) | > Awaiting `status: approved` to `04a`; cross-spec consistency check runs at start of 4b. |
+| Stage 4b | Stage 5 | `04b_fnspec-integration_v<N>.md` | `based_on_sow:` `based_on_fnspec_platform:` (if 4a exists) | `status: approved` (Stage 5 SKIPPED if no 4b) | > Awaiting `status: approved` to `04b`; Stage 5 tech spec runs (or SKIPS if no `04b`, with platform-API addendum on `04a` instead per DESIGN-21). |
 | Stage 5 | Stage 6 | `05_techspec_v<N>.md` | `based_on_fnspec_integration:` `based_on_fnspec_platform:` | `status: approved` | `> Awaiting status: approved on 05_techspec_v<N>.md AND wait-for-commercial-inputs gate before generate-cost-estimate runs (per DESIGN-22).` |
 | Stage 6 | Stage 7a | `06_cost_v<N>.md` + Coda task-table rows | `based_on_techspec:` `based_on_fnspec_*:` `risk_multiplier_version:` | `status: approved` | `> Awaiting status: approved on 06_cost_v<N>.md (locks costed scope) before build-prompt generation.` |
 | Stage 7a / 7b | Stage 8a | `07a_build-prompt_v<N>.md` AND/OR `07b_implementation-prompt_v<N>.md` | `based_on_fnspec_*:` `based_on_cost:` `delivery:` | `status: approved` (both 7a and 7b if applicable) | `> Awaiting status: approved on 07a_build-prompt_v<N>.md and/or 07b_implementation-prompt_v<N>.md; provision-test-harness reads delivery: routing.` |
@@ -628,13 +628,141 @@ dydx-delivery/skills/platform-ziflow/
 **Cross-references.** DESIGN-18 (backward — Stage 2 contract above); DESIGN-20 (forward — Stage 4 fnspec split downstream; populated in Plan 02-06 / Wave 6); AUDIT.md §AUDIT-01.2 (v0.3.0 generate-sow hand-off contract + `client_review` retention rationale grounded in survey).
 
 ## Stage 4a: Functional spec — platform
-(Populated by 02-06-PLAN.md / Wave 6. Covers DESIGN-20 first half.)
+
+> **DESIGN-20:** Stage 4a Fnspec — platform — `generate-fnspec-platform` skill; per-requirement `delivery: native-ai | api` tagging (the routing key for downstream Stages 5 / 6 / 7b / 10); per-platform capability matrix as classifier input; cross-spec consistency check against 4b; optional for integration-only projects.
+
+**Skill:** `generate-fnspec-platform/` (NEW per DESIGN-12 inventory; replaces v0.3.0 `generate-functional-spec` for platform portions per AUDIT.md §1.3 single-spec-for-everything anti-pattern).
+**Stage:** 4a (file prefix `04a_fnspec-platform_*` per DESIGN-02).
+**Complexity:** Medium-high (per CONTEXT specifics — Stage 4 fnspec split carries the most decision weight; routing-key contract drives 4 downstream stages).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_sow: 03_sow_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + `platform: pipefy | wrike | ziflow` (REQUIRED for this skill to run; activates platform-gated identifiers per DESIGN-01).
+- **Upstream artefact path:** `03_sow_v<N>.md` (Stage 3 output, must carry `status: approved`).
+- **External inputs:** per-platform capability matrix from the platform skill's `references/native-ai-inventory.md` (per DESIGN-14 / DESIGN-15 / DESIGN-16) — used as classifier input for `delivery:` tagging.
+
+**Outputs.**
+- **Carrier file:** `04a_fnspec-platform_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Per-requirement `delivery: native-ai | api` tagging (THE DESIGN-20 contract).** Each requirement row in the fnspec carries an explicit `delivery:` field. Classifier rule: when the requirement maps cleanly to a platform native-AI capability (per the platform's `native-ai-inventory.md` matrix at HIGH or MEDIUM confidence), `delivery: native-ai`; otherwise `delivery: api`. LOW-confidence native-AI capabilities default to `delivery: api` to avoid promising direct ingestion when only copy-paste works (per `## Out of Scope` discipline).
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_sow:`; `platform: <X>`; `pipe_id` / `space_id` / `project_id` (whichever matches the platform per DESIGN-01 platform-gated identifier rules); `status: draft → client_review → approved`.
+
+**Downstream consumer.**
+- `generate-fnspec-integration` (Stage 4b — for cross-spec consistency check at start of 4b).
+- `generate-technical-spec` (Stage 5 — reads `delivery: api` rows for platform-API addendum routing per DESIGN-21 — same wave).
+- `generate-cost-estimate` (Stage 6 — uses `delivery:` for cost categorisation; forward reference, populated in Plan 02-07).
+- `generate-implementation-prompt` (Stage 7b — uses `delivery:` for implementation prompt routing; forward reference, populated in Plan 02-07).
+- `push-native-ai-knowledge` (Stage 10 — reads `delivery: native-ai` rows for ingest selection; forward reference, populated in Plan 02-08).
+
+**Status flag(s).** `status: approved` on `04a_fnspec-platform_v<N>.md` gates Stage 4b consistency check + Stage 5 platform-API addendum routing. Stage 4a is OPTIONAL for integration-only projects (project skips directly to Stage 4b).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 4a → Stage 4b row).**
+
+> Awaiting `status: approved` to `04a`; cross-spec consistency check runs at start of 4b.
+
+**Key v2 decisions for this stage.**
+
+1. **Per-requirement `delivery:` tagging** — single routing key `delivery: native-ai | api` per requirement row. Drives 4 downstream stages (5 / 6 / 7b / 10) without re-classifying. Order is fixed: `native-ai | api` (NOT reversed) — locks the canonical literal.
+2. **Per-platform capability matrix as classifier input** — Stage 4a reads the platform skill's `native-ai-inventory.md` (per DESIGN-14 / DESIGN-15 / DESIGN-16) and uses HIGH / MEDIUM confidence rows to suggest `delivery: native-ai`; LOW confidence (i.e., `[OPEN]`-flagged in the platform skill) defaults to `delivery: api` to avoid optimistic claims.
+3. **Cross-spec consistency check (runs at start of 4b)** — when 4a + 4b both exist, a check at start of 4b verifies: (a) no requirement appears in both specs with conflicting `delivery:` tags; (b) integration touchpoints in 4b reference platform requirements in 4a by ID; (c) no orphan API endpoints. The check is OWNED by Stage 4b but DECLARED in both 4a and 4b for traceability (see Stage 4b key decisions).
+4. **Optional for integration-only projects** — if the project has no platform-side work, Stage 4a does not run. SOW (Stage 3) `platform:` field absence signals this; project routes directly to Stage 4b.
+5. **Legacy single fnspec retired** — `generate-functional-spec` (v0.3.0) is RETIRED per DESIGN-12 inventory + AUDIT.md §1.3 single-spec-for-everything anti-pattern (the legacy single fnspec retired in favour of the 4a + 4b split); v0.3.0 artefacts using the old skill remain readable per DESIGN-08 lenient `frontmatter_version` mode.
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform capability matrices as classifier input — same wave precedent in Plan 02-04); DESIGN-01 (platform-gated identifier rules); DESIGN-08 (lenient mode for v0.3.0 single-fnspec artefacts).
+
+**Cross-references.** DESIGN-19 (backward — Stage 3 SOW upstream); DESIGN-20 Stage 4b below (cross-spec consistency check ownership); DESIGN-21 (Stage 5 platform-API addendum — same wave); DESIGN-22 (Stage 6 reads `delivery:` for cost categorisation — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b reads `delivery:` for implementation prompt routing — forward reference, populated in Plan 02-07); DESIGN-26 (Stage 10 reads `delivery: native-ai` rows for ingest — forward reference, populated in Plan 02-08); AUDIT.md §1.3 (v0.3.0 `generate-functional-spec` brittleness — single-spec-for-everything anti-pattern + status-lifecycle skip — backward, populated).
 
 ## Stage 4b: Functional spec — integration
-(Populated by 02-06-PLAN.md / Wave 6. Covers DESIGN-20 second half.)
+
+> **DESIGN-20:** Stage 4b Fnspec — integration — `generate-fnspec-integration` skill; per-requirement `delivery: native-ai | api` tagging continues (per DESIGN-20 same routing key); cross-spec consistency check against 4a runs at start; optional for platform-only projects (Stage 5 SKIPPED with platform-API addendum on 4a instead).
+
+**Skill:** `generate-fnspec-integration/` (NEW per DESIGN-12 inventory; the integration-side replacement for v0.3.0 `generate-functional-spec` per AUDIT.md §1.3).
+**Stage:** 4b (file prefix `04b_fnspec-integration_*` per DESIGN-02).
+**Complexity:** Medium-high (owns the cross-spec consistency check; same routing-key contract as 4a).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_sow: 03_sow_v<N>` + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` if Stage 4a exists + `client:` + `project:` + `frontmatter_version: 2`.
+- **Upstream artefact paths:** `03_sow_v<N>.md` (REQUIRED, must carry `status: approved`) + (optional) `04a_fnspec-platform_v<N>.md` (must carry `status: approved` if present).
+- **External inputs:** none — integration-side requirements derive from the SOW (and optionally from cross-referenced platform fnspec).
+
+**Outputs.**
+- **Carrier file:** `04b_fnspec-integration_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Per-requirement `delivery: native-ai | api` tagging continues** — same routing-key contract as Stage 4a per DESIGN-20.
+- **Cross-spec consistency report (when 4a exists):** `04b_consistency_check_v<N>.md` emitted FIRST, before fnspec write. Report shape: per-check pass/fail rows (ID-conflict / orphan-touchpoint / orphan-endpoint).
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_sow:`; `based_on_fnspec_platform:` (if present); `status: draft → client_review → approved`.
+
+**Cross-spec consistency check (THE Stage 4b key responsibility).** Runs FIRST, before any fnspec write. Three specific checks:
+1. **No conflicting `delivery:` tags** — no requirement ID appears in both 4a and 4b with conflicting `delivery:` values (one says `native-ai`, the other says `api`).
+2. **Integration touchpoint cross-references** — every integration touchpoint in 4b that references a platform requirement cites that requirement's ID from 4a (no dangling references).
+3. **No orphan API endpoints** — every API endpoint declared in 4b traces back to a `delivery: api` requirement (no endpoints without backing requirements).
+
+Failure of any check halts before fnspec write; emits `04b_consistency_check_v<N>.md` documenting the failure for human triage.
+
+**Downstream consumer.** `generate-technical-spec` (Stage 5 — same wave; consumes `04b` REQUIRED); `generate-cost-estimate` (Stage 6 — forward reference, populated in Plan 02-07); `generate-build-prompt` (Stage 7a — forward reference, populated in Plan 02-07).
+
+**Status flag(s).** `status: approved` on `04b_fnspec-integration_v<N>.md` gates Stage 5. Stage 4b is OPTIONAL for platform-only projects — when absent, Stage 5 SKIPS with platform-API addendum on 4a instead (per DESIGN-21 scope gate, same wave).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 4b → Stage 5 row).**
+
+> Awaiting `status: approved` to `04b`; Stage 5 tech spec runs (or SKIPS if no `04b`, with platform-API addendum on `04a` instead per DESIGN-21).
+
+**Key v2 decisions for this stage.**
+
+1. **Cross-spec consistency check OWNED here** — Stage 4b runs the check at start when both 4a and 4b exist. Three checks (ID-conflict / orphan-touchpoint / orphan-endpoint); failure halts before fnspec write. Declared in both 4a and 4b key-decisions for two-place traceability.
+2. **Same `delivery: native-ai | api` tagging contract** — routing-key carries forward from 4a per DESIGN-20; downstream stages consume the same field whether it originates in 4a or 4b.
+3. **Optional for platform-only projects** — when Stage 4b does not run, Stage 5 SKIPS and DESIGN-21's platform-API addendum routes on 4a instead (covers API-required portions of an otherwise platform-only build).
+4. **Legacy single fnspec retired** — same as Stage 4a per DESIGN-12 inventory + AUDIT.md §1.3; v0.3.0 single-spec artefacts read clean against v2 readers via DESIGN-08 lenient `frontmatter_version` mode.
+
+**Dependencies.** DESIGN-20 Stage 4a above (cross-spec consistency check input); DESIGN-01 (frontmatter scheme + status-lifecycle).
+
+**Cross-references.** DESIGN-20 Stage 4a above (backward); DESIGN-21 (Stage 5 scope gate consumes 4b existence — same wave); DESIGN-22 (Stage 6 reads `delivery:` — forward reference, populated in Plan 02-07); DESIGN-23 Stage 7a (reads 4b for build prompt — forward reference, populated in Plan 02-07); AUDIT.md §1.3 (v0.3.0 single-spec anti-pattern — backward, populated).
 
 ## Stage 5: Tech spec
-(Populated by 02-06-PLAN.md / Wave 6. Covers DESIGN-21.)
+
+> **DESIGN-21:** Stage 5 Tech spec scope gate — REQUIRED only when Stage 4b exists; lightweight platform-API addendum on Stage 4a when API-required portions exist on platform-only build; covers error handling + observability + retries + idempotency for API portions; never hand-waves error paths.
+
+**Skill:** `generate-technical-spec/` (MODIFIED per DESIGN-12 inventory — scope gate logic added against Stage 4b existence; error-paths discipline tightened from v0.3.0 baseline per AUDIT.md §1.4).
+**Stage:** 5 (file prefix `05_techspec_*` per DESIGN-02).
+**Complexity:** Medium (scope-gate decision tree adds branching; error-paths discipline adds per-endpoint structure).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (REQUIRED for full path) + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + `platform:` (if known).
+- **Upstream artefact paths:** `04b_fnspec-integration_v<N>.md` (REQUIRED for full path, must carry `status: approved`) + (optional) `04a_fnspec-platform_v<N>.md` (must carry `status: approved` if present and consumed).
+- **External inputs:** none — tech spec is a pure transform of approved upstream fnspec(s).
+
+**Outputs.**
+- **Carrier file (full path):** `05_techspec_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Carrier file (skip path with addendum):** no `05_techspec_v<N>.md` written; `## Platform-API Addendum` H2 section appended INSIDE `04a_fnspec-platform_v<N>.md`; 4a frontmatter gains `has_platform_api_addendum: true`.
+- **Frontmatter set (full path):** `frontmatter_version: 2`; `based_on_fnspec_integration:`; `based_on_fnspec_platform:` (if 4a consumed); `tech_spec_scope: full | platform-api-addendum-only`; `status: draft → approved`.
+
+**Scope gate (THE DESIGN-21 contract — three branches).**
+
+1. **Default path — full tech spec runs.** Stage 4b exists with `status: approved` → full `05_techspec_v<N>.md` written; `tech_spec_scope: full`.
+2. **Skip path with platform-API addendum.** Stage 4b does NOT exist → tech spec SKIPS the standalone artefact. BUT if 4a has any requirement with `delivery: api`, a **platform-API addendum** runs INSIDE the 4a artefact as a `## Platform-API Addendum` H2 section appended to `04a_fnspec-platform_v<N>.md`; 4a frontmatter gains `has_platform_api_addendum: true`. `tech_spec_scope: platform-api-addendum-only` recorded for the addendum block. The addendum carries the same error-paths discipline as a full tech spec for the API portions only.
+3. **Skip path with no addendum.** Stage 4b does NOT exist AND 4a has no `delivery: api` requirements → tech spec SKIPS entirely; no addendum required; no `05_techspec_v<N>.md` written; no 4a frontmatter change.
+
+**Error-paths discipline (THE Stage 5 quality gate — per DESIGN-21 "never hand-waves error paths").** Every API endpoint enumerated by Stage 5 (full path or addendum) MUST carry the following four elements per endpoint — hand-waving is forbidden:
+
+1. **Failure modes** — explicit list of failure conditions (timeouts, 4xx classes, 5xx classes, schema mismatches, rate-limit responses).
+2. **Retry policy** — per-failure-mode retry decision (retry / don't retry / retry with backoff); backoff curve specified (constant / exponential / decorrelated jitter); max-retries bound.
+3. **Idempotency** — per-endpoint idempotency key strategy (where the key comes from; whether the endpoint is naturally idempotent; what guarantees the upstream API provides).
+4. **Observability** — per-endpoint logging contract (request ID propagation; error class tagging; success/failure metric emission).
+
+**Downstream consumer.** `generate-cost-estimate` (Stage 6 — forward reference, populated in Plan 02-07); `generate-build-prompt` (Stage 7a — forward reference, populated in Plan 02-07).
+
+**Status flag(s).** `status: approved` on `05_techspec_v<N>.md` (full path) gates Stage 6 — note Stage 6 ALSO requires the wait-for-commercial-inputs gate per DESIGN-22 (forward reference). For the addendum path, the parent 4a artefact's `status: approved` continues to gate downstream — addendum lives inside 4a so 4a's gate covers both.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 5 → Stage 6 row).**
+
+> Awaiting status: approved on 05_techspec_v<N>.md AND wait-for-commercial-inputs gate before generate-cost-estimate runs (per DESIGN-22).
+
+**Key v2 decisions for this stage.**
+
+1. **Scope-gate against Stage 4b existence** — full tech spec runs only when 4b exists; otherwise SKIP with addendum (when API portions exist) or SKIP entirely (when no API portions anywhere). Three explicit branches; no silent default.
+2. **Lightweight platform-API addendum on Stage 4a** — covers the platform-only-build edge case where API-required portions still need error-paths discipline; addendum lives INSIDE 4a artefact (not a separate file) to keep the artefact count clean for platform-only projects. Frontmatter `has_platform_api_addendum: true` flags 4a artefacts carrying the addendum.
+3. **Error-paths discipline — never hand-waves** — every API endpoint enumerates failure modes + retry policy + idempotency + observability. Per AUDIT.md §1.4 (v0.3.0 `generate-technical-spec` brittleness — error paths underspecified). Reviewer can grep per-endpoint for all four elements.
+
+**Dependencies.** DESIGN-20 (Stage 4a / Stage 4b existence drives the scope gate; `delivery: api` rows drive the addendum decision); DESIGN-22 (forward reference — Stage 5 hand-off cites the wait-for-commercial-inputs gate downstream, populated in Plan 02-07).
+
+**Cross-references.** DESIGN-20 Stage 4a above (consumed for addendum routing); DESIGN-20 Stage 4b above (REQUIRED upstream for full path); DESIGN-22 (Stage 6 wait-for-commercial-inputs gate — forward reference, populated in Plan 02-07); AUDIT.md §1.4 (v0.3.0 `generate-technical-spec` brittleness — error-paths discipline rationale — backward, populated).
 
 ## Stage 6: Cost estimate
 (Populated by 02-07-PLAN.md / Wave 7. Covers DESIGN-22 — risk-multiplier taxonomy structure; numeric defaults DEFERRED per D-22.)
