@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: milestone
-status: phase-complete
-stopped_at: Phase 1 APPROVED by user 2026-05-09 — `.planning/AUDIT.md` accepted as the v0.3.0 audit deliverable; ready to begin Phase 2 (Design)
-last_updated: "2026-05-09T22:30:00.000Z"
-last_activity: 2026-05-09 -- Phase 1 approved by user — verification PASS WITH CONDITIONS resolved; approval gate cleared
+status: context-gathered
+stopped_at: Phase 2 context gathered — `.planning/phases/02-design/02-CONTEXT.md` written with D-18..D-35 decisions; ready for `/gsd-plan-phase 2`
+last_updated: "2026-05-09T23:30:00.000Z"
+last_activity: 2026-05-09 -- Phase 2 discuss complete — 12 gray areas surfaced, all 12 selected by user, all locked in recommended direction; CONTEXT.md + DISCUSSION-LOG.md written
 progress:
   total_phases: 4
   completed_phases: 1
@@ -26,12 +26,12 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 1 (Audit) — APPROVED ✓
-Plan: 9 of 9 (all plans complete; AUDIT.md accepted as deliverable)
-Status: Phase 1 approval gate cleared 2026-05-09 by user. Phase 2 (Design) is now unblocked. Next: `/gsd-discuss-phase 2` or `/gsd-plan-phase 2`.
-Last activity: 2026-05-09 -- Phase 1 APPROVED. VERIFICATION.md verdict PASS WITH CONDITIONS resolved by explicit user go-ahead. AUDIT.md (`.planning/AUDIT.md`) is the canonical v0.3.0 audit; downstream phases reference it without re-deriving observations.
+Phase: 2 (Design) — CONTEXT GATHERED ✓
+Plan: 0 of N (planning not yet started; planner sets N — D-31 indicates ~8 plans 02-01 through 02-08)
+Status: Phase 2 context locked 2026-05-09. CONTEXT.md captures 18 decisions (D-18..D-35) covering doc structure, per-stage skill depth, risk-multiplier deferral, /refine resolution, plugin self-tests, migration cutover policy + survey, hand-off matrix shape, [OPEN] marker discipline, decision-ID convention, persona contract, test-bot detail, author flow. Next: `/gsd-plan-phase 2`.
+Last activity: 2026-05-09 -- Phase 2 discuss complete. All 12 gray areas locked in recommended direction. `.planning/phases/02-design/02-CONTEXT.md` and `02-DISCUSSION-LOG.md` written.
 
-Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 1 approved; Phase 2 ready)
+Progress: [██▌░░░░░░░] 25% (1/4 phases complete — Phase 2 ready to plan)
 
 ## Performance Metrics
 
@@ -122,5 +122,5 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 ## Session Continuity
 
 Last session: 2026-05-09
-Stopped at: Phase 1 Plan 09 complete — synthesis wave landed (AUDIT-02 absorption claim + Appendix A glossary + Appendix B 15-row trace + Executive Summary + How-to-read preamble); reviewer coverage doc created at `.planning/phases/01-audit/01-AUDIT-COVERAGE.md`; structural-check exits 0 (8/8 assertions pass); Phase 1 deliverable `.planning/AUDIT.md` is structurally complete and AWAITING HUMAN APPROVAL GATE before Phase 2 (Design) may begin
-Resume file: (Phase 1 awaiting approval — next plan is Phase 2's first plan after approval)
+Stopped at: Phase 2 discuss complete — 12 gray areas locked in CONTEXT.md (D-18..D-35); user took recommended option on all 12. Indicative plan groupings per D-31: 02-01 Cross-cutting (DESIGN-01..10 + status-lifecycle survey appendix) → 02-02 Skill inventory + hand-offs (DESIGN-11..13) → 02-03 Platform skills (DESIGN-14..16) → 02-04 Stage skills 1–4 (DESIGN-17..20) → 02-05 Stage skills 5–8 (DESIGN-21..24) → 02-06 Stage skills 9–11 (DESIGN-25..27) → 02-07 Test bot (DESIGN-28..30) → 02-08 Synthesis. Single approval gate on assembled DESIGN.md.
+Resume file: `.planning/phases/02-design/02-CONTEXT.md`
