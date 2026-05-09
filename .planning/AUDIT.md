@@ -420,7 +420,26 @@ Citations:
 
 ## AUDIT-06: Version-String Mismatches
 
-(populated by 01-06-PLAN.md / Wave 6)
+Inventories every version-bearing location in v0.3.0 — manifests, READMEs, hardcoded runner strings, and an unscoped `v1` reference — and recommends `2.0.0` as the synced target version per D-17. This audit catalogues the gap; the actual version bump is scheduled for v2.1 Foundations build (FOUND-04), not this design milestone.
+
+| # | Location | Citation | Current value | What it represents | Drifts from 0.3.0? |
+|---|---|---|---|---|---|
+| 1 | Plugin manifest | `` `dydx-delivery/.claude-plugin/plugin.json:3` `` | `"version": "0.3.0"` | Plugin semver | Source of truth |
+| 2 | Marketplace plugin entry | `` `.claude-plugin/marketplace.json:16` `` | `"version": "0.3.0"` | Plugin entry version (must match #1) | No |
+| 3 | Marketplace metadata version | `` `.claude-plugin/marketplace.json:9` `` | `"version": "1.2.0"` | Marketplace metadata version — scope unclear | YES (different scheme/scope) |
+| 4 | Root README plugin table | `` `README.md:9` `` | `0.1.0` | Documented plugin version | YES (drifted by 0.2.0) |
+| 5 | Plugin README changelog | `` `dydx-delivery/README.md:126` `` | `**0.3.0** —` (truncated) | Plugin changelog | No (matches but content truncated → AUDIT-07) |
+| 6 | Results-template runner | `` `dydx-delivery/skills/execute-tests/references/results-template.md:9` `` | `runner: dydx-delivery/execute-tests v0.1.0` | Hardcoded runner version | YES (drifted by 0.2.0) |
+| 7 | Safety-rules `v1` reference | `` `dydx-delivery/skills/execute-tests/references/safety-rules.md:93` `` | "Parallel execution is not supported in v1" | Unclear-scope `v1` reference (no anchor) | Unclear (no companion anchor) |
+| 8 | Root README versioning convention | `` `README.md:81-83` `` | (semver convention statement, no version) | Documents the semver convention | N/A (convention doc) |
+
+Summary observations (locations #1, #2, #5 align at `0.3.0`; the rest drift):
+
+- Locations #4 (root README at `0.1.0`) and #6 (results-template hardcoded `v0.1.0`) are the most egregious — both drift the plugin's declared version backwards by `0.2.0`. **[STRUCTURAL]**
+- Location #3 (marketplace metadata at `1.2.0`) uses a different scheme and its scope is undocumented (`README.md:81-83` versioning convention does not address marketplace-vs-plugin version split). **[STRUCTURAL]**
+- Location #7 references `v1` without a companion anchor (`safety-rules.md:93`: "Parallel execution is not supported in v1"). **[STRUCTURAL]**
+
+**Recommended sync target: `2.0.0`** per AUDIT-06 requirement and D-17. All 6 version-bearing locations (#1, #2, #3, #4, #5, #6) move to `2.0.0` in v2.1 Foundations build (FOUND-04); location #7 needs an anchor decision (delete the `v1` phrase or replace with v2 anchor); location #8 is the convention statement (no value change required). **Cross-ref:** AUDIT-07 (cosmetic-but-client-visible aspect of locations #4 and #5).
 
 ---
 
