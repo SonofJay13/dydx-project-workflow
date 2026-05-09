@@ -80,8 +80,8 @@ Plans:
 **Wave 2** *(complete)*
 - [x] 02-02-PLAN.md — Cross-cutting decisions (DESIGN-01..10) + status-lifecycle survey (D-25) + Appendix C persona examples *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-02-SUMMARY.md`)*
 
-**Wave 3**
-- [ ] 02-03-PLAN.md — Skill layout (DESIGN-11) + 13-skill inventory (DESIGN-12) + Stage-by-stage hand-off matrix (DESIGN-13 / D-26)
+**Wave 3** *(complete)*
+- [x] 02-03-PLAN.md — Skill layout (DESIGN-11) + v2 skill inventory (DESIGN-12; H2 anchor renamed from `13-skill inventory` per cross-AI MEDIUM #4) + Stage-by-stage hand-off matrix (DESIGN-13 / D-26; 12 transition rows) *(complete 2026-05-09; SUMMARY at `.planning/phases/02-design/02-03-SUMMARY.md`)*
 
 **Wave 4**
 - [ ] 02-04-PLAN.md — Platform skills: platform-pipefy / -wrike / -ziflow (DESIGN-14, 15, 16) + per-platform [OPEN] markers
