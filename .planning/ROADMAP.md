@@ -30,7 +30,34 @@ This is a **design-only** milestone. The deliverables are four markdown document
   4. `AUDIT.md` catalogues every referenced-but-missing artefact (`platform-pipefy`/`platform-wrike` skills, `/refine-<skill>` slash commands, workspace `hub.md`, client-folder `.env.example`) with exact citations from v0.3.0 docs, AND every duplicated content block (hard-rules across 4 files; pipeline diagram across 3 files; start-at-any-point block across 6 SKILL.md files; Cowork-vs-Claude-Code positioning across 3 files) with a canonical-source recommendation per duplicate.
   5. `AUDIT.md` lists every version-string mismatch across `plugin.json`, `marketplace.json`, root README, plugin README and hardcoded version strings (recommending `2.0.0` as the synced target) AND flags every cosmetic-but-client-visible issue (README truncation, residual "test sheet" wording, missing `LICENSE`, owner-email mismatch) with each cosmetic fix scheduled for v2.1 build, NOT this design milestone.
 **Approval gate**: Human reviews `.planning/AUDIT.md` and approves before Phase 2 begins. Approval signal = explicit go-ahead from the user. Rationale: design rests on accurate audit (CRIT-6 frontmatter migration risk requires surveying live `status:` values before locking canonical lifecycle).
-**Plans**: TBD
+**Plans:** 9 plans
+Plans:
+**Wave 1**
+- [ ] 01-01-PLAN.md — Wave 1 scaffold: structural-check script + AUDIT.md skeleton with all 8 H2 anchors
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 01-02-PLAN.md — AUDIT-01: 7-row skill matrix + 7 prose subsections (per-skill brittleness + DESIGN-* closures)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+- [ ] 01-03-PLAN.md — AUDIT-03: per-stage × per-connector dependency table + PITFALLS-cited fallback hint with DESIGN-07 pointer
+
+**Wave 4** *(blocked on Wave 3 completion)*
+- [ ] 01-04-PLAN.md — AUDIT-04: 5 missing-artefact subsections + 1 verified-clean negative-finding subsection
+
+**Wave 5** *(blocked on Wave 4 completion)*
+- [ ] 01-05-PLAN.md — AUDIT-05: 4 confirmed duplicate-content subsections + 1 [NEW] Stage-N label collision
+
+**Wave 6** *(blocked on Wave 5 completion)*
+- [ ] 01-06-PLAN.md — AUDIT-06: 8-row version-mismatch table + 2.0.0 synced-target recommendation (D-17)
+
+**Wave 7** *(blocked on Wave 6 completion)*
+- [ ] 01-07-PLAN.md — AUDIT-07: 6 cosmetic-fix subsections, each with per-bullet "scheduled for v2.1 build, NOT this milestone" (D-16)
+
+**Wave 8** *(blocked on Wave 7 completion)*
+- [ ] 01-08-PLAN.md — AUDIT-08: live MCP probe table (5 wired + Slack [NEW] + 4 deferred) with probe-time timestamp
+
+**Wave 9** *(blocked on Wave 8 completion)*
+- [ ] 01-09-PLAN.md — Synthesis: AUDIT-02 absorption claim + Appendix A glossary + Appendix B trace + executive summary + preamble + reviewer coverage doc; runs structural-check (must exit 0)
 
 ### Phase 2: Design
 **Goal**: Produce `.planning/DESIGN.md` — the locked v2 architecture covering cross-cutting structural decisions (frontmatter, stage numbering, hard-rules SoT, plugin surfaces, refine pattern, approval gates, connector probe, migration co-existence, directional boundary, persona); the v2 folder layout + 13-skill inventory + per-stage hand-off contracts; the three internalised platform skills (`platform-pipefy`/`-wrike`/`-ziflow`); every stage skill design (Stage 1 Kickoff, Stage 2 Discovery, Stage 3 SOW, Stage 4a/4b Fnspec split, Stage 5 Tech spec, Stage 6 Cost estimate, Stage 7a/7b Build prompts, Stage 8a-8d Test bot, Stage 9 Documentation, Stage 10 Native-AI, Stage 11 Sign-off); and the test bot architecture (Python↔AI orchestrator boundary, `client_state.yaml` schema, drift-detection algorithm).
@@ -81,7 +108,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Audit | 0/TBD | Not started | - |
+| 1. Audit | 0/9 | Not started | - |
 | 2. Design | 0/TBD | Not started | - |
 | 3. Change list | 0/TBD | Not started | - |
 | 4. Open questions register | 0/TBD | Not started | - |
@@ -89,3 +116,4 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
+*Last updated: 2026-05-09 — Phase 1 plans created (9 plans across 9 waves)*
