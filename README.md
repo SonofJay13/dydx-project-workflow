@@ -6,7 +6,7 @@ Internal plugin marketplace for the dYdX Digital team. Subscribe once, get every
 
 | Plugin | Purpose | Version |
 |---|---|---|
-| [`dydx-delivery`](./dydx-delivery/) | Stage-gated client delivery pipeline (discovery → SOW → functional spec → technical spec → test sheet → execution) | 0.1.0 |
+| [`dydx-delivery`](./dydx-delivery/) | Stage-gated client delivery pipeline (discovery → SOW → functional spec → technical spec → **test plan** → execution); targets a 13-stage delivery pipeline (v2.1 ships 6 working stages today; remainder land via v2.x roadmap) | 2.0.0 |
 
 More plugins will be added over time (monitoring, drift detection, handover packs, etc.). Updates land here.
 
