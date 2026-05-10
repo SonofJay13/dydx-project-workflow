@@ -115,4 +115,4 @@ Jason Blignaut — Solutions Architect, dYdX Digital
 
 ## Changelog
 
-- **0.3.0** — Renamed `generate-test-sheet` → `generate-test-plan` (and `test-sheet_v*.md` → `test-plan_v*.md`) for clearer team-facing language. The bot-run terminal stage (`execute-tests`) now c
+- **0.3.0** — Renamed `generate-test-sheet` → `generate-test-plan` (and `test-sheet_v*.md` → `test-plan_v*.md`) for clearer team-facing language. The bot-run terminal stage (`execute-tests`) now carries explicit sandbox-enforcement rules in `references/safety-rules.md`; results are written to versioned `results-YYYY-MM-DD_vN.md` files.
