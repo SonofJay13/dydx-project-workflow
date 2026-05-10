@@ -18,9 +18,9 @@ Coverage of the v0.3.0 plugin so the v2 design rests on accurate observation, no
 - [x] **AUDIT-01**: AUDIT.md catalogues every v0.3.0 skill (`discovery-intake`, `generate-sow`, `generate-functional-spec`, `generate-technical-spec`, `generate-test-plan`, `generate-build-prompt`, `execute-tests`) with purpose, inputs, outputs, hand-off contract, dependencies, observed brittleness, and what's missing for v2. *(complete 2026-05-09 in Phase 1 Plan 02)*
 - [x] **AUDIT-02**: AUDIT.md absorbs every entry in `.planning/codebase/CONCERNS.md` and adds any new structural issues found during the audit pass — the audit is a superset of CONCERNS.md, never less. *(complete 2026-05-09 in Phase 1 Plan 09 — verified-superset claim in §AUDIT-02 + 15-row Appendix B trace + canonical sentinel "All CONCERNS.md sections absorbed; zero entries dropped silently")*
 - [x] **AUDIT-03**: AUDIT.md inventories per-stage connector dependencies (Miro, Coda, Drive, Gmail, Calendar, Claude in Chrome, Pipefy/Wrike/Ziflow APIs) and identifies which connectors are *required* vs *graceful-degradation* per stage.
-- [ ] **AUDIT-04**: AUDIT.md catalogues referenced-but-missing artefacts (`platform-pipefy`/`platform-wrike` skills, `/refine-<skill>` slash commands, workspace `hub.md`, client-folder `.env.example`) with exact citations from the v0.3.0 docs.
+- [x] **AUDIT-04**: AUDIT.md catalogues referenced-but-missing artefacts (`platform-pipefy`/`platform-wrike` skills, `/refine-<skill>` slash commands, workspace `hub.md`, client-folder `.env.example`) with exact citations from the v0.3.0 docs. *(complete 2026-05-09 — AUDIT.md §AUDIT-04: 5 missing categories + 1 verified-clean; UAT-confirmed 2026-05-10)*
 - [x] **AUDIT-05**: AUDIT.md surfaces duplicated content with the canonical-source recommendation per duplicate (hard-rules across 4 files; pipeline diagram across 3 files; start-at-any-point triage block across 6 SKILL.md files; Cowork-vs-Claude-Code positioning across 3 files).
-- [ ] **AUDIT-06**: AUDIT.md inventories versioning mismatches across `plugin.json`, `marketplace.json`, root README, plugin README, and any hardcoded version strings, recommending `2.0.0` as the synced target.
+- [x] **AUDIT-06**: AUDIT.md inventories versioning mismatches across `plugin.json`, `marketplace.json`, root README, plugin README, and any hardcoded version strings, recommending `2.0.0` as the synced target. *(complete 2026-05-09 — AUDIT.md §AUDIT-06: 8 version-bearing locations; UAT-confirmed 2026-05-10)*
 - [x] **AUDIT-07**: AUDIT.md flags every cosmetic-but-client-visible issue (README truncation, residual "test sheet" wording, missing `LICENSE`, owner-email mismatch with stated org) — fixes scheduled for the v2.1 build, NOT this design milestone.
 - [x] **AUDIT-08**: AUDIT.md verifies connector wiring in this workspace by probing each MCP (Coda, Miro, Google Workspace, Gmail, Calendar) and recording: present-and-working / present-but-broken / missing — with version pins where present.
 
@@ -171,9 +171,9 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | AUDIT-01 | Phase 1 | Complete (2026-05-09 — Plan 02) |
 | AUDIT-02 | Phase 1 | Complete (2026-05-09 — Plan 09) |
 | AUDIT-03 | Phase 1 | Complete (2026-05-09 — Plan 03) |
-| AUDIT-04 | Phase 1 | Pending |
+| AUDIT-04 | Phase 1 | Complete (2026-05-09 — AUDIT.md §AUDIT-04; UAT-confirmed 2026-05-10) |
 | AUDIT-05 | Phase 1 | Complete (2026-05-09 — Plan 05) |
-| AUDIT-06 | Phase 1 | Pending |
+| AUDIT-06 | Phase 1 | Complete (2026-05-09 — AUDIT.md §AUDIT-06; UAT-confirmed 2026-05-10) |
 | AUDIT-07 | Phase 1 | Complete (2026-05-09 — Plan 07) |
 | AUDIT-08 | Phase 1 | Complete (2026-05-09 — Plan 08) |
 | DESIGN-01 | Phase 2 | Complete (2026-05-09 — Plan 02-02) |
@@ -211,13 +211,13 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | CHANGE-03 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
 | CHANGE-04 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
 | CHANGE-05 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
-| OPEN-01 | Phase 4 | Pending |
-| OPEN-02 | Phase 4 | Pending |
-| OPEN-03 | Phase 4 | Pending |
-| OPEN-04 | Phase 4 | Pending |
-| OPEN-05 | Phase 4 | Pending |
-| OPEN-06 | Phase 4 | Pending |
-| OPEN-07 | Phase 4 | Pending |
+| OPEN-01 | Phase 4 | Complete-as-catalogued (2026-05-10 — Phase 4 register approved; resolution downstream per UAT-6.1 — Q01/Q02/Q03 withdrawn, no longer BLOCKER) |
+| OPEN-02 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; resolution downstream by Phase 1 connector probe) |
+| OPEN-03 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; resolution downstream by Phase 1/Phase 4 owners) |
+| OPEN-04 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; live-workstream-pointer per Phase 1 owner) |
+| OPEN-05 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; Coda-template-authoring at Phase 8) |
+| OPEN-06 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; policy-pending-sign-off by Phase 1) |
+| OPEN-07 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; policy-pending-sign-off by Phase 9) |
 
 **Coverage:**
 - v2.0 requirements: 50 total (8 AUDIT + 30 DESIGN + 5 CHANGE + 7 OPEN)

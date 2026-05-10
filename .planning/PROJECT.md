@@ -140,5 +140,9 @@ This document evolves at phase transitions and milestone boundaries.
 
 **Key context:** Session is design-only. No skill edits during this milestone. Audit and design must be locked before any v2 build phase begins. Connector availability (Miro, Coda, Drive, Gmail, Calendar, Claude in Chrome) must be verified — design fails gracefully if connectors are missing.
 
+**Scope locks set during UAT (2026-05-10):**
+- **MCPs for Pipefy/Wrike out-of-scope through v2.6** (UAT-3.5). API-first across all platform skills; MCPs (Pipedream Pipefy MCP at `mcp.pipedream.net/v2`; Wrike MCP at `https://developers.wrike.com/docs/setup-claude-with-wrike-mcp`) are parked references — adoption evaluated as a separate milestone post-first-real-client-engagement-practice-run. Ziflow has no MCP (locked direct-API).
+- **Native-AI ingestion APIs out-of-scope entirely** (UAT-6.1). Stage 10 simplified to "paste bundle + upload audit log" producing structured upload instructions for humans to execute manually via each platform's UI. NO API ingestion attempts. Q01/Q02/Q03 (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI knowledge-ingestion APIs) → withdrawn under UAT-6.1.
+
 ---
 *Last updated: 2026-05-09 after milestone v2.0 kickoff*

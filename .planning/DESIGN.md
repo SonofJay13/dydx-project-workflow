@@ -442,11 +442,15 @@ dydx-delivery/skills/platform-pipefy/
 - Rate limit: `[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`
 - Auth: Bearer token from Pipefy app installation; sandbox token distinct from production token.
 
-**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` per client.
+**Per-tenant host persistence (UAT-4.1, 2026-05-10).** **CRITICAL** — Pipefy hosts vary per tenant. Default web URL: `https://app.pipefy.com/{org_id}`. Custom-subdomain web URL: `https://{subdomain}.pipefy.com/{org_id}` (e.g. `vodacom.pipefy.com/{org_id}` for Vodacom). The GraphQL API endpoint ALSO varies per tenant for organisations on custom subdomains — `[OPEN: Phase 4 — Pipefy custom-subdomain GraphQL endpoint pattern needs verification per OPEN-Q24; Phase 1 connector probe owner]`. The `pipefy_api_host` + `pipefy_web_host` + `pipefy_org_id` fields in `client_state.yaml` (DESIGN-29 — forward reference) carry the per-client persistence values. Hardcoding `api.pipefy.com` is the v0.3.0 bug (parallel to the Wrike `host` issue per DESIGN-15). Same persistence rule applies — read from auth response or per-client config; never default to a global host string.
 
-**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `api` for Behaviors instructions + Skills config (HIGH-confidence). `paste` fallback for KB content-upload UNTIL the `[OPEN]` resolves; downgrade to `paste` keeps Stage 10 functional even with the LOW-confidence row unsettled.
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** **CRITICAL** — Pipefy auth sessions are MUTUALLY EXCLUSIVE across tenants. Cannot be authenticated to two Pipefy tenants simultaneously. Switching from `vodacom.pipefy.com` to `app.pipefy.com` (or any tenant pair) requires re-auth; concurrent operations against two tenants will fail. Operational consequence: any skill that touches multiple Pipefy tenants in one session must serialize per-tenant operations + emit `auth_switch_required` retry signal at tenant-boundary crossings. `client_state.yaml` carries `pipefy.auth_concurrency_class: exclusive` per DESIGN-29; Wrike + Ziflow concurrency class is `[OPEN: Phase 4 — Wrike + Ziflow auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`.
 
-**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: pipefy`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the native-AI capability matrix against then-current Pipefy reality before any new ingestion run.
+**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` + `pipefy_api_host:` + `pipefy_web_host:` + `pipefy_org_id:` + `pipefy.auth_concurrency_class: exclusive` per client.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready Behaviors instructions + KB upload list; humans manually upload via Pipefy UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q01 (Pipefy AI KB content-upload endpoint) is `Status: closed` under UAT-6.1.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: pipefy`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the native-AI capability matrix against then-current Pipefy reality (kept as human-readable reference under UAT-6.1; does not drive API ingestion calls).
 
 **Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
 
@@ -479,13 +483,15 @@ dydx-delivery/skills/platform-wrike/
 **API surface for the gap:**
 
 - Protocol: REST.
-- **CRITICAL — `host` persistence rule.** The `host` field MUST be persisted from the OAuth token response and used as the API base URL for every subsequent call. Hardcoding `www.wrike.com` is the v0.3.0 bug per RESEARCH.md / PITFALLS.md (Wrike returns a tenant-specific host per OAuth handshake; the persisted `host` differs per client and is NOT always `www.wrike.com`). The `wrike_host:` field in `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries the per-client host string.
+- **CRITICAL — `host` persistence rule.** The `host` field MUST be persisted from the OAuth token response and used as the API base URL for every subsequent call. Hardcoding `www.wrike.com` is the v0.3.0 bug per RESEARCH.md / PITFALLS.md (Wrike returns a tenant-specific host per OAuth handshake; the persisted `host` differs per client and is NOT always `www.wrike.com`). The `wrike_host:` field in `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries the per-client host string. **Worked examples (UAT-4.1):** US-2 region tenant → `app-us2.wrike.com`; EU region tenant (e.g. VodafoneZiggo, account `5996999`) → `app-eu.wrike.com` with entry URL pattern `<host>/workspace.htm?acc=<account_id>`. Region + account_id both vary per tenant.
 - Rate limit: `[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]`
 - Auth: OAuth token; sandbox space distinct from production space.
 
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** Wrike auth-concurrency class is `[OPEN: Phase 4 — Wrike auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`. Pipefy is `exclusive` (cannot auth to two tenants simultaneously); Wrike's behaviour needs verification at Phase 1 probe. `client_state.yaml` carries `wrike.auth_concurrency_class: exclusive | shared` per DESIGN-29.
+
 **Sandbox access pattern:** Sandbox space per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `wrike_sandbox_space_id:` AND `wrike_host:` per client. Both fields are mandatory — `wrike_sandbox_space_id:` without `wrike_host:` triggers the v0.3.0 hardcode bug.
 
-**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `api` for Copilot + 16 MCP tools (HIGH-confidence). `paste` fallback for AI Studio knowledge ingestion UNTIL the `[OPEN]` resolves; downgrade keeps Stage 10 functional even with the AI Studio API row unsettled.
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready Copilot workflow narrative + MCP tool config; humans manually configure via Wrike UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q02 (Wrike AI Studio knowledge-ingestion API) is `Status: closed` under UAT-6.1.
 
 **Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: wrike`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the Copilot + MCP tool inventory against then-current Wrike reality.
 
@@ -526,7 +532,9 @@ dydx-delivery/skills/platform-ziflow/
 
 **Sandbox access pattern:** Sandbox project per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `ziflow_sandbox_project_id:` per client.
 
-**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste` (DEFAULT). Checklists Public Preview is documented but the knowledge-ingestion path is copy-paste fallback first; `api` upgrade IF the `[OPEN]` resolves an ingestion API. Defaulting to `paste` keeps Stage 10 functional without depending on the LOW-confidence ingestion row.
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only (DEFAULT `paste`) — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready ReviewAI checklist criteria + manual-paste fallback content; humans manually configure via Ziflow UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q03 (Ziflow ReviewAI knowledge-ingestion API) is `Status: closed` under UAT-6.1. Ziflow has no MCP — direct API only.
+
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** Ziflow auth-concurrency class is `[OPEN: Phase 4 — Ziflow auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`. `client_state.yaml` carries `ziflow.auth_concurrency_class: exclusive | shared` per DESIGN-29.
 
 **Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: ziflow`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying ReviewAI feature availability (Change Verification / Brand Standards GA status) against then-current Ziflow reality.
 
@@ -962,6 +970,8 @@ Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `0
 
 **Concurrency contract (DESIGN-24).** Single per-client `sandbox_lock.yaml` at `<Client> Brain/test-bot/sandbox_lock.yaml`. Stage 8d `execute-tests` acquires the lock before running against the client sandbox; releases on completion (success or failure). Prevents two concurrent test runs from contending for the same Pipefy sandbox pipe / Wrike sandbox space / Ziflow sandbox project. Lock file content: timestamp + acquiring agent ID + expected duration; stale-lock detection halts with explicit error rather than auto-clearing.
 
+**Multi-tenant auth-concurrency serialization (UAT-4.2, 2026-05-10).** When a test run touches multiple platform tenants of a class with `auth_concurrency_class: exclusive` (Pipefy is `exclusive`; Wrike + Ziflow TBD per OPEN-Q25), the test runner MUST serialize per-tenant operations and emit an explicit `auth_switch_required` retry signal at every tenant-boundary crossing. Tier-1 (Python deterministic) handles the serialization mechanics — reads `client_state.yaml` `<platform>.auth_concurrency_class:` per platform; if `exclusive`, groups TCs by tenant and runs them in serial groups; emits a structured retry signal to tier-2 when re-auth is needed. Tier-2 (AI orchestrator) handles the human-in-the-loop re-auth prompt when concurrent-tenant execution is required. Failure-class taxonomy gains an `auth_switch_required` sub-class under `environment issue`. CRITICAL — without serialization, concurrent-tenant Pipefy operations fail silently with auth-mismatch errors that masquerade as test failures.
+
 **Sandbox allowlist (DESIGN-24 — CRIT-5 fix).** v0.3.0 `dydx-delivery/skills/execute-tests/references/safety-rules.md` allowlists Pipefy / Wrike / Ziflow sandbox tenants but OMITS Coda sandbox — Stage 6 (`generate-cost-estimate/` per DESIGN-22) writes to Coda but the v0.3.0 sandbox allowlist does not cover Coda, so a strict reading of safety-rules forbids Stage 6's Coda writes against any "sandbox" framing. v2 extends the allowlist to include the Coda sandbox tenant per CRIT-5. The canonical safety-rules document (per DESIGN-03 SoT contract — `dydx-delivery/references/safety-rules.md`, promoted to plugin-level `references/`) carries the extended allowlist; v0.3.0 path `dydx-delivery/skills/execute-tests/references/safety-rules.md` is RETIRED (per DESIGN-03 collapse of 4-copy duplication catalogued at AUDIT.md §AUDIT-05).
 
 **Test-case lifecycle states (DESIGN-24 contract — 3 states).** `active | obsolete | quarantined`. Per-test-case `state:` field in `<Client> Brain/test-bot/test_cases/<case>.yaml`:
@@ -1067,13 +1077,13 @@ Adding a new doc_type requires updating this enum + the Stage 9 quality gate + t
 
 **Cross-references.** DESIGN-26 (CRIT-8 paired contract — Stage 10 refuses ingest if `doc_published_at < last_diff_review_at`); AUDIT.md §AUDIT-04 (v0.3.0 ad-hoc documentation drop catalogued); PITFALLS MOD-1 (graceful halt discipline); PITFALLS CRIT-8 (publish-before-review race).
 
-## Stage 10: Native-AI enablement
+## Stage 10: Native-AI upload bundle + audit log (UAT-6.1, 2026-05-10)
 
-> **DESIGN-26:** Stage 10 Native-AI enablement — `push-native-ai-knowledge` skill reads Stage 4a + approved Stage 9 doc fragments + per-platform `native-ai-inventory.md`; branches on `native_ai_path: api | paste | none`; copy-paste fallback is the default; refuses to ingest if `doc_published_at < last_diff_review_at` (CRIT-8 fix); per-client target ID in `00_HUB.md` `Pipefy AI:` / `Wrike AI:` / `Ziflow AI:` blocks; refuses ingest if target mismatches `client:` frontmatter (MIN-4 fix); `doc_version: <semver>` + `ingested_at: <ISO>` per ingested doc.
+> **DESIGN-26 (REVISED under UAT-6.1):** Stage 10 produces a paste-ready upload bundle for humans + tracks completed uploads in an audit log. NO API ingestion — the API ingestion paths (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI knowledge-ingestion) were the SINGLE BIGGEST research blocker (Q01/Q02/Q03) and have been removed from scope under UAT-6.1. The tool produces correctly-shaped upload instructions (per-platform: Pipefy Behaviors + KB upload list; Wrike Copilot workflow narrative; Ziflow ReviewAI checklist criteria); humans manually upload via each platform's UI. The skill tracks `uploaded_at:` per fragment for re-run idempotency. Refuses to instruct human upload if `doc_published_at < last_diff_review_at` (CRIT-8 invariant carried forward via "refuse to instruct" instead of "refuse to ingest"); refuses to instruct if per-platform target ID in `00_HUB.md` mismatches `client:` frontmatter (MIN-4 invariant carried forward).
 
-**Skill:** `push-native-ai-knowledge/` (NEW per DESIGN-12 inventory — net-new skill; v0.3.0 had no native-AI ingestion path). Stage 10 is the per-platform native-AI knowledge ingestion path; consumes approved Stage 9 doc fragments and pushes them into per-platform AI surfaces (Pipefy AI Agents KB / Wrike Copilot knowledge / Ziflow ReviewAI knowledge) per `native_ai_path:` branching.
+**Skill:** `push-native-ai-knowledge/` (NEW per DESIGN-12 inventory — net-new skill; v0.3.0 had no native-AI ingestion path). REVISED under UAT-6.1: scope reduced from "API push + paste fallback" to "paste bundle + upload audit log." Consumes approved Stage 9 doc fragments + per-platform `native-ai-inventory.md` reference; produces upload instructions for humans + tracks completion timestamps for re-run idempotency.
 **Stage:** 10 (file prefix `10_native-ai_*` per DESIGN-02).
-**Complexity:** **High** — three branching paths (`api | paste | none`); two distinct refusal contracts (CRIT-8 + MIN-4); per-platform target-ID validation; copy-paste fallback default with HALT-and-resume protocol when human paste action is required.
+**Complexity:** **Low-Medium (post UAT-6.1)** — two branching paths (`paste | none`); two refusal contracts (CRIT-8 + MIN-4) preserved as "refuse to instruct human"; per-platform target-ID validation; HALT-and-resume protocol when human upload is required.
 
 **Inputs.**
 - **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (REQUIRED — Stage 10 reads platform fnspec for the per-requirement `delivery: native-ai` rows that drive ingestion targets) + `based_on_doc_diff: ChangeRequests/<CR>/doc-diff.md` (REQUIRED — must carry `status: approved`) + `client:` (REQUIRED — Stage 10 validates against per-platform target IDs per MIN-4) + `platform: pipefy | wrike | ziflow` (REQUIRED — drives per-platform dispatch); standard `frontmatter_version: 2`, `cr_id:`.
@@ -1085,17 +1095,18 @@ Adding a new doc_type requires updating this enum + the Stage 9 quality gate + t
 - **Per-ingested-doc records:** Each ingested doc fragment carries `doc_version: <semver>` (carried forward from Stage 9 `doc_version:`) + `ingested_at: <ISO>` (set by Stage 10 at the moment of ingestion) + `target_id: <platform-specific>` (the per-platform AI target identifier from `00_HUB.md`).
 - **Frontmatter set on `10_native-ai-push_v<N>.md`:** standard set + `native_ai_path: api | paste | none` (the branch taken per fragment) + `target_id:` (the per-platform AI target ID validated against `client:` per MIN-4) + per-fragment `doc_version:` + `ingested_at:`; `status: draft → approved`.
 
-**Branching on `native_ai_path` (DESIGN-26 contract — exact enum, canonical order).** Skill reads per-platform `native-ai-inventory.md` capability matrix and per-fragment `delivery: native-ai` row to decide branch:
+**Branching on `native_ai_path` (DESIGN-26 contract — REVISED enum under UAT-6.1).** Skill reads per-platform `native-ai-inventory.md` capability matrix (kept as human-readable reference under UAT-6.1) and per-fragment `delivery: native-ai` row to decide branch:
 
-- **`native_ai_path: api`** — Direct API ingestion. HIGH-confidence path. Used when the per-platform native-AI surface has a verified ingestion API (e.g., Pipefy AI Agents Behaviors via API; Wrike Copilot config via MCP attach-doc; Ziflow ReviewAI Checklists via API where Public Preview supports it). Skill writes the doc fragment via the platform's API; logs `target_id:` + `ingested_at:`.
-- **`native_ai_path: paste`** — Copy-paste fallback. Skill emits the doc fragment formatted for human paste (per-platform paste shape — Pipefy KB upload via UI / Wrike attach-doc via UI / Ziflow ReviewAI manual paste); HALTS; prompts human to paste into the per-platform native-AI surface; resumes when human writes `paste_confirmed: <ISO>` into `10_native-ai-push_v<N>.md`. THIS IS THE DEFAULT per `## Out of Scope` (LOW-confidence native-AI ingestion APIs default to paste, not optimistic API claims).
-- **`native_ai_path: none`** — Skip — no native-AI surface exists for this fragment (e.g., a `delivery: api` row that has no `delivery: native-ai` complement; or a fragment whose `doc_type:` is not in the per-platform ingestion-target set). Skill records "no ingestion target" in `10_native-ai-push_v<N>.md` and continues to next fragment.
+- **`native_ai_path: paste`** — Human-upload path. DEFAULT. Skill emits the doc fragment formatted for the per-platform paste shape (Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = ReviewAI checklist criteria + manual-paste fallback content). HALTS with explicit instructions naming the target platform UI, the target document, and the action sequence the human follows. Resumes when human writes `paste_confirmed: <ISO>` + `uploaded_at: <ISO>` into `10_native-ai-push_v<N>.md`.
+- **`native_ai_path: none`** — Skip — no native-AI surface exists for this fragment (e.g., a `delivery: api` row with no `delivery: native-ai` complement; or a fragment whose `doc_type:` is not in the per-platform upload-target set). Skill records "no upload target" in `10_native-ai-push_v<N>.md` and continues to next fragment.
 
-**CRIT-8 refusal contract.** Stage 10 REFUSES to ingest any doc fragment whose source Drive doc carries `doc_published_at < last_diff_review_at`. This is a hard halt, not a warning. The invariant is set by Stage 9 (DESIGN-25) at push time — `doc_published_at >= last_diff_review_at` must always hold by construction. If Stage 10 reads a fragment violating the invariant (e.g., a manually-edited Drive doc that bypassed Stage 9), the skill halts with an explicit error in `10_native-ai-push_v<N>.md` naming the violating fragment + the violating timestamps. Reviewer must triage — either re-run Stage 9 to re-publish the fragment cleanly, or surface a CR amendment.
+**`api` branch REMOVED under UAT-6.1.** Q01 (Pipefy AI KB content-upload endpoint), Q02 (Wrike AI Studio knowledge-ingestion API), Q03 (Ziflow ReviewAI knowledge-ingestion API) were the SINGLE BIGGEST research blocker — withdrawn under UAT-6.1. NO API ingestion path. Tool produces docs; humans upload manually. Re-evaluation of API ingestion is a post-v2.6 milestone gated on first-real-client-engagement-practice-run completion.
 
-**MIN-4 refusal contract.** Stage 10 reads the per-platform target ID from `<Client> Brain/00_HUB.md` (Pipefy AI: / Wrike AI: / Ziflow AI: blocks). REFUSES to ingest if the resolved `target_id:` does not match the artefact's `client:` frontmatter — i.e., if the per-platform AI target configured in `00_HUB.md` belongs to a different client than the artefact under ingestion. This prevents cross-client contamination (a v2 design contract addressing MIN-4: "wrong tenant ingestion" historic risk). Hard halt; reviewer must triage `00_HUB.md` configuration.
+**CRIT-8 refusal contract (UAT-6.1 — refuse to instruct).** Stage 10 REFUSES to emit upload instructions for any doc fragment whose source Drive doc carries `doc_published_at < last_diff_review_at`. This is a hard halt, not a warning. The invariant is set by Stage 9 (DESIGN-25) at push time — `doc_published_at >= last_diff_review_at` must always hold by construction. If Stage 10 reads a fragment violating the invariant (e.g., a manually-edited Drive doc that bypassed Stage 9), the skill halts with an explicit error in `10_native-ai-push_v<N>.md` naming the violating fragment + the violating timestamps. Reviewer must triage — either re-run Stage 9 to re-publish the fragment cleanly, or surface a CR amendment. Under UAT-6.1, the principle changes from "refuse to ingest via API" to "refuse to instruct human upload" but the invariant + halt mechanics are identical.
 
-**Default: copy-paste fallback (DESIGN-26 contract — per `## Out of Scope`).** Native-AI ingestion APIs are LOW-confidence per DESIGN-14/15/16 (Pipefy KB content-upload API `[OPEN]`; Wrike AI Studio knowledge-ingestion API `[OPEN]`; Ziflow ReviewAI knowledge-ingestion API `[OPEN]`). v2 design defaults to `native_ai_path: paste` — copy-paste fallback. Optimistic-API anti-pattern is FORBIDDEN: Stage 10 does NOT claim API ingestion for unverified APIs; defaults to paste; only upgrades to `api` when the per-platform `native-ai-inventory.md` row is HIGH-confidence (verified API).
+**MIN-4 refusal contract (UAT-6.1 — refuse to instruct).** Stage 10 reads the per-platform target ID from `<Client> Brain/00_HUB.md` (Pipefy AI: / Wrike AI: / Ziflow AI: blocks). REFUSES to emit upload instructions if the resolved `target_id:` does not match the artefact's `client:` frontmatter — i.e., if the per-platform AI target configured in `00_HUB.md` belongs to a different client than the artefact under upload. This prevents cross-client contamination. Hard halt; reviewer must triage `00_HUB.md` configuration.
+
+**Default + only path: paste bundle + upload audit (DESIGN-26 REVISED under UAT-6.1).** `native_ai_path: paste` is the default AND only active branch. The skill emits a structured upload bundle per fragment (target platform UI / target document / per-platform paste shape) and tracks `uploaded_at:` per fragment. Re-runs read the audit log and skip already-uploaded fragments (idempotency). The `api` branch is REMOVED entirely — optimistic-API anti-pattern remains FORBIDDEN; under UAT-6.1, no API ingestion exists at all to be optimistic about.
 
 **Downstream consumer.** Stage 11 — `sign-off-and-archive` (DESIGN-27 below) reads `10_native-ai-push_v<N>.md` (`status: approved` required) along with all upstream approved artefacts before archiving the CR.
 
@@ -1105,13 +1116,13 @@ Adding a new doc_type requires updating this enum + the Stage 9 quality gate + t
 
 > Awaiting status: approved on per-platform native-AI ingestion records; sign-off-and-archive runs only after all push-native-ai-knowledge runs succeed (or native_ai_path: none).
 
-**Key v2 decisions for this stage.**
+**Key v2 decisions for this stage (REVISED under UAT-6.1).**
 
-1. **`native_ai_path: api | paste | none` branching** — three explicit branches; canonical enum order (api, paste, none); per-fragment branch is recorded in the ingestion artefact for traceability.
-2. **CRIT-8 refusal — `doc_published_at < last_diff_review_at` halts ingest** — paired contract with DESIGN-25's invariant; Stage 10 will not ingest fragments that violate the publish-after-review ordering.
+1. **`native_ai_path: paste | none` only** — `api` branch REMOVED. Two explicit branches; per-fragment branch is recorded in the upload audit log for traceability.
+2. **CRIT-8 refusal — `doc_published_at < last_diff_review_at` halts upload-instructions emission** — paired contract with DESIGN-25's invariant; Stage 10 will not instruct human upload for fragments that violate the publish-after-review ordering.
 3. **MIN-4 refusal — per-platform target ID must match `client:` frontmatter** — prevents cross-client contamination via mis-configured `00_HUB.md` AI targets.
-4. **Copy-paste fallback IS the default per `## Out of Scope`** — LOW-confidence native-AI ingestion APIs default to `paste`; optimistic-API claims FORBIDDEN.
-5. **Per-doc traceability — `doc_version:` + `ingested_at:` + `target_id:`** — every ingested fragment carries these three fields so a downstream audit can reconstruct what version of which doc was pushed to which target at what time.
+4. **Paste is the only path under UAT-6.1** — native-AI ingestion APIs are OUT OF SCOPE entirely. Tool produces docs; humans upload manually. No optimistic-API claims because no API path exists.
+5. **Per-doc audit traceability — `doc_version:` + `uploaded_at:` + `paste_confirmed:` + `target_id:`** — every fragment in the upload bundle carries these fields so a downstream audit can reconstruct what version of which doc was uploaded to which target at what time. `uploaded_at:` enables re-run idempotency (already-uploaded fragments skipped).
 
 **Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform `native-ai-inventory.md` capability matrices); DESIGN-25 (Stage 9 `doc_published_at:` + `last_diff_review_at:` fields — CRIT-8 paired contract); platform-pipefy / platform-wrike / platform-ziflow (per-platform target ID + ingestion shape).
 
@@ -1252,14 +1263,21 @@ last_provisioned_at: <ISO>
 sandbox:
   pipefy:
     pipe_id: <sandbox-pipe-id>
+    api_host: <api-host-per-tenant>            # PERSISTED per DESIGN-14 / UAT-4.1; varies per custom subdomain
+    web_host: <web-host-per-tenant>            # e.g. app.pipefy.com OR vodacom.pipefy.com
+    org_id: <pipefy-organisation-id>
     api_token_ref: env:PIPEFY_SANDBOX_TOKEN
+    auth_concurrency_class: exclusive          # UAT-4.2 — Pipefy auth sessions mutually exclusive across tenants
   wrike:
     space_id: <sandbox-space-id>
-    host: <wrike-host-from-OAuth-token-response>  # PERSISTED per DESIGN-15
+    host: <wrike-host-from-OAuth-token-response>  # PERSISTED per DESIGN-15 (e.g. app-us2.wrike.com / app-eu.wrike.com)
+    account_id: <wrike-account-id>             # entry URL pattern: <host>/workspace.htm?acc=<account_id>
     api_token_ref: env:WRIKE_SANDBOX_TOKEN
+    auth_concurrency_class: <exclusive|shared> # UAT-4.2 — TBD per OPEN-Q25; Phase 1 connector probe owner
   ziflow:
     project_id: <sandbox-project-id>
     api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+    auth_concurrency_class: <exclusive|shared> # UAT-4.2 — TBD per OPEN-Q25; Phase 1 connector probe owner
   coda:
     doc_id: <sandbox-coda-doc>   # CRIT-5 fix per DESIGN-24 — sandbox allowlist extended to Coda
     api_token_ref: env:CODA_SANDBOX_TOKEN
@@ -1309,12 +1327,16 @@ test_cases:
 
 **3 worked per-platform examples.**
 
-- **Pipefy example** — client `acme-inc`, sandbox tenant ID `pipe-12345`, schema fetched `2026-04-15T10:00:00Z`:
+- **Pipefy example** — client `vodacom`, sandbox tenant on custom subdomain `vodacom.pipefy.com`, sandbox pipe `pipe-12345`, org_id `org-vodacom-456`, schema fetched `2026-04-15T10:00:00Z`. UAT-4.1: `api_host` + `web_host` + `org_id` PERSISTED per tenant; hardcoding `api.pipefy.com` is the bug (parallel to Wrike). UAT-4.2: `auth_concurrency_class: exclusive` — switching to another Pipefy tenant requires re-auth.
   ```yaml
   sandbox:
     pipefy:
       pipe_id: pipe-12345
-      api_token_ref: env:PIPEFY_SANDBOX_TOKEN
+      api_host: api.vodacom.pipefy.com         # PERSISTED per UAT-4.1; custom subdomain → custom API host
+      web_host: vodacom.pipefy.com             # web URL pattern: <web_host>/<org_id>
+      org_id: org-vodacom-456
+      api_token_ref: env:PIPEFY_VODACOM_SANDBOX_TOKEN
+      auth_concurrency_class: exclusive        # UAT-4.2 — Pipefy mutually exclusive across tenants
   last_known_schema:
     pipefy:
       fetched_at: 2026-04-15T10:00:00Z
@@ -1322,19 +1344,21 @@ test_cases:
       schema_snapshot_path: ./schema_cache/pipefy_2026-04-15.json
   test_cases:
     TC-001:
-      targets_artefact: acme-inc Brain/widget-redesign/04a_fnspec-platform_v2.md
+      targets_artefact: vodacom Brain/widget-redesign/04a_fnspec-platform_v2.md
       last_passed_at: 2026-04-15T10:30:00Z
       layer: tier-1
       state: active
   ```
 
-- **Wrike example** — client `acme-inc`, sandbox space ID `space-67890`, OAuth-discovered host `https://app-us2.wrike.com/api/v4` PERSISTED per DESIGN-15 (CRITICAL — never hardcode `www.wrike.com`):
+- **Wrike example** — client `vodafoneziggo` (EU-region tenant), sandbox space ID `space-67890`, OAuth-discovered host `https://app-eu.wrike.com/api/v4` PERSISTED per DESIGN-15 (CRITICAL — never hardcode `www.wrike.com`); account_id `5996999` per entry URL `<host>/workspace.htm?acc=5996999`. UAT-4.2 auth-concurrency class TBD per OPEN-Q25.
   ```yaml
   sandbox:
     wrike:
       space_id: space-67890
-      host: https://app-us2.wrike.com/api/v4   # PERSISTED from OAuth token response
-      api_token_ref: env:WRIKE_SANDBOX_TOKEN
+      host: https://app-eu.wrike.com/api/v4   # PERSISTED from OAuth token response (EU region)
+      account_id: 5996999                       # entry URL: <host>/workspace.htm?acc=5996999
+      api_token_ref: env:WRIKE_VFZ_SANDBOX_TOKEN
+      auth_concurrency_class: <TBD-OPEN-Q25>   # Phase 1 probe verifies
   last_known_schema:
     wrike:
       fetched_at: 2026-04-15T10:00:00Z
@@ -1348,12 +1372,13 @@ test_cases:
       state: active
   ```
 
-- **Ziflow example** — client `acme-inc`, sandbox project ID `project-abcde`, read-after-create eventual consistency window flagged per DESIGN-16:
+- **Ziflow example** — client `acme-inc`, sandbox project ID `project-abcde`, read-after-create eventual consistency window flagged per DESIGN-16. UAT-4.2 auth-concurrency class TBD per OPEN-Q25.
   ```yaml
   sandbox:
     ziflow:
       project_id: project-abcde
       api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+      auth_concurrency_class: <TBD-OPEN-Q25>   # Phase 1 probe verifies
   last_known_schema:
     ziflow:
       fetched_at: 2026-04-15T10:00:00Z

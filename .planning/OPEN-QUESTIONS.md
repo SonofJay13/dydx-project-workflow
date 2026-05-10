@@ -12,23 +12,23 @@
 
 ## Executive Summary
 
-**Severity rollup.**
+**Severity rollup.** *(Updated 2026-05-10 post UAT — register expanded from 25 → 28 rows; 3 BLOCKERs status `closed` under UAT-6.1 but severity tag preserved in audit trail.)*
 
 | Severity | Count | Notes |
 |---|---|---|
-| BLOCKER | 3 | OPEN-Q01..Q03 native-AI ingestion APIs (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI); all Phase 7 owner. Plan-phase for Phase 7 refuses to start while these are open. D-37 contingent fallback applies (slide P8/P9 → v2.7 if unresolved at v2.5 kickoff). |
+| BLOCKER | 3 (status=closed) | OPEN-Q01..Q03 native-AI ingestion APIs (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI). **WITHDRAWN under UAT-6.1 (2026-05-10) — native-AI API ingestion is OUT OF SCOPE entirely; Stage 10 simplified to paste bundle + upload audit log.** Severity tag preserved as historic record; Status flipped to `closed`. Phase 7 unblocked under UAT-6.1; D-37 contingent fallback obsolete. |
 | GUARDRAIL | 4 | Pipefy GraphQL pagination cursor (Q04 / Phase 7) / Ziflow read-after-create consistency (Q05 / Phase 2) / Coda MCP wired (Q10 / Phase 1) / Google Workspace MCP server choice (Q11 / Phase 1). Resolved during owning phase but does not halt plan-creation. |
-| INFORMATIONAL | 18 | Pipefy/Wrike rate-limit splits (Q06.1/Q06.2 + Q07.1/Q07.2 post-cross-AI-C6) / Miro export endpoint (Q08) / Claude in Chrome naming (Q09) / Miro MCP wired (Q12) / Wrike host field source-of-truth (Q13) / risk-multiplier defaults (Q14) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / hub-link backfill (Q17) / Coda templates (Q18..Q20) / `/refine-<skill>` resolution + namespace (Q21 / Q21.1) / plugin self-test scope (Q22). Documented for awareness; recommended default acceptable. |
+| INFORMATIONAL | 21 | Pipefy/Wrike rate-limit splits (Q06.1/Q06.2 + Q07.1/Q07.2 post-cross-AI-C6) / Miro export endpoint (Q08) / Claude in Chrome naming (Q09) / Miro MCP wired (Q12) / Wrike host field source-of-truth (Q13) / risk-multiplier defaults (Q14) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / hub-link backfill (Q17) / Coda templates (Q18..Q20) / `/refine-<skill>` resolution + namespace (Q21 / Q21.1) / plugin self-test scope (Q22) / **NEW: LICENSE content decision (Q23) / Pipefy custom-subdomain GraphQL endpoint (Q24) / Wrike+Ziflow auth-concurrency class (Q25)**. Documented for awareness; recommended default acceptable. |
 
 **Owning-phase rollup** (single-owner only per cross-AI review C6 — no hybrid `Phase 1/Phase 2` row):
 
 | Phase | Count | Sample questions |
 |---|---|---|
-| Phase 1 | 12 | Coda MCP wired (Q10) / Google Workspace MCP server (Q11) / hub-link backfill (Q17) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / `/refine-<skill>` resolution (Q21) + namespace (Q21.1) / Pipefy 2026 rate-limit publication (Q06.1) / Wrike 2026 rate-limit publication (Q07.1) / Miro MCP wired (Q12) / Wrike host field (Q13) / Claude in Chrome naming (Q09) |
+| Phase 1 | 15 | Coda MCP wired (Q10) / Google Workspace MCP server (Q11) / hub-link backfill (Q17) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / `/refine-<skill>` resolution (Q21) + namespace (Q21.1) / Pipefy 2026 rate-limit publication (Q06.1) / Wrike 2026 rate-limit publication (Q07.1) / Miro MCP wired (Q12) / Wrike host field (Q13) / Claude in Chrome naming (Q09) / **NEW: LICENSE content decision (Q23) / Pipefy custom-subdomain GraphQL endpoint (Q24) / Wrike+Ziflow auth-concurrency class (Q25)** |
 | Phase 2 | 3 | Ziflow read-after-create consistency (Q05) / Pipefy throttle calibration (Q06.2) / Wrike throttle calibration (Q07.2) |
 | Phase 3 | 1 | Miro export-whole-board endpoint (Q08) |
 | Phase 4 | 1 | Risk-multiplier defaults pending dYdX-historical (Q14) |
-| Phase 7 | 4 | Pipefy AI KB (Q01) / Wrike AI Studio (Q02) / Ziflow ReviewAI (Q03) / Pipefy GraphQL pagination cursor (Q04) |
+| Phase 7 | 4 (3 closed) | Pipefy AI KB (Q01 — closed UAT-6.1) / Wrike AI Studio (Q02 — closed UAT-6.1) / Ziflow ReviewAI (Q03 — closed UAT-6.1) / Pipefy GraphQL pagination cursor (Q04 — active) |
 | Phase 8 | 3 | Coda templates: brain-mirror (Q18) / task-table (Q19) / `00_HUB.md` schema (Q20) |
 | Phase 9 | 1 | Plugin self-test scope (Q22) |
 
@@ -36,10 +36,10 @@
 
 | Path | Count | Notes |
 |---|---|---|
-| /gsd-research-phase <N> | 15 | OPEN-01 + OPEN-02 research-flagged items; resolved by `/gsd-research-phase` invocation against owning phase |
+| /gsd-research-phase <N> | 17 | OPEN-01 + OPEN-02 + UAT-additions research-flagged items; resolved by `/gsd-research-phase` invocation against owning phase. Includes Q01/Q02/Q03 (Status: closed under UAT-6.1; resolution-path tag preserved historically) + Q24 + Q25 added under UAT-4.1/4.2. |
 | decide-before-Phase-<N> | 3 | OPEN-Q14 (Phase 4) / OPEN-Q15 + OPEN-Q16 (Phase 1) design-decision-deferred items |
 | Coda-template-authoring (Phase 8) | 3 | OPEN-Q18 / OPEN-Q19 / OPEN-Q20 Coda templates authored during Phase 8 build |
-| policy-pending-sign-off | 3 | OPEN-Q21 + OPEN-Q21.1 `/refine-<skill>` resolution + namespace; OPEN-Q22 plugin self-test scope |
+| policy-pending-sign-off | 4 | OPEN-Q21 + OPEN-Q21.1 `/refine-<skill>` resolution + namespace; OPEN-Q22 plugin self-test scope; **NEW: OPEN-Q23 LICENSE content decision (UAT-3.2)** |
 | live-workstream-pointer | 1 | OPEN-Q17 hub-link backfill (Jason's parallel workstream tracker) |
 
 ## How to read this register
@@ -60,38 +60,38 @@
 
 This section catalogues every research-flagged "couldn't verify" item surfaced from `.planning/research/SUMMARY.md` § Phase Ordering Rationale + `.planning/CHANGELIST.md` Appendix C (research-blocked phases) + `.planning/DESIGN.md` § "Deferred to Phase 4 OPEN-QUESTIONS". Three rows are HARD BLOCKER (native-AI ingestion APIs per platform — Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI; all Phase 7 owner per CHANGE-04). The remaining items are GUARDRAIL or INFORMATIONAL (resolved during owning phase but do not halt plan-creation). Per cross-AI review C6, the historic hybrid-owner rate-limit rows are split into single-owner pairs (Pipefy → Q06.1 Phase 1 + Q06.2 Phase 2; Wrike → Q07.1 Phase 1 + Q07.2 Phase 2) so both phase consumers grep their concern independently. **D-37 OPEN-01 contingent fallback (verbatim — carried from `.planning/CHANGELIST.md` § Phase 7 / Appendix E):** If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest.
 
-**OPEN-Q01** — Pipefy AI KB content-upload endpoint externally verifiable?
+**OPEN-Q01** — Pipefy AI KB content-upload endpoint externally verifiable? *(WITHDRAWN under UAT-6.1, 2026-05-10)*
 
-- Question: Is the Pipefy AI KB content-upload endpoint externally verifiable, and if so via which API call (REST vs GraphQL; sync vs async; what payload shape)?
+- Question: Is the Pipefy AI KB content-upload endpoint externally verifiable, and if so via which API call (REST vs GraphQL; sync vs async; what payload shape)? *(WITHDRAWN — native-AI API ingestion OUT OF SCOPE under UAT-6.1; tool produces docs, humans upload manually via Pipefy UI)*
 - Source citations: `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:284`, `.planning/DESIGN.md:410`
 - Owning phase: Phase 7
 - Verification owner: Phase 7 / dev
 - Severity: BLOCKER
 - Resolution path: /gsd-research-phase 7
-- Proposed default: none (per REQUIREMENTS.md OPEN-01 — paths must be externally verified before Phase 7 can lock plans).
-- Status: open
+- Proposed default: none (HISTORIC). Under UAT-6.1: no resolution needed — native-AI API ingestion removed from scope entirely; Stage 10 simplified to paste bundle + upload audit log.
+- Status: closed
 
-**OPEN-Q02** — Wrike AI Studio knowledge-ingestion API externally verifiable?
+**OPEN-Q02** — Wrike AI Studio knowledge-ingestion API externally verifiable? *(WITHDRAWN under UAT-6.1, 2026-05-10)*
 
-- Question: Is the Wrike AI Studio knowledge-ingestion API externally verifiable, and if so via which endpoint (sync vs async; KB-scope vs skill-scope; rate-limit per ingest job)?
+- Question: Is the Wrike AI Studio knowledge-ingestion API externally verifiable, and if so via which endpoint (sync vs async; KB-scope vs skill-scope; rate-limit per ingest job)? *(WITHDRAWN — native-AI API ingestion OUT OF SCOPE under UAT-6.1; tool produces docs, humans upload manually via Wrike UI)*
 - Source citations: `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:280`, `.planning/DESIGN.md:455`
 - Owning phase: Phase 7
 - Verification owner: Phase 7 / dev
 - Severity: BLOCKER
 - Resolution path: /gsd-research-phase 7
-- Proposed default: none.
-- Status: open
+- Proposed default: none (HISTORIC). Under UAT-6.1: no resolution needed.
+- Status: closed
 
-**OPEN-Q03** — Ziflow ReviewAI knowledge-ingestion API externally verifiable?
+**OPEN-Q03** — Ziflow ReviewAI knowledge-ingestion API externally verifiable? *(WITHDRAWN under UAT-6.1, 2026-05-10)*
 
-- Question: Is the Ziflow ReviewAI knowledge-ingestion API (Checklists Public Preview) externally verifiable, and if so via which endpoint?
+- Question: Is the Ziflow ReviewAI knowledge-ingestion API (Checklists Public Preview) externally verifiable, and if so via which endpoint? *(WITHDRAWN — native-AI API ingestion OUT OF SCOPE under UAT-6.1; tool produces docs, humans upload manually via Ziflow UI)*
 - Source citations: `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:281`, `.planning/DESIGN.md:496`
 - Owning phase: Phase 7
 - Verification owner: Phase 7 / dev
 - Severity: BLOCKER
 - Resolution path: /gsd-research-phase 7
-- Proposed default: none.
-- Status: open
+- Proposed default: none (HISTORIC). Under UAT-6.1: no resolution needed.
+- Status: closed
 
 **OPEN-Q04** — Pipefy GraphQL pagination cursor field names current?
 
@@ -378,6 +378,47 @@ This section catalogues the policy decision on plugin self-test scope per REQUIR
   - **Fallback-if-undecided:** v2.1 ships without self-tests; revisit at v2.2 kickoff.
 - Status: proposed
 
+## OPEN-08: Net-new rows from milestone v2.0 UAT (2026-05-10)
+
+This section catalogues net-new questions surfaced during milestone v2.0 UAT walkthrough on 2026-05-10. Three rows: LICENSE content decision (UAT-3.2); Pipefy custom-subdomain GraphQL endpoint verification (UAT-4.1); Wrike + Ziflow auth-concurrency class verification (UAT-4.2). All Phase 1 owners — resolution gates v2.1 Foundations build.
+
+**OPEN-Q23** — LICENSE file content decision (UAT-3.2)
+
+- Question: What content goes in the `LICENSE` file added during v2.1 Foundations build (FOUND-04)? Three plausible paths: (a) boilerplate `All rights reserved. Not licensed for redistribution.`; (b) full proprietary EULA — drafted with whatever terms (e.g. only dYdX Digital + named contractors can use; redistribution forbidden; warranty disclaimed); (c) switch declaration to a permissive licence (MIT/Apache-2.0).
+- Source citations: `.planning/AUDIT.md:516`, `.planning/CHANGELIST.md:223`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: policy-pending-sign-off
+- Proposed default:
+  - **Recommendation:** Option (a) — boilerplate `All rights reserved. Not licensed for redistribution.` Minimal cover for the existing `Proprietary` declaration in `plugin.json:10`. Sufficient until external distribution scenarios appear.
+  - **Decision deadline:** before Phase 1 plan-phase locks FOUND-04 LICENSE deliverable.
+  - **Acceptance signal:** Jason explicit go-ahead in chat or commit message.
+  - **Fallback-if-undecided:** v2.1 Foundations build slips the LICENSE deliverable to v2.2; manifest `Proprietary` declaration remains unbacked until decision lands.
+- Status: proposed
+
+**OPEN-Q24** — Does Pipefy GraphQL API endpoint vary per tenant for custom subdomains? (UAT-4.1)
+
+- Question: For Pipefy organisations on custom subdomains (e.g. `vodacom.pipefy.com`), does the GraphQL API endpoint also vary (e.g. `api.vodacom.pipefy.com/graphql`) or does ALL traffic route through canonical `api.pipefy.com/graphql`? Per UAT-4.1 the user confirms GraphQL DOES vary per tenant — Phase 1 connector probe verifies the canonical pattern + persistence rule for `client_state.yaml.sandbox.pipefy.api_host:`.
+- Source citations: `.planning/DESIGN.md:437`, `.planning/AUDIT.md:543`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: INFORMATIONAL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: assume per-tenant variance (UAT-4.1 confirmed). Phase 1 probe documents the canonical mapping (default `api.pipefy.com` for vanilla `app.pipefy.com` tenants; per-subdomain `api.<subdomain>.pipefy.com` for custom-subdomain tenants); `client_state.yaml.sandbox.pipefy.api_host:` field PERSISTED per tenant per DESIGN-14 + DESIGN-29 carried.
+- Status: proposed
+
+**OPEN-Q25** — Wrike + Ziflow auth-concurrency class verification (UAT-4.2)
+
+- Question: Are Wrike and/or Ziflow auth sessions mutually exclusive across tenants (`exclusive` like Pipefy per UAT-4.2) or shared (`shared`)? Operational consequence: `exclusive` requires per-tenant operation serialization + `auth_switch_required` retry signals at tenant-boundary crossings (per DESIGN-24 multi-tenant auth-concurrency serialization contract).
+- Source citations: `.planning/DESIGN.md:481`, `.planning/DESIGN.md:521`, `.planning/AUDIT.md:543`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: INFORMATIONAL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: assume `exclusive` per Pipefy precedent until Phase 1 probe confirms otherwise — conservative; serialization-by-default is safer than concurrent-by-default. `client_state.yaml` `wrike.auth_concurrency_class:` + `ziflow.auth_concurrency_class:` fields populated per Phase 1 probe outcome.
+- Status: proposed
+
 ---
 
 ## Appendix A: Per-phase rollup index
@@ -386,15 +427,15 @@ This index lets a v2.x build phase look up the rows it owns. One row per v2.x ph
 
 | Phase | Question IDs (OPEN-QNN) | BLOCKER count | GUARDRAIL count | INFORMATIONAL count |
 |---|---|---|---|---|
-| Phase 1 | OPEN-Q06.1, OPEN-Q07.1, OPEN-Q09, OPEN-Q10, OPEN-Q11, OPEN-Q12, OPEN-Q13, OPEN-Q15, OPEN-Q16, OPEN-Q17, OPEN-Q21, OPEN-Q21.1 | 0 | 2 | 10 |
+| Phase 1 | OPEN-Q06.1, OPEN-Q07.1, OPEN-Q09, OPEN-Q10, OPEN-Q11, OPEN-Q12, OPEN-Q13, OPEN-Q15, OPEN-Q16, OPEN-Q17, OPEN-Q21, OPEN-Q21.1, **OPEN-Q23, OPEN-Q24, OPEN-Q25** | 0 | 2 | 13 |
 | Phase 2 | OPEN-Q05, OPEN-Q06.2, OPEN-Q07.2 | 0 | 1 | 2 |
 | Phase 3 | OPEN-Q08 | 0 | 0 | 1 |
 | Phase 4 | OPEN-Q14 | 0 | 0 | 1 |
-| Phase 7 | OPEN-Q01, OPEN-Q02, OPEN-Q03, OPEN-Q04 | 3 | 1 | 0 |
+| Phase 7 | OPEN-Q01 *(closed UAT-6.1)*, OPEN-Q02 *(closed UAT-6.1)*, OPEN-Q03 *(closed UAT-6.1)*, OPEN-Q04 | 3 *(all closed)* | 1 | 0 |
 | Phase 8 | OPEN-Q18, OPEN-Q19, OPEN-Q20 | 0 | 0 | 3 |
 | Phase 9 | OPEN-Q22 | 0 | 0 | 1 |
 
-Total: 25 register rows = 3 BLOCKER + 4 GUARDRAIL + 18 INFORMATIONAL across 7 single-owner phases.
+Total: **28 register rows = 3 BLOCKER (all status=closed under UAT-6.1) + 4 GUARDRAIL + 21 INFORMATIONAL** across 7 single-owner phases. Active row count = 25 (3 closed, 25 active).
 
 ## Appendix B: Source traceability
 
@@ -427,10 +468,13 @@ One row per register row; 1:1 cardinality with register-total (25 rows) per D-53
 | OPEN-Q21 | `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/AUDIT.md:287` |
 | OPEN-Q21.1 | `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/DESIGN.md:139` |
 | OPEN-Q22 | `.planning/REQUIREMENTS.md:96`, `.planning/DESIGN.md:122`, `.planning/CHANGELIST.md:160` |
+| OPEN-Q23 | `.planning/AUDIT.md:516`, `.planning/CHANGELIST.md:223` |
+| OPEN-Q24 | `.planning/DESIGN.md:437`, `.planning/AUDIT.md:543` |
+| OPEN-Q25 | `.planning/DESIGN.md:481`, `.planning/DESIGN.md:521`, `.planning/AUDIT.md:543` |
 
 ## Appendix C: Reconciliation algorithm result
 
-**Reconciliation algorithm executed:** 2026-05-10 (synthesis Plan 04-05).
+**Reconciliation algorithm executed:** 2026-05-10 (synthesis Plan 04-05); **re-run 2026-05-10 post-UAT** with register expanded from 25 → 28 rows (3 new under UAT-3.2/4.1/4.2; 3 status flipped to `closed` under UAT-6.1).
 
 **Algorithm:**
 

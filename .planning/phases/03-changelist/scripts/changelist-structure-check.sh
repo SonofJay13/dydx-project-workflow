@@ -41,7 +41,7 @@ declare -a required_h2=(
   "## Phase 4: Tech spec + Cost + Implementation prompt (v2.3)"
   "## Phase 5: Test bot rebuild (v2.4)"
   "## Phase 6: Documentation publishing (v2.5)"
-  "## Phase 7: Native-AI knowledge push (v2.5) [BLOCKED — see Appendix C]"
+  "## Phase 7: Native-AI upload bundle + audit log (v2.5)"
   "## Phase 8: Sign-off + Coda mirror (v2.6)"
   "## Phase 9: Surfaces (v2.6)"
   "## Appendix A: Per-skill delta matrix (CHANGE-02)"
@@ -66,9 +66,10 @@ done
 phase_count=$(grep -cE '^## Phase [1-9]: .* \(v2\.[1-6]\)' "$CHANGELIST_FILE" || true)
 [ "$phase_count" -ge 9 ] || fail "expected >= 9 'Phase N: <name> (v2.X)' H2 anchors, found $phase_count"
 
-# Phase 7 carries the [BLOCKED — see Appendix C] inline tag per D-42 (visibility)
-grep -qF '## Phase 7: Native-AI knowledge push (v2.5) [BLOCKED — see Appendix C]' "$CHANGELIST_FILE" \
-  || fail "Phase 7 H2 must carry inline '[BLOCKED — see Appendix C]' tag per D-42"
+# Phase 7 H2 anchor — REVISED under UAT-6.1 (2026-05-10). Native-AI API ingestion OUT OF SCOPE entirely;
+# Phase 7 unblocked, scope reduced to "paste bundle + upload audit log." [BLOCKED] tag REMOVED.
+grep -qF '## Phase 7: Native-AI upload bundle + audit log (v2.5)' "$CHANGELIST_FILE" \
+  || fail "Phase 7 H2 must match revised UAT-6.1 anchor 'Native-AI upload bundle + audit log (v2.5)'"
 
 # Appendix B opening-sentence sentinel (D-41 verbatim-lift opening — partial match on stable substring)
 grep -qF 'Lifted verbatim from `.planning/AUDIT.md` § AUDIT-07' "$CHANGELIST_FILE" \
@@ -82,11 +83,12 @@ grep -qF 'Authoritative contract: `.planning/DESIGN.md` § DESIGN-08' "$CHANGELI
 grep -qF 'Closed list of every' "$CHANGELIST_FILE" \
   || fail "Appendix E must open with mechanical-walk sentinel (D-27) — substring 'Closed list of every'"
 
-# Appendix B per-bullet sentinel count (D-16 carried) — must equal AUDIT-07 sentinel count when populated.
-# AUDIT-07 carries 6 fixes (7.1..7.6) each with the sentinel — assert >= 6 in Appendix B.
+# Appendix B per-bullet sentinel count (D-16 carried). AUDIT-07 carried 6 fixes originally; under
+# UAT-3.1 (2026-05-10) §7.5 owner-email was reclassified as intentional (NOT a fix), reducing the
+# active scheduled-fix count to 5. Floor lowered from 6 → 5 to match.
 appendix_b_sentinels=$(section_between "## Appendix B: Cosmetic-fix list (CHANGE-03)" \
   | grep -cE 'Scheduled for v2\.1 Foundations build \(FOUND-[0-9]+\), NOT this milestone' || true)
-[ "$appendix_b_sentinels" -ge 6 ] || fail "Appendix B per-bullet sentinel count must be >= 6 (matches AUDIT-07's 6 fixes per D-16/D-41), found $appendix_b_sentinels"
+[ "$appendix_b_sentinels" -ge 5 ] || fail "Appendix B per-bullet sentinel count must be >= 5 (matches AUDIT-07's 5 active fixes after UAT-3.1 reclassification of §7.5; per D-16/D-41), found $appendix_b_sentinels"
 
 # Appendix A row count (per CONTEXT specifics — 13 v2 skills + 2 RETIRED → SPLIT minimum = 15 rows).
 # Per cross-AI C1 (codex HIGH / gemini MEDIUM): anchor on the Status-column closed enum (per D-39)

@@ -522,12 +522,12 @@ Catalogues every cosmetic-but-client-visible issue in v0.3.0 — README truncati
 
 ---
 
-### 7.5 Owner-email mismatch with stated org
+### 7.5 Owner-email — INTENTIONAL (NOT a fix; UAT-3.1 reclassification 2026-05-10)
 
-- **Citation:** `.claude-plugin/marketplace.json:5` (`owner.email`) and `dydx-delivery/.claude-plugin/plugin.json:7` (`author.email`) both list `jasonmichaelb@gmail.com`; README and marketplace metadata describe the team as "dYdX Digital" (e.g. `.claude-plugin/marketplace.json:4`, `dydx-delivery/.claude-plugin/plugin.json:4`); no `@dydx.digital` or org domain appears in the manifests.
-- **Context:** Provenance — clients viewing the marketplace see a personal Gmail; mismatches the stated organisational identity.
-- **Severity:** **[COSMETIC]** — client-visible (provenance).
-- **Fix:** Change to an org-domain address. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.** **Cross-ref:** MIN-6 PITFALL.
+- **Citation:** `.claude-plugin/marketplace.json:5` (`owner.email`) and `dydx-delivery/.claude-plugin/plugin.json:7` (`author.email`) both list `jasonmichaelb@gmail.com`; README and marketplace metadata describe the team as "dYdX Digital" (e.g. `.claude-plugin/marketplace.json:4`, `dydx-delivery/.claude-plugin/plugin.json:4`).
+- **Context:** Project owner's private email is intentionally listed on the plugin manifests — explicitly approved by dYdX Digital. NOT a defect; NOT a deferred fix; NOT pending an org-handover event.
+- **Severity:** **[NOT A FINDING]** — UAT-3.1 reclassification (2026-05-10). Permanent decision per dYdX Digital approval.
+- **Action:** No fix required. Removed from FOUND-04 v2.1 Foundations scope. **Cross-ref:** MIN-6 PITFALL marked **closed/withdrawn** under UAT-3.1.
 
 ---
 
