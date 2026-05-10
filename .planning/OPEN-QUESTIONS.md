@@ -242,7 +242,8 @@ This section catalogues design-decision-deferred items needing human input befor
 - Severity: INFORMATIONAL
 - Resolution path: decide-before-Phase-4
 - Proposed default: 1.1 / 1.3 / 1.6 (per DESIGN-22 carried structure-locked defaults at `.planning/DESIGN.md:795`). Decision-deadline: before Phase 4 plan-phase locks Stage 6 cost estimate plans.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT Step 4):** ACCEPTED — ship Stage 6 with `<TBD-deferred>` placeholders + `risk_multiplier_version:` frontmatter lock. Validate dYdX historicals before v2.3 build kickoff (Phase 4); reviewer-override prompt at the wait-for-commercial-inputs gate accepts numeric values per CR until validation lands.
+- Status: decided
 
 **OPEN-Q15** — Frontmatter migration cutover date
 
@@ -253,7 +254,8 @@ This section catalogues design-decision-deferred items needing human input befor
 - Severity: INFORMATIONAL
 - Resolution path: decide-before-Phase-1
 - Proposed default: opt-in per CR (no global cutover) per DESIGN-08 + CHANGELIST.md Appendix D rule 2 (`.planning/CHANGELIST.md:260`); v2 readers tolerate v0.3.0 lenient mode permanently. No artefacts auto-flip on a calendar trigger.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — opt-in per CR; no calendar trigger. v2 readers permanently tolerate v0.3.0 lenient mode.
+- Status: decided
 
 **OPEN-Q16** — Status-lifecycle survey orphan check
 
@@ -264,7 +266,8 @@ This section catalogues design-decision-deferred items needing human input befor
 - Severity: INFORMATIONAL
 - Resolution path: decide-before-Phase-1
 - Proposed default: per DESIGN-08 status-lifecycle survey (`.planning/DESIGN.md:270`) — sampled v0.3.0 sources show only `{draft, client_review, approved}`; `archived` is additive (Stage 11 write only); no live values orphaned. Phase 1 re-runs the survey at v2.1 kickoff to confirm no drift since 2026-05-10 sample date.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — re-run the survey at Phase 1 kickoff to confirm no drift since 2026-05-10 sample date.
+- Status: decided
 
 > **Plugin self-test scope** (REQUIREMENTS.md OPEN-03 4th sub-item) is section-canonicalised under the `OPEN-07` H2 anchor (Plugin self-test scope) per D-50 source-merging discipline. See OPEN-Q22 (assigned at Wave 4 / Plan 04-04).
 
@@ -339,7 +342,8 @@ This section catalogues the policy decision on `/refine-<skill>` resolution per 
   - **Decision deadline:** before Phase 1 plan-phase locks Foundations build (v2.1).
   - **Acceptance signal:** Jason explicit go-ahead in chat or commit message ("approved" or equivalent — same pattern as Phase approval gates).
   - **Fallback-if-undecided:** v2.1 ships with `/refine-<skill>` orphan references intact but undocumented (option c — punt); revisit at v2.2 kickoff.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — option (a) build single parameterised `commands/refine.md` taking skill name as `$1`. Resolves all 3 orphan references catalogued in AUDIT-04 §4.2.
+- Status: decided
 
 **OPEN-Q21.1** — `/refine-<skill>` namespace decision (sub-row; only relevant if OPEN-Q21 = build)
 
@@ -355,7 +359,8 @@ This section catalogues the policy decision on `/refine-<skill>` resolution per 
   - **Acceptance signal:** Jason explicit go-ahead in chat or commit message.
   - **Fallback-if-undecided:** unprefixed `/refine-<skill>`; revisit if clash detected post-ship.
   - **Conditional:** only relevant if OPEN-Q21 = build; if OPEN-Q21 = delete, this row is superseded.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — `/dydx-refine-*` plugin-prefixed namespace. Avoids clash with other plugins' `/refine-*` commands.
+- Status: decided
 
 ## OPEN-07: Plugin self-test scope
 
@@ -376,7 +381,8 @@ This section catalogues the policy decision on plugin self-test scope per REQUIR
   - **Decision deadline:** before Phase 9 plan-phase locks Surfaces build (v2.6).
   - **Acceptance signal:** Jason explicit go-ahead in chat or commit message ("approved" or equivalent — same pattern as Phase approval gates).
   - **Fallback-if-undecided:** v2.1 ships without self-tests; revisit at v2.2 kickoff.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — ship pytest smoke tests at Phase 9 (v2.6) for hooks + frontmatter validator at `dydx-delivery/tests/`.
+- Status: decided
 
 ## OPEN-08: Net-new rows from milestone v2.0 UAT (2026-05-10)
 
@@ -395,7 +401,8 @@ This section catalogues net-new questions surfaced during milestone v2.0 UAT wal
   - **Decision deadline:** before Phase 1 plan-phase locks FOUND-04 LICENSE deliverable.
   - **Acceptance signal:** Jason explicit go-ahead in chat or commit message.
   - **Fallback-if-undecided:** v2.1 Foundations build slips the LICENSE deliverable to v2.2; manifest `Proprietary` declaration remains unbacked until decision lands.
-- Status: proposed
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — option (a) boilerplate. LICENSE file content: `All rights reserved.\nNot licensed for redistribution.` (two lines). Manifest `Proprietary` declaration backed by this minimal text. Phase 1 FOUND-04 ships the file.
+- Status: decided
 
 **OPEN-Q24** — Does Pipefy GraphQL API endpoint vary per tenant for custom subdomains? (UAT-4.1)
 
