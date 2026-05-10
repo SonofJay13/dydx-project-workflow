@@ -219,7 +219,15 @@ Lifted verbatim from `.planning/AUDIT.md` § AUDIT-07 (per D-16 sentinel discipl
 
 Authoritative contract: `.planning/DESIGN.md` § DESIGN-08 (locked by D-25). This appendix restates the rules in implementer-readable form; if rules conflict, DESIGN-08 wins.
 
-(Populated by 03-05-PLAN.md / Wave 1. Numbered checklist of 5-7 rules per D-43.)
+1. v2 readers tolerate v0.3.0 frontmatter via the `frontmatter_version` field (absent → v0.3.0 lenient mode) (per DESIGN-08).
+2. Migration is opt-in per change request — artefacts upgrade only when their owning CR fires (per DESIGN-08).
+3. In-flight `client_review` artefacts NEVER auto-flip to `approved` (per DESIGN-08).
+4. Status lifecycle MUST retain `client_review` — live in `dydx-delivery/skills/generate-sow/SKILL.md:93` per AUDIT.md §AUDIT-01.2 + DESIGN.md §"Live status-lifecycle survey" (per DESIGN-08).
+5. The canonical lifecycle is `draft → client_review → approved → archived` (per DESIGN-01).
+6. Artefact file renumbering (00→02 / 01→03 / 02→04 / 03→05 / 04→07a per FOUND-03) applies only to NEW artefacts written by v2 skills; existing files stay at v0.3.0 prefixes until their owning CR opts in (per FOUND-03 + DESIGN-08).
+7. The status-lifecycle survey result (`.planning/DESIGN.md` §"Live status-lifecycle survey") is the empirical confirmation that no live `status:` value gets orphaned by this contract — sampled v0.3.0 sources show only `{draft, client_review, approved}`; `archived` is additive, locked by D-25 (per DESIGN-08).
+
+**Source-of-truth pointer.** This appendix is a reading aid. The authoritative migration contract lives at `.planning/DESIGN.md` §DESIGN-08 (locked by D-25 — status-lifecycle survey result). If a v2.1+ implementer encounters a conflict between this appendix and DESIGN-08, DESIGN-08 wins. If a CR's migration step is unclear, re-read DESIGN-08 + the survey section before writing migration code.
 
 ## Appendix E: Deferred to Phase 4 OPEN-QUESTIONS
 
