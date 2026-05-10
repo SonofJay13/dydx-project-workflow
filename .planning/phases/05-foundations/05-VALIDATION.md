@@ -3,7 +3,7 @@ phase: 5
 slug: foundations
 status: draft
 nyquist_compliant: false
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-05-10
 ---
 
@@ -11,7 +11,7 @@ created: 2026-05-10
 
 > Per-phase validation contract for feedback sampling during execution.
 
-> **Note:** Phase 5 is a foundations + canonical-references phase — no application code, no test framework needed. "Validation" = grep/jq/file-existence assertions baked into a single shell script (`scripts/validation/phase5-structure-check.sh`) that mirrors the Phase 1–4 pattern. The Validation Architecture details live in `05-RESEARCH.md` and will be hoisted into per-task `<acceptance_criteria>` blocks by the planner.
+> **Note:** Phase 5 is a foundations + canonical-references phase — no application code, no test framework needed. "Validation" = grep/jq/file-existence assertions baked into a single shell script (`.planning/phases/05-foundations/scripts/phase5-structure-check.sh`) that mirrors the Phase 1–4 pattern. The Validation Architecture details live in `05-RESEARCH.md` and will be hoisted into per-task `<acceptance_criteria>` blocks by the planner.
 
 ---
 
@@ -21,16 +21,16 @@ created: 2026-05-10
 |----------|-------|
 | **Framework** | bash + grep + jq + diff (no JS/Python test framework — docs/config phase) |
 | **Config file** | none — assertions are inline in the structure-check script |
-| **Quick run command** | `bash scripts/validation/phase5-structure-check.sh --quick` |
-| **Full suite command** | `bash scripts/validation/phase5-structure-check.sh` |
+| **Quick run command** | `bash .planning/phases/05-foundations/scripts/phase5-structure-check.sh --quick` |
+| **Full suite command** | `bash .planning/phases/05-foundations/scripts/phase5-structure-check.sh` |
 | **Estimated runtime** | ~3 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `bash scripts/validation/phase5-structure-check.sh --quick` (only the section relevant to the task — script supports `--section <name>` for per-criterion runs)
-- **After every plan wave:** Run `bash scripts/validation/phase5-structure-check.sh` (full grep/jq matrix)
+- **After every task commit:** Run `bash .planning/phases/05-foundations/scripts/phase5-structure-check.sh --quick` (only the section relevant to the task — script supports `--section <name>` for per-criterion runs)
+- **After every plan wave:** Run `bash .planning/phases/05-foundations/scripts/phase5-structure-check.sh` (full grep/jq matrix)
 - **Before `/gsd-verify-work`:** Full suite must exit 0
 - **Max feedback latency:** 3 seconds
 
@@ -73,9 +73,11 @@ The planner MUST copy these assertions verbatim into per-task `<acceptance_crite
 
 ## Wave 0 Requirements
 
-- [ ] `scripts/validation/phase5-structure-check.sh` — single bash script with all assertions above (no test framework install needed)
-- [ ] Script exits 0 only when every assertion passes; prints `[PASS] <criterion>` per success and `[FAIL] <criterion>: <why>` per failure
-- [ ] Script supports `--section <name>` for per-section runs and `--quick` for fastest subset
+- [x] `.planning/phases/05-foundations/scripts/phase5-structure-check.sh` — single bash script with all assertions above (no test framework install needed)
+- [x] Script exits 0 only when every assertion passes; prints `[PASS] <criterion>` per success and `[FAIL] <criterion>: <why>` per failure
+- [x] Script supports `--section <name>` for per-section runs and `--quick` for fastest subset
+
+> **Note (W-02 fix):** Wave 0 deferred to Wave 5 retrospective; per-task inline grep/jq/test assertions in Plans 01-04 cover Nyquist sampling continuity. Script lands in W5 as ratification artefact.
 
 *If none: "Existing infrastructure covers all phase requirements."* — N/A; this script is new.
 
@@ -95,7 +97,7 @@ The planner MUST copy these assertions verbatim into per-task `<acceptance_crite
 
 - [ ] All tasks have `<acceptance_criteria>` with grep/jq/file-exists commands or Wave 0 dependency on the structure-check script
 - [ ] Sampling continuity: every plan wave ends with a full structure-check run
-- [ ] Wave 0 delivers `scripts/validation/phase5-structure-check.sh` before any other plan wave runs assertions against it
+- [x] Wave 0 delivers `.planning/phases/05-foundations/scripts/phase5-structure-check.sh` before any other plan wave runs assertions against it (deferred to Wave 5 retrospective per W-02 fix; per-task inline assertions in Plans 01-04 covered Nyquist continuity)
 - [ ] No watch-mode flags
 - [ ] Feedback latency < 3s
 - [ ] `nyquist_compliant: true` set in frontmatter once all per-task entries are populated and verified
