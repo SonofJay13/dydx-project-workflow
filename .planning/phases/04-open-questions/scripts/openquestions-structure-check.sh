@@ -78,9 +78,22 @@ open_nn_count=$(grep -cE '^## OPEN-0[1-7]: ' "$OPENQ_FILE" || true)
 # A4. Register-row count floor (per cross-AI C4 — was hard-22, now robust >= 21).
 #   Each register row is identified by `**OPEN-Q<NN>**` per D-47 (per-row block form) OR
 #   `| OPEN-Q<NN> |` (table-form). Cross-AI C2: regex is decimal-ID-aware to count OPEN-Q21.1.
-register_rows=$(grep -cE '^\| OPEN-Q[0-9]+(\.[0-9]+)? \|' "$OPENQ_FILE" || true)
+#   Synthesis-state fix: Appendix B uses `| OPEN-Q<NN> |` table-format for traceability;
+#   subtract Appendix B rows so they are not double-counted as register rows. Register total
+#   = max(table-form register rows, block-form register rows) — register format is one of
+#   two; planner chose per-row block form for the OPEN-NN sections.
+register_table=$(grep -cE '^\| OPEN-Q[0-9]+(\.[0-9]+)? \|' "$OPENQ_FILE" || true)
 register_blocks=$(grep -cE '^\*\*OPEN-Q[0-9]+(\.[0-9]+)?\*\*' "$OPENQ_FILE" || true)
-register_total=$(( register_rows + register_blocks ))
+appendix_b_table_rows=$(section_between "## Appendix B: Source traceability" \
+  | grep -cE '^\| OPEN-Q[0-9]+(\.[0-9]+)? \|' || true)
+register_rows_outside_appendix_b=$(( register_table - appendix_b_table_rows ))
+# Register total: pick the larger of (table-form-outside-Appendix-B) and (block-form);
+# register rows live in OPEN-NN sections in one format, Appendix B is traceability not the register.
+if [ "$register_rows_outside_appendix_b" -ge "$register_blocks" ]; then
+  register_total=$register_rows_outside_appendix_b
+else
+  register_total=$register_blocks
+fi
 [ "$register_total" -ge 21 ] || fail "register row/block count $register_total < 21 (expected >= 21 per cross-AI C4 — Wave 4 baseline; Appendix B 1:1 cardinality + Appendix C reconciliation carry the rest)"
 
 # A5. Severity closed enum (per D-48): every severity field must match BLOCKER|GUARDRAIL|INFORMATIONAL.

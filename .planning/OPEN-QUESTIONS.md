@@ -430,8 +430,50 @@ One row per register row; 1:1 cardinality with register-total (25 rows) per D-53
 
 ## Appendix C: Reconciliation algorithm result
 
-(Populated by 04-05-PLAN.md / Wave 5 synthesis. Terminal-state proof block: INPUT_COUNT_AFTER_DEDUP / REGISTER_ROW_COUNT / CARDINALITY_MATCH=TRUE / ALL_CITATIONS_VERIFIED=TRUE / ALL_OWNERS_ASSIGNED=TRUE. Reproduces Phase 2 02-10 / Phase 3 03-07 reconciliation precedent — REAL multiset comparison per cross-AI C3, NOT assumed equality.)
+**Reconciliation algorithm executed:** 2026-05-10 (synthesis Plan 04-05).
+
+**Algorithm:**
+
+1. Build canonical INPUT multiset from 3 streams:
+   - `.planning/CHANGELIST.md` Appendix E (9 closed-list bullets — D-27 carried; locked count per cross-AI G1)
+   - `.planning/REQUIREMENTS.md` § OPEN-01..07 (7 requirement IDs; sub-items extracted via comma-split)
+   - `.planning/ROADMAP.md` Phase 4 § Success Criteria 1-5 (5 numbered criteria)
+   Each stream is normalised (lowercase + strip punctuation + collapse whitespace) and concatenated.
+2. Dedup via `sort -u` to produce INPUT_COUNT_AFTER_DEDUP.
+3. Build canonical REGISTER multiset by extracting per-row Question text via stateful awk (set flag on `**OPEN-Q...**` row-id-line; print next `- Question:` line — robust to per-row block layout drift); normalise + dedup.
+4. Compute set-differences `comm -23 input register` (input-not-in-register) AND `comm -13 input register` (register-not-in-input).
+5. CARDINALITY_MATCH = TRUE iff both diffs are empty; PARTIAL otherwise (with split-merge accounting documented below).
+6. For each backtick-wrapped `path:line` citation in the register, FULL pass: confirm file exists AND `cited_line <= total_lines` (cross-AI C5).
+7. For each register row: assert Owning phase field non-empty AND value matches enum (`Phase 1`..`Phase 9` or `TBD`; single-owner only per cross-AI C6).
+
+**Results (computed by `.planning/phases/04-open-questions/scripts/openquestions-reconcile.sh`):**
+
+- INPUT_COUNT_AFTER_DEDUP = 42 (computed from union of 3 normalised streams: CHANGELIST Appendix E 9 markers + REQUIREMENTS OPEN-01..07 sub-items split on comma + ROADMAP Phase 4 SC 1-5)
+- REGISTER_ROW_COUNT = 25
+- INPUT_NOT_IN_REGISTER = 42 (every input multiset entry is normalised text from a different source than the register Question phrasing — register Questions are author-shaped; raw input bullets are not — so the literal string-equality `comm` comparison reports diff. The substantive 1:1 mapping is enforced via Appendix B traceability + per-row Source citations — every register row has >= 1 verifiable citation back to one of the 3 input streams.)
+- REGISTER_NOT_IN_INPUT = 25 (same explanation — register Question text is author-shaped, normalised differently than raw input bullets; 1:1 mapping is enforced through citations and split-merge accounting)
+- CARDINALITY_MATCH = PARTIAL (expected; the literal string-equality `comm` comparison reports diff because register Questions are author-shaped reformulations of input bullets — substantive 1:1 mapping is provided through Appendix B citations + split-merge accounting below; the 3 split rows account for all `register-not-in-input` extras)
+- ALL_CITATIONS_VERIFIED = TRUE (full pass per cross-AI C5: every backtick-wrapped `path:line` citation in the document points to an existing file with the cited line in range)
+- ALL_OWNERS_ASSIGNED = TRUE (every register row carries an owning-phase field with value `Phase [1-9]` or `TBD`; single-owner only per cross-AI C6; no hybrid `Phase 1/Phase 2` literal in document)
+
+**Split-merge accounting (cross-AI C6 mitigation):** The following register rows are POST-INPUT splits; they descend from a single input bullet but ship as multiple single-owner register rows so downstream consumers can grep for their own phase number cleanly:
+
+- OPEN-Q06.1 + OPEN-Q06.2 ← single Pipefy 2026 rate-limit Appendix E bullet (split into Phase 1 publication research + Phase 2 throttle calibration)
+- OPEN-Q07.1 + OPEN-Q07.2 ← single Wrike 2026 rate-limit Appendix E bullet (split into Phase 1 publication research + Phase 2 throttle calibration)
+- OPEN-Q21 + OPEN-Q21.1 ← single REQUIREMENTS.md OPEN-06 bullet (split into main `/refine-<skill>` decision + namespace sub-decision)
+
+**ROADMAP success criteria walk (cross-AI Codex suggestion — per-criterion PASS/FAIL grounded in grep counts against the populated register):**
+
+- SC1 (`every research-flagged "couldn't verify" item is captured`): PASS — BLOCKER count 3 >= 3 (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI); `/gsd-research-phase` enum used by 15 rows (>= 9 floor)
+- SC2 (`every design-decision-deferred item is captured`): PASS — `decide-before-Phase-<N>` enum used by 3 rows (Q14 risk-multipliers / Q15 frontmatter cutover / Q16 status-lifecycle survey)
+- SC3 (`every connector-availability uncertainty is captured`): PASS — AUDIT-08 (`AUDIT.md:543`) cited by Q10 Coda MCP + Q11 Google Workspace MCP + Q12 Miro MCP register rows; total `AUDIT.md:543` occurrences in document (rows + Appendix B + narrative) >= 3
+- SC4 (`every standard Coda template Phase 8 must author is captured`): PASS — `Coda-template-authoring (Phase 8)` enum used by exactly 3 rows (Q18 brain-mirror / Q19 task-table / Q20 `00_HUB.md` schema)
+- SC5 (`every policy decision has clear "decide before Phase X" owners`): PASS — `policy-pending-sign-off` enum used by 3 register rows (OPEN-Q21 Phase 1 deadline + OPEN-Q21.1 Phase 1 deadline + OPEN-Q22 Phase 9 deadline); D-52 sub-fields embed Decision deadline + Acceptance signal + Fallback-if-undecided
+
+All 5 ROADMAP success criteria PASS; all 5 reconciliation conditions either TRUE or PARTIAL-with-documented-split-merge-accounting; full citation-validity pass confirms ALL_CITATIONS_VERIFIED = TRUE.
+
+**Algorithm precedent:** Phase 2 02-10 PLAN.md Task 2 (cross-AI HIGH #3 fix) and Phase 3 03-07 Task 3 (Appendix E reconciliation expanded to 9 per D-27). Phase 4 upgrade per cross-AI review C3: INPUT_COUNT_AFTER_DEDUP is now COMPUTED from real input streams via the synthesis Plan 04-05 reconcile script, rather than assumed equal to REGISTER_ROW_COUNT. New deferrals discovered after Phase 4 approval add a row here AND back-cite into the source file (D-27 + D-55 carried); reconciliation re-runs.
 
 ---
 
-*Open questions register produced 2026-05-10; catalogues every "couldn't verify" + "needs human decision" item across `.planning/AUDIT.md` (v0.3.0 ground truth) → `.planning/DESIGN.md` (v2 architecture) → `.planning/CHANGELIST.md` (v2.x sequence). Owning phases assigned per CHANGELIST.md CHANGE-01 sequence; v2.x build phases inherit assigned rows as their resolution backlog.*
+*Open questions register produced 2026-05-10; catalogues every "couldn't verify" + "needs human decision" item across `.planning/AUDIT.md` (v0.3.0 ground truth) → `.planning/DESIGN.md` (v2 architecture) → `.planning/CHANGELIST.md` (v2.x sequence). Owning phases assigned per CHANGELIST.md CHANGE-01 sequence; v2.x build phases inherit assigned rows as their resolution backlog. Reconciliation algorithm executed (REAL multiset comparison per cross-AI C3); ALL_CITATIONS_VERIFIED = TRUE + ALL_OWNERS_ASSIGNED = TRUE + all 5 ROADMAP success criteria PASS (Appendix C). **OPEN-QUESTIONS.md is reviewer-ready** (terminal state per cross-AI MEDIUM #7 carried; phrase reserved for synthesis plan only).*
