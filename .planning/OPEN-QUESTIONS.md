@@ -284,9 +284,13 @@ This section catalogues the rollout coordination invariant for the per-client hu
 - Severity: INFORMATIONAL
 - Resolution path: live-workstream-pointer
 - Proposed default: graceful halt at Stage 9 only — does not halt other stages, per MOD-1 prevention (verbatim from `.planning/REQUIREMENTS.md` OPEN-04). Pointer source-of-truth: live `00_HUB.md` files in client folders + Jason's parallel workstream tracker (location TBD; sub-row to be added when tracker materialises during v2.1 Foundations build kickoff per D-51). *(Non-binding suggestion per cross-AI C8 — tracker format/destination is Phase 1 owner discretion; this register does not own that destination.)*
-- Status: proposed
-
-**Sub-row reservation:** A second row (OPEN-Q17.1 or similar) may be added during v2.1 Foundations build kickoff to name the live workstream tracker source-of-truth (Coda doc / shared spreadsheet / GitHub issue / external URL). Phase 4 explicitly does NOT snapshot this because it is a moving target; D-51 carry-forward applies (pointer-only + invariant). The reconciliation algorithm in Plan 04-05 accommodates 1-row OR 2-row OPEN-04 cardinality cleanly.
+- **Decision (2026-05-10 post-UAT):** ACCEPTED — per-client brain Coda docs ARE the canonical tracker (no separate meta-tracker). Live brains established for 2 clients; other clients TBD (no Coda brain doc yet — bootstrapped at first Stage 11 archive per DESIGN-27).
+  - **The Up & Up Group** (M&C Saatchi Process Automation): https://coda.io/d/M-C-Saatchi-Process-Automation_dITb4lVmQ67/The-Up-Up-Brain_sux7GT-N#_luUaEH88
+  - **VodafoneZiggo:** https://coda.io/d/VodafoneZiggo_dUW9wD-EKrb/VFZ-Brain-Do-Not-Delete-speak-to-Jason_suHgD2Jd
+  - **Other clients:** TBD — no Coda brain docs yet. Bootstrapped at first Stage 11 archive when each client's first CR completes the v2.x pipeline.
+  - **Subpages convention:** content from `.md` files in `<Client> Brain/` folders lives in subpages of these top-level brain Coda docs (per DESIGN-27 7-section spoke-shaped layout — Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes).
+  - **Phase 1 connector-probe consumption:** walks per-client `<Client> Brain/00_HUB.md` files locally to check for `Documentation:` Drive link presence; cross-references with the live brain Coda doc URL when one exists. Stage 9 halts gracefully on missing-link clients without blocking other stages (MOD-1 prevention).
+- Status: decided
 
 ## OPEN-05: Standard Coda templates v2 must author
 
@@ -406,14 +410,15 @@ This section catalogues net-new questions surfaced during milestone v2.0 UAT wal
 
 **OPEN-Q24** — Does Pipefy GraphQL API endpoint vary per tenant for custom subdomains? (UAT-4.1)
 
-- Question: For Pipefy organisations on custom subdomains (e.g. `vodacom.pipefy.com`), does the GraphQL API endpoint also vary (e.g. `api.vodacom.pipefy.com/graphql`) or does ALL traffic route through canonical `api.pipefy.com/graphql`? Per UAT-4.1 the user confirms GraphQL DOES vary per tenant — Phase 1 connector probe verifies the canonical pattern + persistence rule for `client_state.yaml.sandbox.pipefy.api_host:`.
+- Question: For Pipefy organisations on custom subdomains (e.g. `vodacom.pipefy.com`), does the GraphQL API endpoint also vary (e.g. `api.vodacom.pipefy.com/graphql`) or does ALL traffic route through canonical `api.pipefy.com/graphql`?
 - Source citations: `.planning/DESIGN.md:437`, `.planning/AUDIT.md:543`
 - Owning phase: Phase 1
 - Verification owner: Phase 1 / dev
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
-- Proposed default: assume per-tenant variance (UAT-4.1 confirmed). Phase 1 probe documents the canonical mapping (default `api.pipefy.com` for vanilla `app.pipefy.com` tenants; per-subdomain `api.<subdomain>.pipefy.com` for custom-subdomain tenants); `client_state.yaml.sandbox.pipefy.api_host:` field PERSISTED per tenant per DESIGN-14 + DESIGN-29 carried.
-- Status: proposed
+- Proposed default: assume per-tenant variance pending probe.
+- **Decision (2026-05-10 post-UAT — operational test):** RESOLVED — **API endpoint is canonical-only.** DNS test against `https://api.vodacom.pipefy.com/graphql` returned `The remote name could not be resolved` (custom-subdomain API host does not exist). All Pipefy GraphQL traffic routes through canonical `https://api.pipefy.com/graphql` regardless of which web-host the tenant uses. **DESIGN simplification:** `pipefy_api_host:` field REMOVED from DESIGN-29 schema (UAT-4.1 simplification); `pipefy_web_host:` + `pipefy_org_id:` retained for paste-fallback navigation. Bonus finding: Pipefy's API returns Keycloak login HTML on auth failure (Content-Type: text/html), NOT JSON 401 — captured in DESIGN-14 as v2.1+ build gotcha.
+- Status: decided
 
 **OPEN-Q25** — Wrike + Ziflow auth-concurrency class verification (UAT-4.2)
 

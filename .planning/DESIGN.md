@@ -442,11 +442,13 @@ dydx-delivery/skills/platform-pipefy/
 - Rate limit: `[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`
 - Auth: Bearer token from Pipefy app installation; sandbox token distinct from production token.
 
-**Per-tenant host persistence (UAT-4.1, 2026-05-10).** **CRITICAL** — Pipefy hosts vary per tenant. Default web URL: `https://app.pipefy.com/{org_id}`. Custom-subdomain web URL: `https://{subdomain}.pipefy.com/{org_id}` (e.g. `vodacom.pipefy.com/{org_id}` for Vodacom). The GraphQL API endpoint ALSO varies per tenant for organisations on custom subdomains — `[OPEN: Phase 4 — Pipefy custom-subdomain GraphQL endpoint pattern needs verification per OPEN-Q24; Phase 1 connector probe owner]`. The `pipefy_api_host` + `pipefy_web_host` + `pipefy_org_id` fields in `client_state.yaml` (DESIGN-29 — forward reference) carry the per-client persistence values. Hardcoding `api.pipefy.com` is the v0.3.0 bug (parallel to the Wrike `host` issue per DESIGN-15). Same persistence rule applies — read from auth response or per-client config; never default to a global host string.
+**Per-tenant host persistence (UAT-4.1, 2026-05-10).** **Pipefy WEB URL varies per tenant; API endpoint is canonical-only.** Default web URL: `https://app.pipefy.com/{org_id}`. Custom-subdomain web URL: `https://{subdomain}.pipefy.com/{org_id}` (e.g. `vodacom.pipefy.com/{org_id}` for Vodacom). **API endpoint is canonical `https://api.pipefy.com/graphql` for ALL tenants** — verified 2026-05-10 (Q24 resolved): DNS does not resolve `api.<subdomain>.pipefy.com` for custom-subdomain tenants; all GraphQL traffic routes through canonical. The `pipefy_web_host` + `pipefy_org_id` fields in `client_state.yaml` (DESIGN-29 — forward reference) carry the per-tenant web URL values for paste-fallback navigation; the API host is hardcoded to canonical `api.pipefy.com` (no `pipefy_api_host:` field needed — UAT-4.1 simplification post-Q24-verification).
+
+**Pipefy API auth-failure gotcha (UAT-4.1 bonus finding, 2026-05-10).** **CRITICAL** — Pipefy's GraphQL API returns the **Keycloak login HTML page (Content-Type: text/html) on auth failure**, NOT a JSON 401 error. Non-standard API behaviour — most APIs return structured JSON. Skills calling Pipefy GraphQL MUST check `Content-Type` of the response before parsing JSON; HTML response indicates auth failure (token expired / invalid / wrong format). `platform-pipefy/references/api-contract.md` must document this. Stage 8 test bot tier-1 needs an HTML-detect → `auth_failed` failure-class branch separate from the existing `auth_switch_required` (UAT-4.2 tenant-exclusivity branch).
 
 **Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** **CRITICAL** — Pipefy auth sessions are MUTUALLY EXCLUSIVE across tenants. Cannot be authenticated to two Pipefy tenants simultaneously. Switching from `vodacom.pipefy.com` to `app.pipefy.com` (or any tenant pair) requires re-auth; concurrent operations against two tenants will fail. Operational consequence: any skill that touches multiple Pipefy tenants in one session must serialize per-tenant operations + emit `auth_switch_required` retry signal at tenant-boundary crossings. `client_state.yaml` carries `pipefy.auth_concurrency_class: exclusive` per DESIGN-29; Wrike + Ziflow concurrency class is `[OPEN: Phase 4 — Wrike + Ziflow auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`.
 
-**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` + `pipefy_api_host:` + `pipefy_web_host:` + `pipefy_org_id:` + `pipefy.auth_concurrency_class: exclusive` per client.
+**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` + `pipefy_web_host:` + `pipefy_org_id:` + `pipefy.auth_concurrency_class: exclusive` per client. API host is hardcoded canonical (`api.pipefy.com`) per UAT-4.1 verification — no `pipefy_api_host:` field.
 
 **`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready Behaviors instructions + KB upload list; humans manually upload via Pipefy UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q01 (Pipefy AI KB content-upload endpoint) is `Status: closed` under UAT-6.1.
 
@@ -972,6 +974,8 @@ Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `0
 
 **Multi-tenant auth-concurrency serialization (UAT-4.2, 2026-05-10).** When a test run touches multiple platform tenants of a class with `auth_concurrency_class: exclusive` (Pipefy is `exclusive`; Wrike + Ziflow TBD per OPEN-Q25), the test runner MUST serialize per-tenant operations and emit an explicit `auth_switch_required` retry signal at every tenant-boundary crossing. Tier-1 (Python deterministic) handles the serialization mechanics — reads `client_state.yaml` `<platform>.auth_concurrency_class:` per platform; if `exclusive`, groups TCs by tenant and runs them in serial groups; emits a structured retry signal to tier-2 when re-auth is needed. Tier-2 (AI orchestrator) handles the human-in-the-loop re-auth prompt when concurrent-tenant execution is required. Failure-class taxonomy gains an `auth_switch_required` sub-class under `environment issue`. CRITICAL — without serialization, concurrent-tenant Pipefy operations fail silently with auth-mismatch errors that masquerade as test failures.
 
+**Pipefy API auth-failure detection (UAT-4.1 bonus, 2026-05-10).** Tier-1 must distinguish auth failure from GraphQL error for Pipefy specifically — Pipefy returns the Keycloak login HTML page (Content-Type: text/html) on auth failure rather than JSON 401. Detection rule: if Pipefy GraphQL response carries `Content-Type: text/html`, classify as `auth_failed` and surface to tier-2 for human re-auth prompt; do NOT attempt to parse the body as JSON. Failure-class taxonomy gains an `auth_failed` sub-class under `environment issue` (sibling to `auth_switch_required` from UAT-4.2). Both `auth_failed` and `auth_switch_required` flow into the same tier-2 re-auth prompt path; the sub-class distinction is for operator diagnostics + test-result reporting.
+
 **Sandbox allowlist (DESIGN-24 — CRIT-5 fix).** v0.3.0 `dydx-delivery/skills/execute-tests/references/safety-rules.md` allowlists Pipefy / Wrike / Ziflow sandbox tenants but OMITS Coda sandbox — Stage 6 (`generate-cost-estimate/` per DESIGN-22) writes to Coda but the v0.3.0 sandbox allowlist does not cover Coda, so a strict reading of safety-rules forbids Stage 6's Coda writes against any "sandbox" framing. v2 extends the allowlist to include the Coda sandbox tenant per CRIT-5. The canonical safety-rules document (per DESIGN-03 SoT contract — `dydx-delivery/references/safety-rules.md`, promoted to plugin-level `references/`) carries the extended allowlist; v0.3.0 path `dydx-delivery/skills/execute-tests/references/safety-rules.md` is RETIRED (per DESIGN-03 collapse of 4-copy duplication catalogued at AUDIT.md §AUDIT-05).
 
 **Test-case lifecycle states (DESIGN-24 contract — 3 states).** `active | obsolete | quarantined`. Per-test-case `state:` field in `<Client> Brain/test-bot/test_cases/<case>.yaml`:
@@ -1263,9 +1267,9 @@ last_provisioned_at: <ISO>
 sandbox:
   pipefy:
     pipe_id: <sandbox-pipe-id>
-    api_host: <api-host-per-tenant>            # PERSISTED per DESIGN-14 / UAT-4.1; varies per custom subdomain
-    web_host: <web-host-per-tenant>            # e.g. app.pipefy.com OR vodacom.pipefy.com
+    web_host: <web-host-per-tenant>            # e.g. app.pipefy.com OR vodacom.pipefy.com (varies per tenant — UAT-4.1)
     org_id: <pipefy-organisation-id>
+    # api_host hardcoded canonical https://api.pipefy.com/graphql per UAT-4.1 (Q24 verified — DNS doesn't resolve api.<subdomain>.pipefy.com)
     api_token_ref: env:PIPEFY_SANDBOX_TOKEN
     auth_concurrency_class: exclusive          # UAT-4.2 — Pipefy auth sessions mutually exclusive across tenants
   wrike:
@@ -1327,14 +1331,14 @@ test_cases:
 
 **3 worked per-platform examples.**
 
-- **Pipefy example** — client `vodacom`, sandbox tenant on custom subdomain `vodacom.pipefy.com`, sandbox pipe `pipe-12345`, org_id `org-vodacom-456`, schema fetched `2026-04-15T10:00:00Z`. UAT-4.1: `api_host` + `web_host` + `org_id` PERSISTED per tenant; hardcoding `api.pipefy.com` is the bug (parallel to Wrike). UAT-4.2: `auth_concurrency_class: exclusive` — switching to another Pipefy tenant requires re-auth.
+- **Pipefy example** — client `vodacom`, sandbox tenant on custom subdomain `vodacom.pipefy.com`, sandbox pipe `pipe-12345`, org_id `org-vodacom-456`, schema fetched `2026-04-15T10:00:00Z`. UAT-4.1 verified 2026-05-10: web URL varies per tenant (`vodacom.pipefy.com` for Vodacom; `app.pipefy.com` for default tenants); API endpoint is canonical-only (`api.pipefy.com/graphql`) — `api.<subdomain>.pipefy.com` does NOT exist. UAT-4.2: `auth_concurrency_class: exclusive` — switching to another Pipefy tenant requires re-auth.
   ```yaml
   sandbox:
     pipefy:
       pipe_id: pipe-12345
-      api_host: api.vodacom.pipefy.com         # PERSISTED per UAT-4.1; custom subdomain → custom API host
-      web_host: vodacom.pipefy.com             # web URL pattern: <web_host>/<org_id>
+      web_host: vodacom.pipefy.com             # web URL pattern: <web_host>/<org_id> — varies per tenant (UAT-4.1)
       org_id: org-vodacom-456
+      # API host hardcoded canonical: https://api.pipefy.com/graphql (UAT-4.1 Q24 verified)
       api_token_ref: env:PIPEFY_VODACOM_SANDBOX_TOKEN
       auth_concurrency_class: exclusive        # UAT-4.2 — Pipefy mutually exclusive across tenants
   last_known_schema:
