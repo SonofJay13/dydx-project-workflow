@@ -232,7 +232,20 @@ This section catalogues design-decision-deferred items needing human input befor
 
 ## OPEN-04: Hub-link backfill rollout coordination
 
-(Populated by 04-03-PLAN.md / Wave 3. Single canonical row per D-51 — pointer-only + invariant.)
+This section catalogues the rollout coordination invariant for the per-client hub-link backfill (the `Documentation:` Drive link in each `<Client> Brain/00_HUB.md`). Per D-51 (CONTEXT.md), Phase 4 does NOT enumerate clients in this register — that is a moving target on Jason's parallel workstream. The single canonical row records the invariant + pointer source-of-truth + proposed default verbatim from `.planning/REQUIREMENTS.md` OPEN-04. A sub-row may be added later when the live tracker source-of-truth materialises during v2.1 Foundations build kickoff.
+
+**OPEN-Q17** — Hub-link backfill rollout coordination
+
+- Question: Which clients have `<Client> Brain/00_HUB.md` carrying the `Documentation:` Drive link, and which need backfill before v2.x ship gates? Where is the live workstream tracker (Coda doc / shared spreadsheet / GitHub issue / TBD)?
+- Source citations: `.planning/REQUIREMENTS.md:93`, `.planning/DESIGN.md:619`, `.planning/research/PITFALLS.md:201`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: live-workstream-pointer
+- Proposed default: graceful halt at Stage 9 only — does not halt other stages, per MOD-1 prevention (verbatim from `.planning/REQUIREMENTS.md` OPEN-04). Pointer source-of-truth: live `00_HUB.md` files in client folders + Jason's parallel workstream tracker (location TBD; sub-row to be added when tracker materialises during v2.1 Foundations build kickoff per D-51). *(Non-binding suggestion per cross-AI C8 — tracker format/destination is Phase 1 owner discretion; this register does not own that destination.)*
+- Status: proposed
+
+**Sub-row reservation:** A second row (OPEN-Q17.1 or similar) may be added during v2.1 Foundations build kickoff to name the live workstream tracker source-of-truth (Coda doc / shared spreadsheet / GitHub issue / external URL). Phase 4 explicitly does NOT snapshot this because it is a moving target; D-51 carry-forward applies (pointer-only + invariant). The reconciliation algorithm in Plan 04-05 accommodates 1-row OR 2-row OPEN-04 cardinality cleanly.
 
 ## OPEN-05: Standard Coda templates v2 must author
 
