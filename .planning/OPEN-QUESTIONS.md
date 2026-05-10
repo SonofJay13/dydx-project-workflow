@@ -193,7 +193,42 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 
 ## OPEN-03: Design-decision-deferred items
 
-(Populated by 04-03-PLAN.md / Wave 3. ~3-4 rows: risk-multiplier defaults / frontmatter migration cutover date / status-lifecycle survey / plugin self-test scope cross-link to OPEN-07.)
+This section catalogues design-decision-deferred items needing human input before the owning phase locks plans. Severity is INFORMATIONAL across all rows because each carries a Proposed-default that is shippable; resolution requires Jason's explicit acceptance signal (per D-49 `decide-before-Phase-<N>` enum value) within the named phase deadline. Plugin self-test scope (4th sub-item in `.planning/REQUIREMENTS.md` OPEN-03) is section-canonicalised under `## OPEN-07: Plugin self-test scope` per D-50 dedup discipline; cross-reference at end of this section.
+
+**OPEN-Q14** — risk-multiplier defaults validated against dYdX historicals?
+
+- Question: Are the default risk multipliers (L=1.1 / M=1.3 / H=1.6 — locked structure per DESIGN-22 carried) validated against dYdX historical project costs, or imported from generic delivery-estimate research?
+- Source citations: `.planning/REQUIREMENTS.md:92`, `.planning/CHANGELIST.md:283`, `.planning/DESIGN.md:795`
+- Owning phase: Phase 4
+- Verification owner: Phase 4 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: decide-before-Phase-4
+- Proposed default: 1.1 / 1.3 / 1.6 (per DESIGN-22 carried structure-locked defaults at `.planning/DESIGN.md:795`). Decision-deadline: before Phase 4 plan-phase locks Stage 6 cost estimate plans.
+- Status: proposed
+
+**OPEN-Q15** — Frontmatter migration cutover date
+
+- Question: When is the migration v0.3.0 → v2 frontmatter contract triggered? Is it tied to a specific v2.x ship date OR purely opt-in per change request (per DESIGN-08)?
+- Source citations: `.planning/REQUIREMENTS.md:92`, `.planning/DESIGN.md:181`, `.planning/CHANGELIST.md:260`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: decide-before-Phase-1
+- Proposed default: opt-in per CR (no global cutover) per DESIGN-08 + CHANGELIST.md Appendix D rule 2 (`.planning/CHANGELIST.md:260`); v2 readers tolerate v0.3.0 lenient mode permanently. No artefacts auto-flip on a calendar trigger.
+- Status: proposed
+
+**OPEN-Q16** — Status-lifecycle survey orphan check
+
+- Question: Has the status-lifecycle survey confirmed no live `status:` value gets orphaned by the v2 lifecycle (`draft → client_review → approved → archived`)?
+- Source citations: `.planning/REQUIREMENTS.md:92`, `.planning/DESIGN.md:270`, `.planning/AUDIT.md:38`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: decide-before-Phase-1
+- Proposed default: per DESIGN-08 status-lifecycle survey (`.planning/DESIGN.md:270`) — sampled v0.3.0 sources show only `{draft, client_review, approved}`; `archived` is additive (Stage 11 write only); no live values orphaned. Phase 1 re-runs the survey at v2.1 kickoff to confirm no drift since 2026-05-10 sample date.
+- Status: proposed
+
+> **Plugin self-test scope** (REQUIREMENTS.md OPEN-03 4th sub-item) is section-canonicalised under `## OPEN-07: Plugin self-test scope` per D-50 source-merging discipline. See OPEN-Q22 (assigned at Wave 4 / Plan 04-04).
 
 ## OPEN-04: Hub-link backfill rollout coordination
 
