@@ -97,42 +97,76 @@ Every "couldn't verify" + "needs human decision" surfaced and assigned an owner 
 
 ---
 
-## Future Requirements (deferred — v2.1+)
+## v2.1 Requirements — Foundations + Platform Skills
 
-Build-phase requirements that will be defined in subsequent milestones once this milestone's design lands.
+> **Milestone framing.** First build milestone after v2.0 design-lock. Two phases bundled per CHANGELIST CHANGE-01: Phase 5 (Foundations + Connector Verification) lands canonical references + manifest sync + LICENSE + connector probe matrix + 5 cosmetic CONCERNS fixes; Phase 6 (Internalise Platform Skills) ships `skills/platform-{pipefy,wrike,ziflow}/`. Phase 5 lands BEFORE Phase 6 (intra-milestone ordering — Phase 6 platform skills point at Phase 5 canonical references). Apply v2.0 DESIGN contracts + UAT decisions verbatim — do not re-derive scope.
 
-### v2.1 — Foundations (deferred)
+### Phase 5 — Foundations + Connector Verification
 
-- **FOUND-01**: Plugin-level `references/{safety-rules.md, stage-numbering.md, frontmatter-scheme.md, glossary.md}` written and authoritative
-- **FOUND-02**: Existing 7 skills updated to point at canonical references (collapses 4 hard-rules duplicates; fixes sandbox-block bug; normalises `based_on_*` field names)
-- **FOUND-03**: File renumbering 00→02 / 01→03 / 02→04 / 03→05 / 04→07a per architecture research mapping table
-- **FOUND-04**: Plugin manifest `2.0.0` synced across `plugin.json` + `marketplace.json`; owner-email mismatch corrected; `LICENSE` file added
-- **FOUND-05**: Empty `commands/`, `agents/`, `hooks/` scaffold directories created
-- **FOUND-06**: Connector probe + graceful-degradation matrix codified
-- **FOUND-07**: All cosmetic CONCERNS.md items cleaned (README truncation, "test sheet" wording residual)
+Plugin-level canonical references, manifest sync, scaffold dirs, LICENSE, connector probe matrix, cosmetic CONCERNS fixes.
 
-### v2.2+ — Skill builds (deferred per CHANGE-01 phase plan)
+- [ ] **FOUND-01**: Plugin-level `dydx-delivery/references/safety-rules.md` written and authoritative — single source of truth per DESIGN-03 (sandbox allowlist extended to Coda per CRIT-5; v0.3.0 `dydx-delivery/skills/execute-tests/references/safety-rules.md` retired)
+- [ ] **FOUND-02**: Plugin-level `dydx-delivery/references/stage-numbering.md` written and authoritative — single canonical scheme per DESIGN-02 (file-prefix is the stage number; substages `4a/4b/7a/7b/8a/8b/8c/8d`; old→new mapping table)
+- [ ] **FOUND-03**: Plugin-level `dydx-delivery/references/frontmatter-scheme.md` written and authoritative — canonical scheme per DESIGN-01 (status lifecycle `draft → client_review → approved → archived`; underscore-snake-case keys; platform-gated identifiers; `frontmatter_version: 2`; v0.3.0 lenient mode for absent versions per OPEN-Q15 decision)
+- [ ] **FOUND-04**: Plugin-level `dydx-delivery/references/glossary.md` written and authoritative — canonical vocabulary referenced by all skills
+- [ ] **FOUND-05**: 7 existing v0.3.0 skills updated to point at canonical references — collapses 4 hard-rules duplicates per AUDIT-05.1; fixes sandbox-block bug; normalises `based_on_*` field names. (Sub-target of "skill edits permitted from v2.1 start" — v2.0 design-only mandate ENDS at v2.1 kickoff.)
+- [ ] **FOUND-06**: File renumbering 00→02 / 01→03 / 02→04 / 03→05 / 04→07a applied across skill directories per FOUND-03 mapping table
+- [ ] **FOUND-07**: Plugin manifest `2.0.0` synced across `plugin.json` + `marketplace.json` (metadata + `plugins[0]`) per DESIGN-04 + AUDIT-06 D-17 recommendation. **Owner-email NOT changed** (UAT-3.1 — dYdX-approved private email is intentional; AUDIT-07 §7.5 owner-email = INTENTIONAL).
+- [ ] **FOUND-08**: `LICENSE` file at repo root with content per OPEN-Q23 (two-line boilerplate: `All rights reserved.\nNot licensed for redistribution.`)
+- [ ] **FOUND-09**: Empty `commands/`, `agents/`, `hooks/` scaffold directories created at plugin root per DESIGN-04 (substantive content lands in later v2.x milestones)
+- [ ] **FOUND-10**: Connector probe + graceful-degradation matrix codified per DESIGN-07 — session-start probe of each MCP/API endpoint (Coda MCP / Google Workspace MCP / Miro MCP / Pipefy API / Wrike API / Ziflow API auth headers); per-stage fallback behaviour table; matrix written to `dydx-delivery/references/connector-matrix.md` (or equivalent canonical location)
+- [ ] **FOUND-11**: 5 cosmetic CONCERNS items cleaned per AUDIT-07 (post-UAT-3.1 reclassification) — B.1 README truncation; B.2 residual "test sheet" wording removed; B.3 pipeline-step count corrected to 13; B.4 LICENSE created (covered by FOUND-08); B.6 homepage asymmetry fixed. **B.5 owner-email = INTENTIONAL — no fix.**
+- [ ] **FOUND-12**: Status-lifecycle survey re-run at Phase 5 kickoff per OPEN-Q16 decision — confirms no drift in `status:` values across live `<Client> Brain/` folders since 2026-05-10 sample
+- [ ] **FOUND-13**: 8 connector OPEN-QUESTIONS resolved as part of the probe matrix work — Q06.1 Pipefy 2026 rate-limit publication research; Q07.1 Wrike 2026 rate-limit publication research; Q09 Claude in Chrome canonical product naming; Q10 Coda MCP wired + version pin (re-confirm AUDIT-08 probe); Q11 Google Workspace MCP server choice (taylorwilsdon vs alternatives); Q12 Miro MCP wired vs paste-only (re-confirm AUDIT-08); Q13 Wrike host field source-of-truth across multi-tenant deployments; Q25 Wrike + Ziflow auth-concurrency class verification (Pipefy is exclusive per UAT-4.2; Wrike + Ziflow TBD)
 
-- **PLAT-01..03**: Internalised `platform-pipefy`, `platform-wrike`, `platform-ziflow` skills (Phase 2)
-- **STG1-01..02**: Stage 1 Kickoff capture skill + Stage 2 discovery refactor (Phase 3)
-- **STG3-01**: Stage 3 SOW refactor (Phase 3)
-- **STG4-01..02**: Stage 4 fnspec split (Phase 3)
-- **STG5-01**: Stage 5 tech spec scope gate (Phase 4)
-- **STG6-01..02**: Stage 6 cost estimate + Coda integration (Phase 4)
-- **STG7-01..02**: Stage 7 dual build prompts (Phase 4)
-- **STG8-01..04**: Stage 8 test bot rebuild (Phase 5)
-- **STG9-01..02**: Stage 9 documentation publishing (Phase 6)
-- **STG10-01..03**: Stage 10 native-AI enablement (Phase 7) — BLOCKED BY OPEN-01
-- **STG11-01..03**: Stage 11 sign-off + brain mirror (Phase 8)
-- **SURF-01..03**: Surfaces — `commands/`, agent wrapping, `hooks/` (Phase 9)
+### Phase 6 — Internalise Platform Skills
 
-These are noted, not committed. The v2.0 milestone's CHANGELIST.md (CHANGE-01) is the authoritative sequence; these IDs become first-class requirements when the v2.1+ milestones inherit them.
+`skills/platform-{pipefy,wrike,ziflow}/` each with 5-file `references/` shape; per-platform helpers for known gotchas; locked frontmatter contracts.
+
+- [ ] **PLAT-01**: `skills/platform-pipefy/SKILL.md` + `references/{api-contract.md, native-ai-inventory.md, knowledge-ingestion.md, client-shape-gotchas.md, vocabulary.md}` written per DESIGN-14. **DESIGN-14 REVISED:** API endpoint canonical-only (`api.pipefy.com/graphql` for ALL tenants — Q24 verified 2026-05-10 via DNS test); `web_host` + `org_id` vary per tenant. **HTML-on-auth-failure gotcha** documented in `api-contract.md` (Pipefy returns Keycloak login HTML page, NOT JSON 401, on auth fail). `paginate_all` helper in `api-contract.md` to avoid MOD-4 cursor-pagination bug.
+- [ ] **PLAT-02**: `skills/platform-wrike/SKILL.md` + same 5-file `references/` shape per DESIGN-15. **`host` field persisted from OAuth token response** (NEVER hardcode `www.wrike.com` per MOD-5 — the OAuth token response carries the customer's regional host as part of its base-URL contract; hardcoding breaks multi-tenant). REST API surface for the gap (16 Copilot MCP tools inventoried in `native-ai-inventory.md`); knowledge ingestion via attach-doc-via-MCP path documented in `knowledge-ingestion.md`.
+- [ ] **PLAT-03**: `skills/platform-ziflow/SKILL.md` + same 5-file `references/` shape per DESIGN-16. **`wait_for_proof` helper** in `api-contract.md` for read-after-create eventual consistency (MOD-6); 30s poll budget / 2s interval default. Native-AI matrix grounded in Ziflow ReviewAI (Checklists Public Preview; Change Verification + Brand Standards Coming Soon). Knowledge ingestion path = checklist-generation primarily; copy-paste fallback documented.
+- [ ] **PLAT-04**: `tier_claims_last_verified:` frontmatter populated on each platform skill (`platform-pipefy`, `platform-wrike`, `platform-ziflow`) per MOD-7 — date stamps when the native-AI tier claims in `native-ai-inventory.md` were last verified against vendor docs
+- [ ] **PLAT-05**: Per-platform `native_ai_path:` flag enum locked to `paste | none` ONLY across all 3 platform skills (UAT-6.1 — `api` branch removed; native-AI ingestion APIs OUT-OF-SCOPE entirely; Stage 10 simplified to "paste bundle + upload audit log only" — humans manually upload via each platform's UI)
+- [ ] **PLAT-06**: 3 throttle/consistency OPEN-QUESTIONS resolved as part of platform-skill calibration — Q05 Ziflow read-after-create consistency window (informs `wait_for_proof` defaults in PLAT-03); Q06.2 Pipefy throttle calibration (depends on Q06.1 / FOUND-13); Q07.2 Wrike throttle calibration (depends on Q07.1 / FOUND-13)
+
+---
+
+## Future Requirements (deferred — v2.2+)
+
+Build-phase requirements that will be defined in subsequent milestones per CHANGELIST CHANGE-01 phase plan.
+
+- **STG1-01..02**: Stage 1 Kickoff capture skill + Stage 2 discovery refactor (CHANGELIST Phase 3 / milestone v2.2)
+- **STG3-01**: Stage 3 SOW refactor (CHANGELIST Phase 3)
+- **STG4-01..02**: Stage 4 fnspec split per DESIGN-20 (CHANGELIST Phase 3)
+- **STG5-01**: Stage 5 tech spec scope gate per DESIGN-21 (CHANGELIST Phase 4 / milestone v2.3)
+- **STG6-01..02**: Stage 6 cost estimate + Coda integration per DESIGN-22 (CHANGELIST Phase 4)
+- **STG7-01..02**: Stage 7 dual build prompts per DESIGN-23 (CHANGELIST Phase 4)
+- **STG8-01..04**: Stage 8 test bot rebuild per DESIGN-24/28/29/30 (CHANGELIST Phase 5 / milestone v2.4)
+- **STG9-01..02**: Stage 9 documentation publishing per DESIGN-25 (CHANGELIST Phase 6 / milestone v2.5)
+- **STG10-01..03**: Stage 10 native-AI enablement per DESIGN-26 — paste-only per UAT-6.1 (CHANGELIST Phase 7 / milestone v2.5)
+- **STG11-01..03**: Stage 11 sign-off + brain mirror per DESIGN-27 (CHANGELIST Phase 8 / milestone v2.6)
+- **SURF-01..03**: Surfaces — `commands/refine.md` parameterised per OPEN-Q21 + agent wrapping + `hooks/` validate-frontmatter + bump-artefact-version (CHANGELIST Phase 9 / milestone v2.6)
+
+These are noted, not committed. CHANGELIST.md CHANGE-01 is the authoritative sequence; these IDs become first-class requirements when the v2.2+ milestones inherit them.
 
 ---
 
 ## Out of Scope
 
-Explicit exclusions for v2.0. These prevent scope creep into "Implementor Edition" and codify the synthesizer's anti-feature list.
+Explicit exclusions for v2.0 + v2.1. These prevent scope creep and codify the synthesizer's anti-feature list plus the v2.0 UAT-locked scope decisions.
+
+### v2.1 — Scope locks (UAT 2026-05-10)
+
+| Exclusion | Reason |
+|---|---|
+| **MCPs for Pipefy/Wrike (UAT-3.5)** through v2.6 | API-first across all platform skills. Pipedream Pipefy MCP (`mcp.pipedream.net/v2`) and Wrike MCP (`developers.wrike.com/docs/setup-claude-with-wrike-mcp`) are parked references — adoption re-evaluated as a post-v2.6 milestone gated on first-real-client-engagement-practice-run. Ziflow has no MCP. |
+| **Native-AI ingestion APIs (UAT-6.1)** entirely | OPEN-Q01/Q02/Q03 status=closed. Stage 10 (v2.5) = paste bundle + upload audit log only; humans manually upload via each platform's UI. PLAT-05 enforces `native_ai_path: paste \| none` (no `api` branch). |
+| **Pipefy `api_host` field per tenant (UAT-4.1)** | API host canonical-only (`api.pipefy.com/graphql`) for ALL tenants per Q24 verification 2026-05-10. Only `web_host` + `org_id` vary per tenant. DESIGN-29 simplified accordingly. |
+| **Pipefy auth-concurrency = parallel (UAT-4.2)** | Pipefy auth-concurrency = exclusive. Stage 8 (v2.4) test bot tier-1 must serialize per-tenant ops + emit `auth_switch_required` retry signal. |
+| **Owner-email change to org domain (UAT-3.1)** | AUDIT-07 §7.5 owner-email = INTENTIONAL. dYdX-approved private email; not a defect. FOUND-07 manifest sync explicitly does NOT change the email. |
+
+### Prior v2.0 exclusions (carried)
 
 | Feature / behaviour | Reason |
 |---|---|
