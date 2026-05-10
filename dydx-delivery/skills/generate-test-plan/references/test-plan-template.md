@@ -33,15 +33,9 @@ sandbox:
 
 ---
 
-## Hard rules (enforced by `execute-tests`)
+## Hard rules
 
-> Do not modify these. They are enforced regardless of test plan content.
-
-- **Sandbox only** — runs only against the IDs above
-- **No deletions** — `delete_*` API calls are refused
-- **No destructive automations** — won't trigger phase moves or webhooks that fire external integrations not in scope (real emails, invoices, billing, third-party publishing)
-- **Read-write only** — create / update allowed; deletes refused with a logged warning
-- **Audit trail** — every API call logged in the results file
+> **Hard rules:** Sandbox-only operations. Read-write only against named sandbox tenants. Refuses destructive actions. See `dydx-delivery/references/safety-rules.md` for the canonical ruleset.
 
 ---
 
