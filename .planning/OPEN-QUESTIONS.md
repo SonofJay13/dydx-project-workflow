@@ -193,7 +193,7 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 
 ## OPEN-03: Design-decision-deferred items
 
-This section catalogues design-decision-deferred items needing human input before the owning phase locks plans. Severity is INFORMATIONAL across all rows because each carries a Proposed-default that is shippable; resolution requires Jason's explicit acceptance signal (per D-49 `decide-before-Phase-<N>` enum value) within the named phase deadline. Plugin self-test scope (4th sub-item in `.planning/REQUIREMENTS.md` OPEN-03) is section-canonicalised under `## OPEN-07: Plugin self-test scope` per D-50 dedup discipline; cross-reference at end of this section.
+This section catalogues design-decision-deferred items needing human input before the owning phase locks plans. Severity is INFORMATIONAL across all rows because each carries a Proposed-default that is shippable; resolution requires Jason's explicit acceptance signal (per D-49 `decide-before-Phase-<N>` enum value) within the named phase deadline. Plugin self-test scope (4th sub-item in `.planning/REQUIREMENTS.md` OPEN-03) is section-canonicalised under the `OPEN-07` H2 below per D-50 dedup discipline; cross-reference at end of this section.
 
 **OPEN-Q14** — risk-multiplier defaults validated against dYdX historicals?
 
@@ -228,7 +228,7 @@ This section catalogues design-decision-deferred items needing human input befor
 - Proposed default: per DESIGN-08 status-lifecycle survey (`.planning/DESIGN.md:270`) — sampled v0.3.0 sources show only `{draft, client_review, approved}`; `archived` is additive (Stage 11 write only); no live values orphaned. Phase 1 re-runs the survey at v2.1 kickoff to confirm no drift since 2026-05-10 sample date.
 - Status: proposed
 
-> **Plugin self-test scope** (REQUIREMENTS.md OPEN-03 4th sub-item) is section-canonicalised under `## OPEN-07: Plugin self-test scope` per D-50 source-merging discipline. See OPEN-Q22 (assigned at Wave 4 / Plan 04-04).
+> **Plugin self-test scope** (REQUIREMENTS.md OPEN-03 4th sub-item) is section-canonicalised under the `OPEN-07` H2 anchor (Plugin self-test scope) per D-50 source-merging discipline. See OPEN-Q22 (assigned at Wave 4 / Plan 04-04).
 
 ## OPEN-04: Hub-link backfill rollout coordination
 
@@ -249,7 +249,40 @@ This section catalogues the rollout coordination invariant for the per-client hu
 
 ## OPEN-05: Standard Coda templates v2 must author
 
-(Populated by 04-03-PLAN.md / Wave 3. ~3 rows: brain-mirror template / task-table template / 00_HUB.md Coda block schema. All Phase 8 owner; resolution = `Coda-template-authoring (Phase 8)`.)
+This section catalogues the standard Coda templates v2 must author during Phase 8 (Sign-off + Coda mirror per CHANGELIST.md CHANGE-01). All rows owner=Phase 8; resolution=`Coda-template-authoring (Phase 8)` per D-49 enum. Severity is INFORMATIONAL across — defaults are author-as-built; no row halts plan creation in any earlier phase. Templates are emitted into `dydx-delivery/skills/sign-off-and-archive/references/` per DESIGN-26/27 carried. Templates do not exist in v0.3.0; this is a NEW Phase 8 deliverable.
+
+**OPEN-Q18** — brain-mirror doc Coda template (section-per-spoke + Field Notes table)
+
+- Question: What is the canonical Coda doc template structure for the per-client brain mirror — section-per-spoke layout (one section per stage spoke), Field Notes table schema (input-only per DESIGN-27), and approval-watermark field shape?
+- Source citations: `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:1072`, `.planning/DESIGN.md:1122`
+- Owning phase: Phase 8
+- Verification owner: Phase 8 / non-dev
+- Severity: INFORMATIONAL
+- Resolution path: Coda-template-authoring (Phase 8)
+- Proposed default: author-as-built during Phase 8 Sign-off + Coda mirror skill build; section-per-spoke layout per DESIGN-26 carried (`.planning/DESIGN.md:1072`); Field Notes table is input-only (read-by-skill, never written-by-skill) per DESIGN-27 carried (`.planning/DESIGN.md:1122`).
+- Status: proposed
+
+**OPEN-Q19** — task-table Coda template (column names + types + keyColumns upsert key)
+
+- Question: What is the canonical Coda task-table schema (column names + types + `keyColumns` upsert key)? How does the plugin auto-introspect the existing schema for clients with a pre-existing task table?
+- Source citations: `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:795`
+- Owning phase: Phase 8
+- Verification owner: Phase 8 / non-dev
+- Severity: INFORMATIONAL
+- Resolution path: Coda-template-authoring (Phase 8)
+- Proposed default: author-as-built during Phase 8; `keyColumns` = (client_slug, project_slug, task_slug) triple per DESIGN-22 carried (`.planning/DESIGN.md:795`); plugin schema-introspection cached in `00_HUB.md` Coda block per DESIGN-22 (cross-reference OPEN-Q20).
+- Status: proposed
+
+**OPEN-Q20** — Default `00_HUB.md` Coda block schema
+
+- Question: What is the canonical `00_HUB.md` Coda block YAML schema (`coda_brain_doc:` / `coda_tasks_table:` / `coda_tasks_schema:` cache)?
+- Source citations: `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:795`
+- Owning phase: Phase 8
+- Verification owner: Phase 8 / non-dev
+- Severity: INFORMATIONAL
+- Resolution path: Coda-template-authoring (Phase 8)
+- Proposed default: author-as-built during Phase 8; YAML keys per DESIGN-22 carried (`.planning/DESIGN.md:795`); defines the persistent Stage 6 ↔ Stage 11 contract — Stage 6 cost-estimate writes the schema cache, Stage 11 sign-off-and-archive reads it on every brain-mirror push.
+- Status: proposed
 
 ## OPEN-06: /refine-<skill> resolution
 
