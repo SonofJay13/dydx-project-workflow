@@ -192,7 +192,23 @@ Plans:
   4. **5 cosmetic CONCERNS items cleaned + status-lifecycle survey re-run.** Per AUDIT-07 (post-UAT-3.1 reclassification): B.1 README truncation completed; B.2 residual "test sheet" wording removed from `README.md:9`; B.3 pipeline-step count corrected to 13 in `README.md:9`; B.4 LICENSE created (covered by criterion 2); B.6 homepage asymmetry fixed (`marketplace.json` now carries matching `homepage` field); B.5 owner-email is INTENTIONAL — NO fix applied (UAT-3.1; dYdX-approved private email per user_email_approved memory). Status-lifecycle survey re-run at Phase 5 kickoff per OPEN-Q16 confirms no drift in `status:` values across live `<Client> Brain/` folders since 2026-05-10 sample.
   5. **All v0.3.0 BLOCKING bugs from AUDIT.md resolved + Phase 6 unblocked.** Every BLOCKING-tagged item from AUDIT.md (`platform:` runtime-loading contract, hard-rules duplication, sandbox-block bug, frontmatter inconsistencies) shows resolution-evidence in commit history; Phase 6 platform skills can land cleanly on top because canonical references they need to point at now exist.
 **Approval gate**: Human reviews canonical references + manifest sync + connector matrix + cleaned cosmetic items before Phase 6 begins. Approval signal = explicit go-ahead from the user. Rationale: Phase 6 platform skills point at Phase 5 canonical references — landing Phase 6 first leaves dangling pointers (per CHANGELIST.md Phase Ordering Rationale).
-**Plans**: TBD (defined via `/gsd-discuss-phase 5` then `/gsd-plan-phase 5`)
+**Plans:** 5 plans
+Plans:
+
+**Wave 1**
+- [ ] 05-01-PLAN.md — FOUND-01..04 + FOUND-12: status-lifecycle survey re-run (Coda MCP / SKILL.md fallback) + 4 canonical references (safety-rules.md lift-and-fix per D-62 + CRIT-5 Coda clause / stage-numbering.md DESIGN-02 verbatim mapping / frontmatter-scheme.md DESIGN-01+06+08 with PERMANENT lenient-mode / glossary.md lift-and-narrow from DESIGN.md Appendix A + Q09/Q13 entries)
+
+**Wave 2**
+- [ ] 05-02-PLAN.md — FOUND-05..06: 4-file hard-rules dedup (D-59 verbatim pointer; AUDIT-05.1 ground truth supersedes D-59 nominees) + execute-tests/references/safety-rules.md COLLAPSE per D-62 + 13 based_on_* filename renumbers + 6 template Stage-N self-label renumbers + skill prose filename refs
+
+**Wave 3**
+- [ ] 05-03-PLAN.md — FOUND-07..09: plugin.json + marketplace.json sync to 2.0.0 (owner-email UNCHANGED per UAT-3.1) + B.6 homepage on marketplace.json plugins[0] (cross-AI flag 2 — lands in W3 inline) + LICENSE byte-exact OPEN-Q23 boilerplate at repo root + 3 empty scaffold dirs (commands/agents/hooks) with .gitkeep; mcpServers field DEFERRED to later v2.x (cross-AI flag 5)
+
+**Wave 4**
+- [ ] 05-04-PLAN.md — FOUND-10 + FOUND-13: connector-matrix.md doc-only (D-56) with 6 connectors x 11 stages grid + per-stage fallback narrative + 8 OPEN-Q resolved values inline + UAT-3.5/UAT-6.1 lock-honouring grep gates; OPEN-QUESTIONS.md 8 row Status flips (Q06.1/Q07.1/Q09/Q10/Q11/Q12/Q13/Q25 -> decided) with backtick `path:line` citations per D-14
+
+**Wave 5** *(checkpoint — autonomous: false)*
+- [ ] 05-05-PLAN.md — FOUND-11 + Wave 0 retrospective: B.1 dydx-delivery/README.md changelog truncation closure (user-adjudicated text per checkpoint) + B.2 root README "test sheet" -> "test plan" + B.3 pipeline-step count per cross-AI flag 3 (default = v2.1 reality, 7 skills) + scripts/phase5-structure-check.sh with ~40 assertions A1..A40 mirroring openquestions-structure-check.sh; B.4 + B.6 cross-referenced (already landed in W3); B.5 NO FIX (UAT-3.1)
 
 ### Phase 6: Internalise Platform Skills
 **Goal**: Ship `skills/platform-{pipefy,wrike,ziflow}/` each with the 5-file `references/` shape (`api-contract.md` / `native-ai-inventory.md` / `knowledge-ingestion.md` / `client-shape-gotchas.md` / `vocabulary.md`) per DESIGN-14/15/16, with per-platform helpers for known gotchas (`paginate_all` for Pipefy GraphQL cursor pagination per MOD-4 / `wait_for_proof` for Ziflow read-after-create eventual consistency per MOD-6 / Wrike OAuth-host persistence per MOD-5), DESIGN-14 REVISED canonical-only Pipefy API endpoint (`api.pipefy.com/graphql` for ALL tenants — Q24 verified 2026-05-10 via DNS test) with HTML-on-auth-failure gotcha documented in `api-contract.md`, locked frontmatter contracts (`tier_claims_last_verified:` per MOD-7 + `native_ai_path:` enum locked to `paste | none` ONLY per UAT-6.1 — no `api` branch), and 3 throttle/consistency OPEN-QUESTIONS resolved (Q05 Ziflow read-after-create window / Q06.2 Pipefy throttle calibration / Q07.2 Wrike throttle calibration).
