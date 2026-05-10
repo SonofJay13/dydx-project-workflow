@@ -20,7 +20,7 @@
 
 ## OPEN-01: Research-flagged unverified items
 
-This section catalogues every research-flagged "couldn't verify" item surfaced from `.planning/research/SUMMARY.md` § Phase Ordering Rationale + `.planning/CHANGELIST.md` Appendix C (research-blocked phases) + `.planning/DESIGN.md` § "Deferred to Phase 4 OPEN-QUESTIONS". Three rows are HARD BLOCKER (native-AI ingestion APIs per platform — Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI; all Phase 7 owner per CHANGE-04). The remaining items are GUARDRAIL or INFORMATIONAL (resolved during owning phase but do not halt plan-creation). Per cross-AI review C6, the historic hybrid-owner rate-limit rows are split into single-owner pairs (Pipefy → Q06a Phase 1 + Q06b Phase 2; Wrike → Q07a Phase 1 + Q07b Phase 2) so both phase consumers grep their concern independently. **D-37 OPEN-01 contingent fallback (verbatim — carried from `.planning/CHANGELIST.md` § Phase 7 / Appendix E):** If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest.
+This section catalogues every research-flagged "couldn't verify" item surfaced from `.planning/research/SUMMARY.md` § Phase Ordering Rationale + `.planning/CHANGELIST.md` Appendix C (research-blocked phases) + `.planning/DESIGN.md` § "Deferred to Phase 4 OPEN-QUESTIONS". Three rows are HARD BLOCKER (native-AI ingestion APIs per platform — Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI; all Phase 7 owner per CHANGE-04). The remaining items are GUARDRAIL or INFORMATIONAL (resolved during owning phase but do not halt plan-creation). Per cross-AI review C6, the historic hybrid-owner rate-limit rows are split into single-owner pairs (Pipefy → Q06.1 Phase 1 + Q06.2 Phase 2; Wrike → Q07.1 Phase 1 + Q07.2 Phase 2) so both phase consumers grep their concern independently. **D-37 OPEN-01 contingent fallback (verbatim — carried from `.planning/CHANGELIST.md` § Phase 7 / Appendix E):** If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest.
 
 **OPEN-Q01** — Pipefy AI KB content-upload endpoint externally verifiable?
 
@@ -77,7 +77,7 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Proposed default: conservative — 30 second poll with 2s interval (per CHANGELIST.md Appendix E bullet verbatim recommendation).
 - Status: proposed
 
-**OPEN-Q06a** — Pipefy 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
+**OPEN-Q06.1** — Pipefy 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
 
 - Question: Has Pipefy published a 2026 rate-limit revision, or does the historic ~5 req/sec per token ceiling still apply?
 - Source citations: `.planning/CHANGELIST.md:277`, `.planning/DESIGN.md:442`
@@ -88,18 +88,18 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Proposed default: documented historic ceiling ~5 req/sec per token (per CHANGELIST.md Appendix E verbatim) until Phase 1 connector-validity research surfaces a 2026 revision.
 - Status: proposed
 
-**OPEN-Q06b** — Pipefy 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
+**OPEN-Q06.2** — Pipefy 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
 
-- Question: Given the Phase 1 published-rate-limit answer (Q06a), what is the calibrated consumer throttle value the platform-pipefy helpers should enforce?
+- Question: Given the Phase 1 published-rate-limit answer (Q06.1), what is the calibrated consumer throttle value the platform-pipefy helpers should enforce?
 - Source citations: `.planning/CHANGELIST.md:277`, `.planning/DESIGN.md:442`, `.planning/DESIGN.md:795`
 - Owning phase: Phase 2
 - Verification owner: Phase 2 / dev
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 2
-- Proposed default: helpers throttle at 4 req/sec (80% of historic ceiling — locked by DESIGN-22 carried throttle pattern at `.planning/DESIGN.md:795`) pending Q06a confirmation. Cross-references Q06a.
+- Proposed default: helpers throttle at 4 req/sec (80% of historic ceiling — locked by DESIGN-22 carried throttle pattern at `.planning/DESIGN.md:795`) pending Q06.1 confirmation. Cross-references Q06.1.
 - Status: proposed
 
-**OPEN-Q07a** — Wrike 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
+**OPEN-Q07.1** — Wrike 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
 
 - Question: Has Wrike published a 2026 rate-limit revision, or does the historic ~100 req/min per user still apply?
 - Source citations: `.planning/CHANGELIST.md:278`, `.planning/DESIGN.md:483`
@@ -110,15 +110,15 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Proposed default: documented historic ~100 req/min per user (per CHANGELIST.md Appendix E verbatim) until Phase 1 connector-validity research surfaces a 2026 revision.
 - Status: proposed
 
-**OPEN-Q07b** — Wrike 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
+**OPEN-Q07.2** — Wrike 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
 
-- Question: Given the Phase 1 published-rate-limit answer (Q07a), what is the calibrated consumer throttle value the platform-wrike helpers should enforce?
+- Question: Given the Phase 1 published-rate-limit answer (Q07.1), what is the calibrated consumer throttle value the platform-wrike helpers should enforce?
 - Source citations: `.planning/CHANGELIST.md:278`, `.planning/DESIGN.md:483`, `.planning/DESIGN.md:795`
 - Owning phase: Phase 2
 - Verification owner: Phase 2 / dev
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 2
-- Proposed default: helpers throttle at 80% of confirmed published ceiling per DESIGN-22 carried throttle pattern (`.planning/DESIGN.md:795`); pending Q07a confirmation. Cross-references Q07a.
+- Proposed default: helpers throttle at 80% of confirmed published ceiling per DESIGN-22 carried throttle pattern (`.planning/DESIGN.md:795`); pending Q07.1 confirmation. Cross-references Q07.1.
 - Status: proposed
 
 **OPEN-Q08** — Miro export-whole-board endpoint availability
