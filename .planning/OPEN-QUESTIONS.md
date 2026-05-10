@@ -382,11 +382,51 @@ This section catalogues the policy decision on plugin self-test scope per REQUIR
 
 ## Appendix A: Per-phase rollup index
 
-(Populated by 04-05-PLAN.md / Wave 5 synthesis. `| Phase | Question IDs | BLOCKER | GUARDRAIL | INFORMATIONAL |` — one row per v2.x phase that owns >= 1 question.)
+This index lets a v2.x build phase look up the rows it owns. One row per v2.x phase that owns ≥ 1 question; single-owner only per cross-AI review C6 (no hybrid `Phase 1/Phase 2` row — the historic hybrid rate-limit rows were split into Q06.1/Q06.2 and Q07.1/Q07.2).
+
+| Phase | Question IDs (OPEN-QNN) | BLOCKER count | GUARDRAIL count | INFORMATIONAL count |
+|---|---|---|---|---|
+| Phase 1 | OPEN-Q06.1, OPEN-Q07.1, OPEN-Q09, OPEN-Q10, OPEN-Q11, OPEN-Q12, OPEN-Q13, OPEN-Q15, OPEN-Q16, OPEN-Q17, OPEN-Q21, OPEN-Q21.1 | 0 | 2 | 10 |
+| Phase 2 | OPEN-Q05, OPEN-Q06.2, OPEN-Q07.2 | 0 | 1 | 2 |
+| Phase 3 | OPEN-Q08 | 0 | 0 | 1 |
+| Phase 4 | OPEN-Q14 | 0 | 0 | 1 |
+| Phase 7 | OPEN-Q01, OPEN-Q02, OPEN-Q03, OPEN-Q04 | 3 | 1 | 0 |
+| Phase 8 | OPEN-Q18, OPEN-Q19, OPEN-Q20 | 0 | 0 | 3 |
+| Phase 9 | OPEN-Q22 | 0 | 0 | 1 |
+
+Total: 25 register rows = 3 BLOCKER + 4 GUARDRAIL + 18 INFORMATIONAL across 7 single-owner phases.
 
 ## Appendix B: Source traceability
 
-(Populated by 04-05-PLAN.md / Wave 5 synthesis. `| OPEN-QN | Source citations |` — one row per register row; 1:1 cardinality with register-total per D-53. Sorted numerically by OPEN-QNN per cross-AI G2.)
+One row per register row; 1:1 cardinality with register-total (25 rows) per D-53; SORTED NUMERICALLY by OPEN-QNN per cross-AI G2 (sort key: numeric prefix, then decimal portion — Q06 < Q06.1 < Q06.2 < Q07 < Q07.1 < Q07.2 < Q08 < ... < Q21 < Q21.1 < Q22). Citations lifted verbatim from each register row's Source citations field.
+
+| OPEN-QN | Source citations |
+|---|---|
+| OPEN-Q01 | `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:284`, `.planning/DESIGN.md:410` |
+| OPEN-Q02 | `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:280`, `.planning/DESIGN.md:455` |
+| OPEN-Q03 | `.planning/REQUIREMENTS.md:90`, `.planning/CHANGELIST.md:281`, `.planning/DESIGN.md:496` |
+| OPEN-Q04 | `.planning/CHANGELIST.md:279`, `.planning/DESIGN.md:440` |
+| OPEN-Q05 | `.planning/CHANGELIST.md:282`, `.planning/DESIGN.md:523` |
+| OPEN-Q06.1 | `.planning/CHANGELIST.md:277`, `.planning/DESIGN.md:442` |
+| OPEN-Q06.2 | `.planning/CHANGELIST.md:277`, `.planning/DESIGN.md:442`, `.planning/DESIGN.md:795` |
+| OPEN-Q07.1 | `.planning/CHANGELIST.md:278`, `.planning/DESIGN.md:483` |
+| OPEN-Q07.2 | `.planning/CHANGELIST.md:278`, `.planning/DESIGN.md:483`, `.planning/DESIGN.md:795` |
+| OPEN-Q08 | `.planning/REQUIREMENTS.md:90`, `.planning/AUDIT.md:241` |
+| OPEN-Q09 | `.planning/REQUIREMENTS.md:90`, `.planning/AUDIT.md:266` |
+| OPEN-Q10 | `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543`, `.planning/DESIGN.md:795` |
+| OPEN-Q11 | `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543` |
+| OPEN-Q12 | `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543` |
+| OPEN-Q13 | `.planning/REQUIREMENTS.md:91`, `.planning/DESIGN.md:455`, `.planning/AUDIT.md:233` |
+| OPEN-Q14 | `.planning/REQUIREMENTS.md:92`, `.planning/CHANGELIST.md:283`, `.planning/DESIGN.md:795` |
+| OPEN-Q15 | `.planning/REQUIREMENTS.md:92`, `.planning/DESIGN.md:181`, `.planning/CHANGELIST.md:260` |
+| OPEN-Q16 | `.planning/REQUIREMENTS.md:92`, `.planning/DESIGN.md:270`, `.planning/AUDIT.md:38` |
+| OPEN-Q17 | `.planning/REQUIREMENTS.md:93`, `.planning/DESIGN.md:619`, `.planning/research/PITFALLS.md:201` |
+| OPEN-Q18 | `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:1072`, `.planning/DESIGN.md:1122` |
+| OPEN-Q19 | `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:795` |
+| OPEN-Q20 | `.planning/REQUIREMENTS.md:94`, `.planning/DESIGN.md:795` |
+| OPEN-Q21 | `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/AUDIT.md:287` |
+| OPEN-Q21.1 | `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/DESIGN.md:139` |
+| OPEN-Q22 | `.planning/REQUIREMENTS.md:96`, `.planning/DESIGN.md:122`, `.planning/CHANGELIST.md:160` |
 
 ## Appendix C: Reconciliation algorithm result
 
