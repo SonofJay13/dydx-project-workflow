@@ -252,12 +252,33 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | OPEN-05 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; Coda-template-authoring at Phase 8) |
 | OPEN-06 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; policy-pending-sign-off by Phase 1) |
 | OPEN-07 | Phase 4 | Complete-as-catalogued (2026-05-10 — register approved; policy-pending-sign-off by Phase 9) |
+| FOUND-01 | Phase 5 | Pending |
+| FOUND-02 | Phase 5 | Pending |
+| FOUND-03 | Phase 5 | Pending |
+| FOUND-04 | Phase 5 | Pending |
+| FOUND-05 | Phase 5 | Pending |
+| FOUND-06 | Phase 5 | Pending |
+| FOUND-07 | Phase 5 | Pending |
+| FOUND-08 | Phase 5 | Pending |
+| FOUND-09 | Phase 5 | Pending |
+| FOUND-10 | Phase 5 | Pending |
+| FOUND-11 | Phase 5 | Pending |
+| FOUND-12 | Phase 5 | Pending |
+| FOUND-13 | Phase 5 | Pending |
+| PLAT-01 | Phase 6 | Pending |
+| PLAT-02 | Phase 6 | Pending |
+| PLAT-03 | Phase 6 | Pending |
+| PLAT-04 | Phase 6 | Pending |
+| PLAT-05 | Phase 6 | Pending |
+| PLAT-06 | Phase 6 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 50 total (8 AUDIT + 30 DESIGN + 5 CHANGE + 7 OPEN)
-- Mapped to phases: 50 (8 → Phase 1 / 30 → Phase 2 / 5 → Phase 3 / 7 → Phase 4)
+- v2.1 requirements: 19 total (13 FOUND + 6 PLAT)
+- Total requirements (v2.0 + v2.1): 69
+- Mapped to phases: 69 (8 → Phase 1 / 30 → Phase 2 / 5 → Phase 3 / 7 → Phase 4 / 13 → Phase 5 / 6 → Phase 6)
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-09*
-*Last updated: 2026-05-09 after roadmap lock — 4 phases, 50/50 mapped*
+*Last updated: 2026-05-10 after v2.1 roadmap lock — 6 phases (4 v2.0 + 2 v2.1), 69/69 mapped (50 v2.0 + 19 v2.1)*
