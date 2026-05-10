@@ -206,11 +206,11 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | DESIGN-28 | Phase 2 | Complete (Plan 02-09) |
 | DESIGN-29 | Phase 2 | Complete (Plan 02-09) |
 | DESIGN-30 | Phase 2 | Complete (Plan 02-09) |
-| CHANGE-01 | Phase 3 | Complete (awaiting approval) |
-| CHANGE-02 | Phase 3 | Complete (awaiting approval) |
-| CHANGE-03 | Phase 3 | Complete (awaiting approval) |
-| CHANGE-04 | Phase 3 | Complete (awaiting approval) |
-| CHANGE-05 | Phase 3 | Complete (awaiting approval) |
+| CHANGE-01 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
+| CHANGE-02 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
+| CHANGE-03 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
+| CHANGE-04 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
+| CHANGE-05 | Phase 3 | Complete ✓ APPROVED 2026-05-10 |
 | OPEN-01 | Phase 4 | Pending |
 | OPEN-02 | Phase 4 | Pending |
 | OPEN-03 | Phase 4 | Pending |

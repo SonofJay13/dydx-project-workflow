@@ -13,7 +13,7 @@ This is a **design-only** milestone. The deliverables are four markdown document
 
 - [x] **Phase 1: Audit** — Catalogue v0.3.0 plugin reality so v2 design rests on observation, not memory; output `.planning/AUDIT.md` ✓ APPROVED 2026-05-09
 - [x] **Phase 2: Design** — Lock v2 architecture across cross-cutting structure, 13-skill inventory, platform skills, every stage skill, and test bot; output `.planning/DESIGN.md` ✓ APPROVED 2026-05-10
-- [ ] **Phase 3: Change list** — Sequence the v0.3.0 → v2 delta as the v2.1+ build plan with per-skill delta and cosmetic-fix list; output `.planning/CHANGELIST.md` *(plans 7/7 complete 2026-05-10 — verifier PASS 12/12 — awaiting approval)*
+- [x] **Phase 3: Change list** — Sequence the v0.3.0 → v2 delta as the v2.1+ build plan with per-skill delta and cosmetic-fix list; output `.planning/CHANGELIST.md` ✓ APPROVED 2026-05-10
 - [ ] **Phase 4: Open questions register** — Catalogue every "couldn't verify" + design-decision-deferred item, assign owner / phase; output `.planning/OPEN-QUESTIONS.md`
 
 ## Phase Details
@@ -163,7 +163,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
 | 2. Design | 10/10 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
-| 3. Change list | 7/7 | Plans complete — verifier PASS 12/12 — awaiting approval | - |
+| 3. Change list | 7/7 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
