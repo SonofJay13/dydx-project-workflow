@@ -110,11 +110,29 @@
 
 ## Phase 8: Sign-off + Coda mirror (v2.6)
 
-(Populated by 03-03-PLAN.md / Wave 1.)
+> **Why this phase here.** Depends on Coda MCP verification (Phase 1) and stable brain shape; closes the loop because next ship's kickoff reads Field Notes table populated since the last archive. *(per `.planning/research/SUMMARY.md` § "Phase 8 — Sign-off, Brain Update, Archive (Stage 11) + Coda Mirror" + § "Phase Ordering Rationale": "Phase 8 last among stage-skill phases because it depends on Coda MCP verification AND stable brain shape AND closes the loop with Field Notes for next ship's Phase 3 kickoff.")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `sign-off-and-archive/` skill (Stage 11, NEW); (b) updates local `<Client> Brain/<spokes>/`; (c) one-way push to Coda mirror with brain-mirror Coda doc template (Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes — 7 canonical spoke-shaped sections per DESIGN-27); (d) `tone_lint` pass before publish (MOD-9 prevention); (e) CR move to `Archive/`; (f) `00_Index.md` version bump; (g) Field Notes preserved (input-only, never overwritten); (h) pre-archive sanity check (no orphan refs, no missing artefacts). |
+| Depends on | Phase 1 (Coda MCP verified — required for one-way mirror push), Phase 6 (documentation published — sign-off references published-doc state) |
+| Addresses | STG11-01, STG11-02, STG11-03 |
+| Avoids pitfalls | CRIT-4 (two-way Coda sync re-emerging through Field Notes auto-merge — Field Notes never auto-merged; Stage 11 push is one-way only per DESIGN-09 directional boundary), MOD-9 (brain spoke leaks internal-only language to Coda — `tone_lint` pass before publish) |
+| Skills introduced/modified | 1 NEW (`sign-off-and-archive`, Stage 11). Appendix A row 16. |
+| Research-blocked | — |
 
 ## Phase 9: Surfaces (v2.6)
 
-(Populated by 03-03-PLAN.md / Wave 1.)
+> **Why this phase here.** Quality-of-life on top of fully-shipped skills; building before underlying skills means rewriting as skills shift. Validation/safety hooks fall here because they enforce shapes that only stabilise after Phases 1–8 land. *(per `.planning/research/SUMMARY.md` § "Phase 9 — Surfaces (commands/, agent wrapping, hooks/)" + § "Phase Ordering Rationale": "Phase 9 last overall because surfaces wrap stable underlying behaviour; building hooks before skills means hooks chase a moving target.")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `commands/refine.md` (single parameterised command taking skill name as `$1` per DESIGN-05 — avoids 10+ separate files; namespace `/dydx-refine-*` per DESIGN-23 carried); (b) `commands/{gsd-test-bot-run, gsd-publish-docs, gsd-push-native-ai, gsd-archive-cr}.md` (4 GSD-prefixed shortcuts per DESIGN-04); (c) `hooks/validate-frontmatter.py` (PostToolUse, parses YAML object never raw markdown per MOD-3 prevention); (d) `hooks/bump-artefact-version.py` (PreToolUse, enforces `_v{N+1}.md` naming); (e) approval-gate hook refusing `status: approved` writes lacking `approved_by` per DESIGN-06; (f) `mcpServers` field in `dydx-delivery/.claude-plugin/plugin.json` per DESIGN-04; (g) optional plugin self-tests at `dydx-delivery/tests/` per DESIGN-04 + D-24 (scope decision is `[OPEN: Phase 4 — plugin self-test scope per OPEN-07]` — pulled forward from REQUIREMENTS.md OPEN-07). |
+| Depends on | Phases 1-8 (surfaces wrap behaviour; building hooks before skills means hooks chase a moving target — per ordering rule) |
+| Addresses | SURF-01, SURF-02, SURF-03 |
+| Avoids pitfalls | MOD-2 (slash-command name collision — namespace as `/dydx-refine-*`; `/refine-<skill>` orphan references resolved per CONCERNS.md MOD-2), MOD-3 (hook frontmatter corruption — operates on parsed YAML object, never raw markdown). Plus anti-feature avoided: auto-progression hooks (REQUIREMENTS.md Out of Scope row 12 — explicitly excluded). |
+| Skills introduced/modified | No skill rows. `agents/test-bot-orchestrator/` shipped in Phase 5 — Phase 9 wraps it as a user-facing surface only via `/gsd-test-bot-run` shortcut. |
+| Research-blocked | — |
 
 ---
 
