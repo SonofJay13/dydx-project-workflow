@@ -6,15 +6,53 @@
 **Phase 2 Design (v2 architecture ground truth):** `.planning/DESIGN.md` (approved 2026-05-10)
 **Phase 3 Change list (v2.x build sequence):** `.planning/CHANGELIST.md` (approved 2026-05-10)
 
-> (Preamble placeholder — finalised in synthesis plan 04-05.)
+> **Reading conventions.** This register catalogues every research-flagged "couldn't verify" + design-decision-deferred item across the v2.0 design milestone. Each row carries a closed 9-field schema per D-47 (OPEN-QN / Question / Source citations / Owning phase / Verification owner / Severity / Resolution path / Proposed default / Status). Severity is one of `BLOCKER | GUARDRAIL | INFORMATIONAL` per D-48. Resolution path is one of `/gsd-research-phase <N>` / `decide-before-Phase-<N>` / `Coda-template-authoring (Phase 8)` / `policy-pending-sign-off` / `live-workstream-pointer` per D-49. Citation format is `` `path:line` `` per D-14 carried (verifiable via `grep -n` and the citation-validity full pass at Appendix C). Source-merging follows D-50 (single canonical row per dedup-on-Question-text; multi-source citation list per row). Reconciliation algorithm result lives in Appendix C — every row maps 1:1 to Appendix B traceability + has Owning phase + has >= 1 verifiable citation. Owning phase is single-owner only (`Phase [1-9]|TBD`) per cross-AI review C6.
+>
+> **Reviewer flow.** Read-in-order (Executive Summary → OPEN-01..07 → Appendices) for the full backlog argument; OR skip-to-contract via the Severity rollup (BLOCKER first), Owning-phase rollup (per-phase view), or Resolution-path rollup (research-blocked vs decide-before vs policy vs Coda-template vs live-workstream). v2.x build phases consume their assigned rows by `grep`-ing on the row's owning-phase field for their phase number.
 
 ## Executive Summary
 
-(Executive summary 3-table placeholder — populated by 04-05-PLAN.md / Wave 5 synthesis. Severity rollup + Owning-phase rollup + Resolution-path rollup tables.)
+**Severity rollup.**
+
+| Severity | Count | Notes |
+|---|---|---|
+| BLOCKER | 3 | OPEN-Q01..Q03 native-AI ingestion APIs (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI); all Phase 7 owner. Plan-phase for Phase 7 refuses to start while these are open. D-37 contingent fallback applies (slide P8/P9 → v2.7 if unresolved at v2.5 kickoff). |
+| GUARDRAIL | 4 | Pipefy GraphQL pagination cursor (Q04 / Phase 7) / Ziflow read-after-create consistency (Q05 / Phase 2) / Coda MCP wired (Q10 / Phase 1) / Google Workspace MCP server choice (Q11 / Phase 1). Resolved during owning phase but does not halt plan-creation. |
+| INFORMATIONAL | 18 | Pipefy/Wrike rate-limit splits (Q06.1/Q06.2 + Q07.1/Q07.2 post-cross-AI-C6) / Miro export endpoint (Q08) / Claude in Chrome naming (Q09) / Miro MCP wired (Q12) / Wrike host field source-of-truth (Q13) / risk-multiplier defaults (Q14) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / hub-link backfill (Q17) / Coda templates (Q18..Q20) / `/refine-<skill>` resolution + namespace (Q21 / Q21.1) / plugin self-test scope (Q22). Documented for awareness; recommended default acceptable. |
+
+**Owning-phase rollup** (single-owner only per cross-AI review C6 — no hybrid `Phase 1/Phase 2` row):
+
+| Phase | Count | Sample questions |
+|---|---|---|
+| Phase 1 | 12 | Coda MCP wired (Q10) / Google Workspace MCP server (Q11) / hub-link backfill (Q17) / frontmatter migration cutover (Q15) / status-lifecycle survey (Q16) / `/refine-<skill>` resolution (Q21) + namespace (Q21.1) / Pipefy 2026 rate-limit publication (Q06.1) / Wrike 2026 rate-limit publication (Q07.1) / Miro MCP wired (Q12) / Wrike host field (Q13) / Claude in Chrome naming (Q09) |
+| Phase 2 | 3 | Ziflow read-after-create consistency (Q05) / Pipefy throttle calibration (Q06.2) / Wrike throttle calibration (Q07.2) |
+| Phase 3 | 1 | Miro export-whole-board endpoint (Q08) |
+| Phase 4 | 1 | Risk-multiplier defaults pending dYdX-historical (Q14) |
+| Phase 7 | 4 | Pipefy AI KB (Q01) / Wrike AI Studio (Q02) / Ziflow ReviewAI (Q03) / Pipefy GraphQL pagination cursor (Q04) |
+| Phase 8 | 3 | Coda templates: brain-mirror (Q18) / task-table (Q19) / `00_HUB.md` schema (Q20) |
+| Phase 9 | 1 | Plugin self-test scope (Q22) |
+
+**Resolution-path rollup** (5 enum values per D-49 — full coverage at Wave 4):
+
+| Path | Count | Notes |
+|---|---|---|
+| /gsd-research-phase <N> | 15 | OPEN-01 + OPEN-02 research-flagged items; resolved by `/gsd-research-phase` invocation against owning phase |
+| decide-before-Phase-<N> | 3 | OPEN-Q14 (Phase 4) / OPEN-Q15 + OPEN-Q16 (Phase 1) design-decision-deferred items |
+| Coda-template-authoring (Phase 8) | 3 | OPEN-Q18 / OPEN-Q19 / OPEN-Q20 Coda templates authored during Phase 8 build |
+| policy-pending-sign-off | 3 | OPEN-Q21 + OPEN-Q21.1 `/refine-<skill>` resolution + namespace; OPEN-Q22 plugin self-test scope |
+| live-workstream-pointer | 1 | OPEN-Q17 hub-link backfill (Jason's parallel workstream tracker) |
 
 ## How to read this register
 
-(Populated by 04-05-PLAN.md / Wave 5 synthesis. 5 bold-headed paragraphs.)
+**Document purpose.** This register catalogues every "couldn't verify" item from research + every design-decision-deferred item across the v2.0 design milestone. Owning phases are assigned per `.planning/CHANGELIST.md` CHANGE-01 sequence; v2.x build phases consume their assigned rows as their resolution backlog. Approval of this register signals milestone-design-complete; v2.1 milestone definition can begin afterward.
+
+**Reading conventions.** Each H2 (`OPEN-01..07`) corresponds 1:1 to a `.planning/REQUIREMENTS.md` requirement ID. Each register row uses the closed 9-field schema per D-47. Closed enums per D-48 (severity), D-49 (resolution path), D-47 (status), and tightened single-owner per cross-AI review C6 (owning phase = `Phase [1-9]|TBD` only) are structurally checked by `.planning/phases/04-open-questions/scripts/openquestions-structure-check.sh`. Citations use `` `path:line` `` format per D-14 — verifiable via `grep -n` AND the full citation-validity pass run at Appendix C reconciliation (cross-AI C5). Source merging follows D-50 (single canonical row per dedup-on-Question-text; multi-source citation list).
+
+**Reviewer flow.** Two paths through this document. **Read-in-order** (Executive Summary → OPEN-01..07 → Appendices) gives the full backlog argument with severity reasoning. **Skip-to-contract** uses the Executive Summary as a TOC: Severity rollup (Table 1) for BLOCKER-first scanning; Owning-phase rollup (Table 2) for per-v2.x-phase planning; Resolution-path rollup (Table 3) for research-vs-decide-vs-policy-vs-Coda-vs-workstream classification. v2.x build phases find their assigned backlog by grepping the per-row owning-phase field for their phase number (e.g., `grep -B1 'Phase 1' OPEN-QUESTIONS.md` from the row context). Appendix A is the "what does my phase own?" lookup; Appendix B is the "where did this question come from?" traceability lookup (sorted numerically by OPEN-QNN per cross-AI G2); Appendix C is the reconciliation proof (REAL multiset comparison per cross-AI C3 + ROADMAP SC 1-5 walk + full citation-validity pass per cross-AI C5).
+
+**Source-of-truth pointers.** Phase 1 Audit (v0.3.0 ground truth) → `.planning/AUDIT.md`. Phase 2 Design (v2 architecture) → `.planning/DESIGN.md`. Phase 3 Change list (v2.x sequence) → `.planning/CHANGELIST.md`. Requirements → `.planning/REQUIREMENTS.md` § "Open questions register (OPEN-QUESTIONS.md)" (OPEN-01..07 verbatim). Roadmap success criteria → `.planning/ROADMAP.md` Phase 4 section. Pitfalls → `.planning/research/PITFALLS.md` (CRIT/MOD/MIN families). Research summary → `.planning/research/SUMMARY.md` § Phase Ordering Rationale (Phase 1 + Phase 7 research-blocked detail).
+
+**Phase boundary.** This is the terminal phase of the v2.0 Implementor Edition milestone (design-only mandate per kickoff; no skill files edited). Approval of this register = milestone-design-complete; v2.1+ build milestones inherit it as the resolution backlog. v2.x build phases resolve their assigned BLOCKER rows BEFORE locking plans (per D-48); GUARDRAIL rows are resolved DURING the owning phase (warning, not halt); INFORMATIONAL rows ship with the recommended default unless explicit override.
 
 ---
 
