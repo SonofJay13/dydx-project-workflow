@@ -152,7 +152,23 @@ Plans:
   4. `OPEN-QUESTIONS.md` catalogues the standard Coda templates v2 must author with Phase 8 as owner — brain-mirror doc template (section per spoke + Field Notes table); task-table template for clients without a pre-existing one; default `00_HUB.md` Coda block schema (`coda_brain_doc:`, `coda_tasks_table:`, `coda_tasks_schema:` cache).
   5. `OPEN-QUESTIONS.md` catalogues the two policy decisions still open — `/refine-<skill>` resolution (confirm "build single parameterised command" recommended OR "delete every orphan reference"; if build, namespace decision `/dydx-refine-*` vs `/refine-*`) AND plugin self-test scope (smoke tests for hooks + frontmatter validator via `pytest` on the plugin's own correctness — recommended — vs defer; plugin ships v2.1 without self-tests) — both with clear "decide before Phase X" owners.
 **Approval gate**: Human reviews `.planning/OPEN-QUESTIONS.md` and approves. This is the milestone-final approval. Approval signal = explicit go-ahead. Rationale: register is the handoff artefact to v2.1+ build milestones; once approved the milestone is design-complete and v2.1 milestone definition can begin.
-**Plans**: TBD
+**Plans:** 5 plans
+Plans:
+
+**Wave 1**
+- [ ] 04-01-PLAN.md — Wave 1 scaffold: openquestions-structure-check.sh (13 assertions A1..A13) + OPEN-QUESTIONS.md skeleton with 12 H2 anchors + preamble blockquote placeholder
+
+**Wave 2**
+- [ ] 04-02-PLAN.md — OPEN-01 + OPEN-02: research-flagged unverified items (~8 rows; 3x BLOCKER native-AI ingestion + 5x GUARDRAIL/INFORMATIONAL; D-37 contingent fallback verbatim) + connector-availability uncertainties (~3-4 rows; all Phase 1 owner)
+
+**Wave 3**
+- [ ] 04-03-PLAN.md — OPEN-03 + OPEN-04 + OPEN-05: design-decision-deferred items (~3 rows; risk-multiplier / migration cutover / status-survey) + hub-link backfill (1 canonical row per D-51) + Coda templates v2 must author (3 rows; Phase 8 owner); cross-reference forward to OPEN-Q22 per D-50 dedup
+
+**Wave 4**
+- [ ] 04-04-PLAN.md — OPEN-06 + OPEN-07: /refine-<skill> resolution (1-2 rows; D-52 sub-fields embedded; verbatim REQUIREMENTS.md recommendation) + plugin self-test scope (single canonical row OPEN-Q22; Phase 9 owner; resolves OPEN-03 cross-reference)
+
+**Wave 5**
+- [ ] 04-05-PLAN.md — Synthesis: preamble + Executive Summary 3-table (severity / phase / resolution rollups) + How-to-read 5-paragraph guide + Appendix A per-phase rollup + Appendix B traceability (1:1 cardinality with register-total) + Appendix C reconciliation algorithm result (5 conditions TRUE) + final structural-check exits 0 + reviewer-ready terminal-state phrase
 
 ## Progress
 
@@ -164,7 +180,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
 | 2. Design | 10/10 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
 | 3. Change list | 7/7 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
-| 4. Open questions register | 0/TBD | Not started | - |
+| 4. Open questions register | 0/5 | Plans created — execution pending | - |
 
 ---
 
