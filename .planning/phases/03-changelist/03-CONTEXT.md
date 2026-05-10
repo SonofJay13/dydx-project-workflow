@@ -62,7 +62,7 @@ Phase 3 produces `.planning/CHANGELIST.md` — the **sequenced, justified delta*
   **OPEN-01 contingent fallback (also mandatory in CHANGELIST.md, attached to the v2.5 row):** "If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest."
 
 ### 9-phase plan presentation depth
-- **D-38:** **H3 + per-phase mini-table per attribute.** Each phase = `### Phase N: <name> (v2.X)` + brief narrative paragraph (ordering rationale only — *why this phase here, not earlier or later*) + 6-row mini-table:
+- **D-38:** **H2 (per D-36) + per-phase mini-table per attribute.** Each phase = `## Phase N: <name> (v2.X)` H2 anchor (per D-36) + brief narrative paragraph (ordering rationale only — *why this phase here, not earlier or later*) + 6-row mini-table:
 
   | Attribute | Detail |
   |---|---|
