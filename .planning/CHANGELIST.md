@@ -84,11 +84,29 @@
 
 ## Phase 6: Documentation publishing (v2.5)
 
-(Populated by 03-03-PLAN.md / Wave 1.)
+> **Why this phase here.** Drive MCP integration; depends on shipped CRs to diff against and on Phase 1 connector verification. *(per `.planning/research/SUMMARY.md` § "Phase 6 — Documentation Publishing (Stage 9)")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `update-documentation/` skill (Stage 9, NEW; writes `ChangeRequests/<CR>/doc-diff.md`, requires reviewer approval, publishes via Drive MCP); (b) naming-scheme normalisation `<client_slug>__<project_slug>__<doc_type>__v<N>` with double-underscore separator + closed `doc_type` enum (per DESIGN-25 9-value enum); (c) `doc_published_at` timestamp on Drive doc + frontmatter; (d) `00_Index.md` canonical in Drive (local snapshot regenerated on push); (e) graceful halt condition if `<Client> Brain/00_HUB.md` `Documentation:` link missing (does not halt other stages — MOD-1 prevention). |
+| Depends on | Phase 1 (Drive MCP verified via connector probe), Phase 5 (Stage 8d test results approved upstream gate Stage 9 doc-diff) |
+| Addresses | STG9-01, STG9-02 |
+| Avoids pitfalls | CRIT-8 (publish/ingest race — `doc_published_at` invariant before Stage 10), MOD-1 (hub-link contract halts unrelated stages — graceful halt at Stage 9 only), MOD-15 (naming-scheme drift — closed `doc_type` enum + double-underscore separator), MIN-1 (diff rubber-stamp — plain-English summary + targeted question), MIN-2 (Drive permission asymmetry on new docs) |
+| Skills introduced/modified | 1 NEW (`update-documentation`, Stage 9). Appendix A row 14. |
+| Research-blocked | — |
 
 ## Phase 7: Native-AI knowledge push (v2.5) [BLOCKED — see Appendix C]
 
-(Populated by 03-03-PLAN.md / Wave 1. The `[BLOCKED — see Appendix C]` H2 tag per D-42 makes the only at-risk phase visible on a casual H2 scan.)
+> **Why this phase here.** Per-platform path; depends on platform skills (Phase 2) and approved doc fragments (Phase 6). *(per `.planning/research/SUMMARY.md` § "Phase 7 — Native-AI Knowledge Push (Stage 10)" + § "Phase Ordering Rationale": "Phase 6 before Phase 7 because Stage 10 ingests approved doc fragments from Stage 9.")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `push-native-ai-knowledge/` skill (Stage 10, NEW); (b) reads `04a` + approved doc fragments from Stage 9 + per-platform `references/native-ai-inventory.md`; (c) branches on `native_ai_path: api | paste | none` (copy-paste fallback default); (d) refuses ingest if `doc_published_at < last_diff_review_at` (CRIT-8 fix); (e) per-client target ID in `00_HUB.md` `Pipefy AI:` / `Wrike AI:` blocks; (f) refuses ingest if target mismatches `client:` frontmatter (MIN-4 fix); (g) `doc_version: <semver>` + `ingested_at: <ISO>` per ingested doc. |
+| Depends on | Phase 2 (platform-pipefy/-wrike/-ziflow `native-ai-inventory.md` references), Phase 6 (approved doc fragments from Stage 9) |
+| Addresses | STG10-01, STG10-02, STG10-03 (REQUIREMENTS.md flags "BLOCKED BY OPEN-01") |
+| Avoids pitfalls | CRIT-8 (knowledge-ingestion races doc publishing — refuses ingest if `doc_published_at < last_diff_review_at`), MIN-3 (knowledge-versioning gap — `doc_version` + `ingested_at` per ingested doc), MIN-4 (multi-tenant knowledge leak — refuses ingest if target mismatches `client:`) |
+| Skills introduced/modified | 1 NEW (`push-native-ai-knowledge`, Stage 10). Appendix A row 15. |
+| Research-blocked | ⚠ **HARD BLOCKER (Phase 7 inherits OPEN-01).** Three native-AI ingestion paths could not be externally verified: Pipefy AI KB content-upload endpoint, Wrike AI Studio knowledge-ingestion API, Ziflow ReviewAI knowledge-ingestion API. See Appendix C for full unknown-list + recommended `/gsd-research-phase` invocation.<br><br>**Inline marker (per D-27 carried — pulled forward from DESIGN.md Appendix E bullet 1):** `[OPEN: Phase 4 — Pipefy AI KB content-upload endpoint not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`<br><br>**OPEN-01 contingent fallback (verbatim per D-37):** "If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest." |
 
 ## Phase 8: Sign-off + Coda mirror (v2.6)
 
