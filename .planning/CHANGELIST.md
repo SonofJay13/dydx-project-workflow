@@ -28,7 +28,7 @@
 | Addresses | FOUND-01, FOUND-02, FOUND-03, FOUND-04, FOUND-05, FOUND-06, FOUND-07 |
 | Avoids pitfalls | CRIT-6 (frontmatter migration corrupts in-flight builds), MIN-5 (stage-numbering orphans), MOD-16 (hard-rules duplicate-and-edit), MIN-6 (email mismatch with stated org) |
 | Skills introduced/modified | existing 7 v0.3.0 skills MODIFIED to point at canonical references (no NEW skills this phase — see Appendix A rows tagged MODIFIED with Introduced (phase) = Phase 1) |
-| Research-blocked | ⚠ Connector availability per tenant unverified (Coda MCP version pin, Google Workspace MCP choice, Miro MCP existence, Wrike rate-limit currency, Ziflow auth header) — see Appendix C |
+| Research-blocked | ⚠ Connector availability per tenant unverified (Coda MCP version pin, Google Workspace MCP choice, Miro MCP existence, Wrike rate-limit currency, Ziflow auth header) — see Appendix C.<br><br>**Inline markers (per D-27 carried — pulled forward from .planning/DESIGN.md Appendix E bullets 3, 5):**<br>• `[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`<br>• `[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]` |
 
 ## Phase 2: Internalise Platform Skills (v2.1)
 
@@ -41,7 +41,7 @@
 | Addresses | PLAT-01, PLAT-02, PLAT-03 |
 | Avoids pitfalls | MOD-4 (Pipefy GraphQL pagination silently truncates), MOD-5 (Wrike OAuth token-host trap), MOD-6 (Ziflow eventual consistency on proof creation), MOD-7 (Platform-tier capability claims age fast) |
 | Skills introduced/modified | 3 NEW platform skills — `platform-pipefy`, `platform-wrike`, `platform-ziflow` (Appendix A rows 17-19 per DESIGN-12 matrix). No stage-skill changes this phase. |
-| Research-blocked | ⚠ Pipefy GraphQL pagination cursor field names + Pipefy/Wrike 2026 rate-limit currency + Ziflow read-after-create consistency window unverified — see Appendix C |
+| Research-blocked | ⚠ Pipefy GraphQL pagination cursor field names + Pipefy/Wrike 2026 rate-limit currency + Ziflow read-after-create consistency window unverified — see Appendix C.<br><br>**Inline markers (per D-27 carried — pulled forward from .planning/DESIGN.md Appendix E bullets 2, 4, 6, 7):**<br>• `[OPEN: Phase 4 — Pipefy GraphQL pagination cursor field names need verification against current 2026 schema per OPEN-01]`<br>• `[OPEN: Phase 4 — Wrike AI Studio knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`<br>• `[OPEN: Phase 4 — Ziflow ReviewAI knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`<br>• `[OPEN: Phase 4 — Ziflow read-after-create consistency window unverified per OPEN-01; Phase 2 owner per CHANGE-04. Conservative default in helper: 30 second poll with 2s interval.]` |
 
 ## Phase 3: Stage 1 + Stage 4 split (v2.2)
 
