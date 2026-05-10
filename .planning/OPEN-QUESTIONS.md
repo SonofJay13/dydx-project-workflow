@@ -145,7 +145,51 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 
 ## OPEN-02: Connector-availability uncertainties
 
-(Populated by 04-02-PLAN.md / Wave 2. ~3-4 rows for connector probes — Coda MCP / Google Workspace MCP / Miro MCP / Wrike auth header. All Phase 1 owner; resolution = `/gsd-research-phase 1`.)
+This section catalogues connector-availability uncertainties surfaced from `.planning/AUDIT.md` § AUDIT-08 (live MCP probe in this workspace) and `.planning/REQUIREMENTS.md` OPEN-02. Every row is owned by Phase 1 (Foundations + Connector Verification per CHANGELIST.md CHANGE-01) — Phase 1 connector probe is the resolution path for all rows in this section. Severity is GUARDRAIL when missing wiring blocks a downstream stage (Coda / Google Workspace) and INFORMATIONAL when a documented fallback exists (Miro paste-only).
+
+**OPEN-Q10** — Coda MCP wired in this workspace at canonical version pin?
+
+- Question: Is Coda MCP wired in this workspace, at what version pin, and does the wiring carry the live-edit + table-rows-manage capabilities Stage 6 + Stage 11 require?
+- Source citations: `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543`, `.planning/DESIGN.md:795`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: GUARDRAIL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: assume Coda MCP wired (AUDIT-08 records present-and-working as of probe date `2026-05-09T17:05Z` per `.planning/AUDIT.md:543`); Phase 1 connector probe re-confirms version pin + capability-set at v2.1 kickoff. If absent: Stage 6 cost estimate Coda mirror writes degrade to manual-paste fallback.
+- Status: proposed
+
+**OPEN-Q11** — Google Workspace MCP wired (which server)?
+
+- Question: Is Google Workspace MCP wired in this workspace, and which specific server (`taylorwilsdon` vs `piotr-agier` vs Anthropic-maintained)? Different servers expose different tool surfaces (Drive read-vs-write; Gmail send vs read-only; Calendar event-create vs read).
+- Source citations: `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: GUARDRAIL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: confirm via `claude mcp list` plus per-MCP cheap-read probe at Phase 1 kickoff (mirroring the AUDIT-08 methodology at `.planning/AUDIT.md:543`). If absent: Stage 9 doc-publish degrades to manual-upload to Drive (graceful per MOD-1 prevention). *(Non-binding suggestion per cross-AI C8 — capturing the chosen server in `dydx-delivery/references/connectors.md` (FOUND-06) is recommended; Phase 1 owner finalises destination — this register does not own that destination.)*
+- Status: proposed
+
+**OPEN-Q12** — Miro MCP wired (or paste-only)?
+
+- Question: Is Miro MCP wired in this workspace, or does the Stage 3 SOW capture flow rely on paste-from-screenshot?
+- Source citations: `.planning/REQUIREMENTS.md:91`, `.planning/AUDIT.md:543`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: INFORMATIONAL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: AUDIT-08 records Miro MCP wired and working at probe date (per `.planning/AUDIT.md:543` — `board_search_boards` returned 5 boards / total 920); paste-from-screenshot remains the documented fallback for clients without per-tenant Miro access. Stage 3 design must function without it.
+- Status: proposed
+
+**OPEN-Q13** — Wrike auth header / `host` field source-of-truth across multi-tenant deployments
+
+- Question: Where is the per-tenant Wrike `host` field (returned from OAuth token exchange) persisted in this workspace's pattern, and is it the same source-of-truth Stage 7b will read from for `platform-wrike` API calls?
+- Source citations: `.planning/REQUIREMENTS.md:91`, `.planning/DESIGN.md:455`, `.planning/AUDIT.md:233`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / dev
+- Severity: INFORMATIONAL
+- Resolution path: /gsd-research-phase 1
+- Proposed default: persist `wrike_host` alongside `coda_brain_doc:` cache per DESIGN-15 carried (`.planning/DESIGN.md:455`). *(Non-binding suggestion per cross-AI C8 — exact storage location (e.g., `<Client> Brain/00_HUB.md` Coda block) is Phase 1 owner discretion; this register does not own that destination.)*
+- Status: proposed
 
 ## OPEN-03: Design-decision-deferred items
 
