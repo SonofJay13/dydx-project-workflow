@@ -6,16 +6,17 @@
   },
   "metadata": {
     "description": "Private plugin marketplace for the dYdX Digital team. Solutions architecture and delivery tooling — stage-gated client pipelines, platform-specific skills, internal automation.",
-    "version": "1.2.0"
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "dydx-delivery",
       "source": "./dydx-delivery",
       "description": "Stage-gated client delivery pipeline. Seven skills: discovery-intake, generate-sow, generate-functional-spec, generate-technical-spec, generate-test-plan, generate-build-prompt (for Claude Code), execute-tests (bot runs the test plan against the sandbox). Every stage produces a versioned, human-reviewed artefact.",
-      "version": "0.3.0",
+      "version": "2.0.0",
       "category": "delivery",
-      "tags": ["sow", "spec", "test-plan", "build-prompt", "claude-code", "automated-testing", "pipefy", "wrike", "solutions-architecture"]
+      "tags": ["sow", "spec", "test-plan", "build-prompt", "claude-code", "automated-testing", "pipefy", "wrike", "solutions-architecture"],
+      "homepage": "https://github.com/SonofJay13/dydx-project-workflow"
     }
   ]
 }
