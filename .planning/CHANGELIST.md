@@ -58,11 +58,29 @@
 
 ## Phase 4: Tech spec + Cost + Implementation prompt (v2.3)
 
-(Populated by 03-02-PLAN.md / Wave 1.)
+> **Why this phase here.** Tech spec scope-gates against fnspec-integration existence; cost estimate adds Coda integration (depends on Phase 1 Coda verification); implementation prompt is a sibling of the existing build prompt. Cannot run before Phase 3 because cost estimate reads fnspecs. *(per `.planning/research/SUMMARY.md` § "Phase 4 — Tech Spec Scope Gate, Stage 6 Cost Estimate, Stage 7b Implementation Prompt")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `generate-technical-spec/` MODIFIED (Stage 5, scope-gated; emits platform-API addendum on 4a if no 4b); (b) `generate-cost-estimate/` (Stage 6, NEW; reads Coda task-table schema + caches in 00_HUB.md, writes per-assignee rows via `rows/upsert` with `keyColumns`, polls `mutationStatus`, rate-limits at 4 req/10s — 80% of Coda's 5/10s ceiling per CRIT-3); (c) `generate-build-prompt/` MODIFIED (Stage 7a); (d) `generate-implementation-prompt/` (Stage 7b, NEW; per-platform shape — Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = checklist/criteria spec); (e) risk-multiplier taxonomy STRUCTURE locked per DESIGN-22 (with mandatory `rationale` field per row) — numeric defaults DEFERRED per D-22. |
+| Depends on | Phase 1 (Coda MCP verified), Phase 2 (platform skills loaded for per-platform Stage 7b shapes), Phase 3 (fnspec-platform + fnspec-integration to read) |
+| Addresses | STG5-01, STG6-01, STG6-02, STG7-01, STG7-02 |
+| Avoids pitfalls | CRIT-1 (Coda formula column overwrite — schema-introspect first), CRIT-2 (Coda async-202 — `mutate_and_wait`), CRIT-3 (Coda write rate-limit — batch `rows/upsert` + 4/10s buffer + idempotent retry via `keyColumns`), CRIT-9 (Coda token over-scope — per-client tokens + 00_HUB.md doc IDs), MOD-10 (risk-multiplier indefensible — closed taxonomy + `rationale` field per row) |
+| Skills introduced/modified | 1 MODIFIED (`generate-technical-spec`, Stage 5) + 1 NEW (`generate-cost-estimate`, Stage 6) + 1 MODIFIED (`generate-build-prompt`, Stage 7a) + 1 NEW (`generate-implementation-prompt`, Stage 7b). Appendix A rows 6, 7, 8, 9. |
+| Research-blocked | — (Coda API HIGH-confidence per RESEARCH.md; per-platform Stage 7b implementation-prompt shapes documented in FEATURES.md). Risk-multiplier numeric defaults `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` — Phase 4 OPEN-QUESTIONS register owner. |
 
 ## Phase 5: Test bot rebuild (v2.4)
 
-(Populated by 03-02-PLAN.md / Wave 1.)
+> **Why this phase here.** Test bot needs the new fnspec-platform + fnspec-integration to derive cases properly; building before Phase 3 means rebuilding to handle the split. Self-contained otherwise; depends only on `<Client> Brain/test-bot/` shape and existing `execute-tests` safety contract. *(per `.planning/research/SUMMARY.md` § "Phase 5 — Test Bot Rebuild" + § "Phase Ordering Rationale": "Phase 3 before Phase 5 because test bot derives cases from fnspecs.")*
+
+| Attribute | Detail |
+|---|---|
+| Deliverables | (a) `provision-test-harness/` (Stage 8a, NEW; bootstrap once, delta-update thereafter against `client_state.yaml`); (b) `generate-test-plan/` UNCHANGED body / MODIFIED path (Stage 8b — moves to `<Client> Brain/test-bot/test_cases/`); (c) `generate-uat-plan/` (Stage 8c, NEW); (d) `execute-tests/` UNCHANGED user-facing / MODIFIED-internally (Stage 8d — invokes test-bot agent); (e) `agents/test-bot-orchestrator/` agent (NEW); (f) per-client `client_state.yaml` schema (sandbox tenant IDs gated by platform, fixtures, integration toggles, `wrike_host`, `last_known_schema` per platform, `last_passed_at` per test case, `targets_artefact` per test case for obsolescence detection); (g) sandbox-allowlist extended to Coda (CRIT-5 fix); (h) `harness_drift` failure class added to `spec gap | implementation gap | environment issue | unknown`; (i) `sandbox_lock.yaml` for concurrency; (j) test-case lifecycle states `active | obsolete | quarantined`; (k) drift-detection algorithm per DESIGN-30 (pre-flight schema diff; mismatch halts + emits `schema_drift_report.md`). |
+| Depends on | Phase 3 (fnspec-platform + fnspec-integration to derive cases) |
+| Addresses | STG8-01, STG8-02, STG8-03, STG8-04 |
+| Avoids pitfalls | CRIT-5 (sandbox enforcement gap on Coda — extend allowlist), CRIT-7 (harness drift — `client_state.yaml` + drift detection), MOD-11 (stale tests linger — lifecycle states), MOD-12 (Python/AI orchestrator boundary creep — hard contract on layer separation), MOD-13 (concurrency conflict in sandbox — `sandbox_lock.yaml`), MOD-14 (sandbox cleanup-via-no-deletes — fixture run-ID prefix); also avoids AP-3 (recreating test-bot on each ship) |
+| Skills introduced/modified | 1 NEW (`provision-test-harness`, Stage 8a) + 1 MODIFIED (`generate-test-plan`, Stage 8b — body unchanged; path moves to `<Client> Brain/test-bot/test_cases/`) + 1 NEW (`generate-uat-plan`, Stage 8c) + 1 MODIFIED (`execute-tests`, Stage 8d — internally invokes `test-bot-orchestrator` agent). Plus 1 NEW agent: `agents/test-bot-orchestrator/`. Appendix A rows 10, 11, 12, 13. |
+| Research-blocked | — (self-contained — depends on `<Client> Brain/test-bot/` shape + existing `execute-tests` safety contract; both validated) |
 
 ## Phase 6: Documentation publishing (v2.5)
 
