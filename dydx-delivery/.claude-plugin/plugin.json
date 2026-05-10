@@ -1,6 +1,6 @@
 {
   "name": "dydx-delivery",
-  "version": "0.3.0",
+  "version": "2.0.0",
   "description": "Stage-gated client delivery pipeline for dYdX Digital. Seven skills that turn a discovery conversation into a SOW, functional spec, technical spec, test plan, and a Claude-Code-ready build prompt — then a bot runs the test plan against the sandbox tenant. Cowork is the strategy seat, Claude Code is the build seat. Every stage produces a versioned, human-reviewed artefact.",
   "author": {
     "name": "Jason Blignaut",
