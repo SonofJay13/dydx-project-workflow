@@ -286,7 +286,38 @@ This section catalogues the standard Coda templates v2 must author during Phase 
 
 ## OPEN-06: /refine-<skill> resolution
 
-(Populated by 04-04-PLAN.md / Wave 4. 1-2 rows: namespace decision + parameterised-vs-orphan-delete. Phase 1 deadline; resolution = `policy-pending-sign-off`.)
+This section catalogues the policy decision on `/refine-<skill>` resolution per REQUIREMENTS.md OPEN-06. Per D-52 carried, both rows in this section use `Resolution path: policy-pending-sign-off` (Jason approves the recommended default; no further work needed beyond an acceptance signal). The recommended default is lifted verbatim from REQUIREMENTS.md OPEN-06: build single parameterised command (option a); namespace `/dydx-refine-<skill>` (plugin-prefixed; avoids clash). Each row's Proposed-default field embeds the D-52 sub-fields (Decision deadline / Acceptance signal / Fallback-if-undecided) in markdown-list form. The namespace sub-decision is emitted as decimal-ID OPEN-Q21.1 (per cross-AI C2 decimal-ID-aware regex in structural-check A4/A10/A14).
+
+**OPEN-Q21** — `/refine-<skill>` resolution: build-single-parameterised-command vs delete-orphan-references
+
+- Question: Should the v0.3.0 `/refine-<skill>` orphan references be (a) collapsed into a single parameterised `commands/refine.md` per DESIGN-05 carried, OR (b) deleted entirely (no refine workflow shipped)?
+- Source citations: `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/AUDIT.md:287`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: policy-pending-sign-off
+- Proposed default:
+  - **Recommendation:** "build single parameterised command" (option a) per `.planning/REQUIREMENTS.md:95` OPEN-06 verbatim — collapses the 3 orphan references catalogued in `.planning/AUDIT.md:287` § 4.2 into a single parameterised `commands/refine.md` per DESIGN-05 (`.planning/DESIGN.md:132`).
+  - **Decision deadline:** before Phase 1 plan-phase locks Foundations build (v2.1).
+  - **Acceptance signal:** Jason explicit go-ahead in chat or commit message ("approved" or equivalent — same pattern as Phase approval gates).
+  - **Fallback-if-undecided:** v2.1 ships with `/refine-<skill>` orphan references intact but undocumented (option c — punt); revisit at v2.2 kickoff.
+- Status: proposed
+
+**OPEN-Q21.1** — `/refine-<skill>` namespace decision (sub-row; only relevant if OPEN-Q21 = build)
+
+- Question: If OPEN-Q21 = build (option a), what is the canonical command namespace — `/dydx-refine-<skill>` (plugin-prefixed; recommended) OR `/refine-<skill>` (unprefixed; risks clash with other plugins)?
+- Source citations: `.planning/REQUIREMENTS.md:95`, `.planning/DESIGN.md:132`, `.planning/DESIGN.md:139`
+- Owning phase: Phase 1
+- Verification owner: Phase 1 / Jason
+- Severity: INFORMATIONAL
+- Resolution path: policy-pending-sign-off
+- Proposed default:
+  - **Recommendation:** `/dydx-refine-<skill>` (plugin-prefixed; avoids clash with other plugins' `/refine-*` commands) per CONTEXT.md D-52 + DESIGN-05 namespace lock at `.planning/DESIGN.md:139` ("Namespace: `/dydx-refine-*` (NOT bare `/refine-*` — D-23)").
+  - **Decision deadline:** before Phase 1 plan-phase locks Foundations build (v2.1).
+  - **Acceptance signal:** Jason explicit go-ahead in chat or commit message.
+  - **Fallback-if-undecided:** unprefixed `/refine-<skill>`; revisit if clash detected post-ship.
+  - **Conditional:** only relevant if OPEN-Q21 = build; if OPEN-Q21 = delete, this row is superseded.
+- Status: proposed
 
 ## OPEN-07: Plugin self-test scope
 
