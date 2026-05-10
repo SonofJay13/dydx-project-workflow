@@ -169,7 +169,47 @@ This appendix inventories every skill in the v2 universe — every existing v0.3
 
 Lifted verbatim from `.planning/AUDIT.md` § AUDIT-07 (per D-16 sentinel discipline). Editing here without also editing AUDIT-07 introduces drift; if a fix needs revision, edit AUDIT.md first and re-lift.
 
-(Populated by 03-05-PLAN.md / Wave 1. Verbatim lift from AUDIT-07's 6 fix subsections — each carries the per-bullet sentinel `**Scheduled for v2.1 Foundations build (FOUND-NN), NOT this milestone.**` per D-16/D-41.)
+#### B.1 README truncation (plugin-level)
+
+- **Citation:** `dydx-delivery/README.md:126` — Changelog entry for `0.3.0` reads: *"The bot-run terminal stage (`execute-tests`) now c"* and the file terminates mid-sentence. No closing punctuation, no further entries.
+- **Context:** Plugin README is the install-time README; truncation is visible to anyone reading the plugin's marketplace listing.
+- **Severity:** **[COSMETIC]** — client-visible (plugin README).
+- **Fix:** Complete the truncated sentence in the changelog entry. **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+#### B.2 Residual "test sheet" wording
+
+- **Citation:** `README.md:9` — Root README still says "discovery → SOW → functional spec → technical spec → **test sheet** → execution".
+- **Context:** Plugin README changelog (`dydx-delivery/README.md:126`) records the 0.3.0 rename `generate-test-sheet` → `generate-test-plan`; root README never followed the rename.
+- **Severity:** **[COSMETIC]** — client-visible (root marketplace README).
+- **Fix:** Change "test sheet" to "test plan" at `README.md:9`. **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+#### B.3 Pipeline-step count mismatch (root README)
+
+- **Citation:** `README.md:9` says 5 pipeline steps; `.claude-plugin/marketplace.json:15` and `dydx-delivery/.claude-plugin/plugin.json:4` describe **seven skills**; `dydx-delivery/README.md:33-41` lists seven.
+- **Context:** Two-vs-three sources of truth disagree on pipeline length; new readers see contradictory information.
+- **Severity:** **[COSMETIC]** — client-visible (root README).
+- **Fix:** Update `README.md:9` to reflect the 7-skill v0.3.0 pipeline (or v2's 13-skill pipeline post-rebuild). **Scheduled for v2.1 Foundations build (FOUND-07), NOT this milestone.**
+
+#### B.4 Missing LICENSE file
+
+- **Citation:** `dydx-delivery/.claude-plugin/plugin.json:10` declares `"license": "Proprietary"`; no `LICENSE` or `LICENSE.md` file exists at repo root or plugin folder; `.claude-plugin/marketplace.json` has no `license` field.
+- **Context:** Provenance gap — the `Proprietary` declaration is unbacked by an actual licence text; clients viewing the marketplace see a license field that doesn't resolve to a document.
+- **Severity:** **[COSMETIC]** — client-visible (provenance).
+- **Fix:** Add `LICENSE` file at repo root (or `dydx-delivery/LICENSE`) with proprietary licence terms; add matching `license` field to `marketplace.json`. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.**
+
+#### B.5 Owner-email mismatch with stated org
+
+- **Citation:** `.claude-plugin/marketplace.json:5` (`owner.email`) and `dydx-delivery/.claude-plugin/plugin.json:7` (`author.email`) both list `jasonmichaelb@gmail.com`; README and marketplace metadata describe the team as "dYdX Digital" (e.g. `.claude-plugin/marketplace.json:4`, `dydx-delivery/.claude-plugin/plugin.json:4`); no `@dydx.digital` or org domain appears in the manifests.
+- **Context:** Provenance — clients viewing the marketplace see a personal Gmail; mismatches the stated organisational identity.
+- **Severity:** **[COSMETIC]** — client-visible (provenance).
+- **Fix:** Change to an org-domain address. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.** **Cross-ref:** MIN-6 PITFALL.
+
+#### B.6 [NEW] Homepage asymmetry
+
+- **Citation:** `dydx-delivery/.claude-plugin/plugin.json:9` has `"homepage": "https://github.com/SonofJay13/dydx-project-workflow"`; `.claude-plugin/marketplace.json` has no `homepage` field. (`.planning/codebase/CONCERNS.md:197-199`).
+- **Context:** Asymmetric metadata — the marketplace listing omits a link the plugin manifest provides.
+- **Severity:** **[NEW]** **[COSMETIC]** — client-visible (marketplace listing). [NEW] tag because CONCERNS.md flagged the asymmetry but didn't formally categorize it; AUDIT.md elevates it to cosmetic-client-visible.
+- **Fix:** Add matching `homepage` field to `marketplace.json`. **Scheduled for v2.1 Foundations build (FOUND-04), NOT this milestone.**
 
 ## Appendix C: Research-blocked phases (CHANGE-04)
 
