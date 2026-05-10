@@ -14,7 +14,7 @@ sandbox:
 
 # Test Plan — <CLIENT_NAME> · <feature>
 
-> Stage 5 of the dydx-delivery pipeline. Executable test plan derived from the technical spec. Each row is one runnable test.
+> Stage 8b of the dydx-delivery pipeline. Executable test plan derived from the technical spec. Each row is one runnable test.
 
 ---
 
@@ -140,4 +140,4 @@ When this test plan is approved:
 3. Once the build is complete, run `execute-tests` to run this plan against the sandbox tenant
 
 **Next stage (`generate-build-prompt`) reads:** this test plan plus the technical spec.
-**Final stage (`execute-tests`) reads:** the highest-version `test-plan_v*.md` in this folder.
+**Final stage (`execute-tests`) reads:** the highest-version `08b_test-plan_v*.md` in this folder.

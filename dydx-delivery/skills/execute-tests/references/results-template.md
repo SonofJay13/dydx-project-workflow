@@ -15,7 +15,7 @@ sandbox:
 
 # Test Results — <CLIENT_NAME> · <feature> · <YYYY-MM-DD>
 
-> Stage 6 of the dydx-delivery pipeline. Output of one test run.
+> Stage 8d of the dydx-delivery pipeline. Output of one test run.
 
 ---
 
@@ -117,7 +117,7 @@ sandbox:
   ...
 ```
 
-(Full audit log appended below or in a sibling file `results-YYYY-MM-DD_v<N>_audit.log` if very large.)
+(Full audit log appended below or in a sibling file `08d_test-results_v<N>_audit.log` if very large.)
 
 ---
 

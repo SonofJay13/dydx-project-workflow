@@ -85,7 +85,7 @@ This engagement follows the dydx-delivery pipeline:
 Each deliverable is accepted when:
 
 1. The acceptance criteria in the deliverables table are met
-2. The deliverable passes the test plan relevant to it (see `testing/<feature>/test-plan_v*.md`)
+2. The deliverable passes the test plan relevant to it (see `testing/<feature>/08b_test-plan_v*.md`)
 3. The client signs off in writing on the deliverable
 
 Final engagement acceptance is on completion of all deliverables plus successful UAT in the client's sandbox tenant.
@@ -152,4 +152,4 @@ When this SOW is approved:
 2. Save the signed PDF (or signature confirmation) alongside this file
 3. Run `generate-functional-spec` to convert in-scope deliverables into detailed requirements
 
-**Next stage reads:** the highest-version `01_sow_v*.md` in this folder.
+**Next stage reads:** the highest-version `03_sow_v*.md` in this folder.

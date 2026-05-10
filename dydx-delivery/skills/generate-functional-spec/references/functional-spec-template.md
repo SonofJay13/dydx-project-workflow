@@ -10,7 +10,7 @@ generated_at: <YYYY-MM-DD>
 
 # Functional Specification — <CLIENT_NAME> · <ENGAGEMENT_NAME>
 
-> Stage 2 of the dydx-delivery pipeline. Defines **what** the system must do — platform-agnostic. Every business rule and acceptance criterion here must be testable.
+> Stage 4a of the dydx-delivery pipeline. Defines **what** the system must do — platform-agnostic. Every business rule and acceptance criterion here must be testable.
 
 ---
 
@@ -162,4 +162,4 @@ When this functional spec is approved:
 1. Update `status:` to `approved`
 2. Run `generate-technical-spec` to map these requirements onto the platform
 
-**Next stage reads:** the highest-version `02_functional-spec_v*.md`.
+**Next stage reads:** the highest-version `04a_fnspec-platform_v*.md`.

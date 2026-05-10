@@ -9,25 +9,25 @@ Translate an approved technical spec into a Claude-Code-ready build prompt. The 
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/03_technical-spec_v*.md` (required, must be `status: approved` for production builds)
-- The latest `<Client>/testing/<feature>/test-plan_v*.md` if generated — referenced in the prompt so the build self-checks against it
+- The latest `<Client>/build-specs/<platform>/05_techspec_v*.md` (required, must be `status: approved` for production builds)
+- The latest `<Client>/testing/<feature>/08b_test-plan_v*.md` if generated — referenced in the prompt so the build self-checks against it
 - Functional spec + SOW for context
 
 ## Output
 
-`<Client>/build-specs/<platform>/04_build-prompt_vN.md`
+`<Client>/build-specs/<platform>/07a_build-prompt-dev_vN.md`
 
 ## How to run
 
 ### Step 1 — Locate upstream artefacts
 
-Find the highest-version `03_technical-spec_v*.md`. Pull the latest test plan if it exists.
+Find the highest-version `05_techspec_v*.md`. Pull the latest test plan if it exists.
 
 **If technical spec not found**, run start-at-any-point triage:
 
 > I don't see a technical spec for `<Client>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing technical spec** — I'll save it as `03_technical-spec_v1.md`
+> **(a) Paste an existing technical spec** — I'll save it as `05_techspec_v1.md`
 > **(b) Walk through the implementation plan inline** — I'll capture enough to draft a build prompt, stub the technical spec
 > **(c) Cancel**
 
@@ -54,7 +54,7 @@ Reference the platform skill explicitly in the prompt so Claude Code loads it on
 
 ### Step 4 — Check for existing build prompt
 
-Look for `04_build-prompt_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
+Look for `07a_build-prompt-dev_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
 
 ### Step 5 — Draft the build prompt
 
@@ -62,7 +62,7 @@ Use the template at `references/build-prompt-template.md`. The prompt has eight 
 
 **1. Context** — what's being built, for whom, why. One paragraph. Lifted from SOW + technical spec.
 
-**2. Inputs to read first** — explicit list of artefacts Claude Code must read before acting. Include exact paths and version numbers (e.g. `03_technical-spec_v3.md` not "the latest tech spec").
+**2. Inputs to read first** — explicit list of artefacts Claude Code must read before acting. Include exact paths and version numbers (e.g. `05_techspec_v3.md` not "the latest tech spec").
 
 **3. Build scope** — bulleted list of what's in scope for THIS build prompt. Excludes anything outside scope.
 
@@ -91,7 +91,7 @@ Use the template at `references/build-prompt-template.md`. The prompt has eight 
 **8. Done criteria + handoff** — what "complete" looks like and what to hand back:
 - All build sequence items checked off
 - Smoke tests green
-- Build report at `<Client>/build-specs/<platform>/04_build-prompt_v<N>_report.md` listing what shipped, generated identifiers, and any deviations
+- Build report at `<Client>/build-specs/<platform>/07a_build-prompt-dev_v<N>_report.md` listing what shipped, generated identifiers, and any deviations
 - Posted back to Cowork conversation as a summary
 
 ### Step 6 — Senior-level challenge
@@ -106,7 +106,7 @@ Before finalising:
 
 ### Step 7 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/04_build-prompt_v{N}.md` with frontmatter:
+Write to `<Client>/build-specs/<platform>/07a_build-prompt-dev_v{N}.md` with frontmatter:
 
 ```yaml
 ---
@@ -116,7 +116,7 @@ integrations: [<...>]
 version: 1
 status: draft
 based_on_technical_spec: 05_techspec_v{N}.md
-based_on_test_plan: 08b_test-plan_v{N}.md
+based_on_test_plan: 08b_08b_test-plan_v{N}.md
 build_components: [platform_config, custom_code]
 generated_at: <ISO date>
 ---
@@ -140,7 +140,7 @@ End with this exact handoff message:
 >
 > **While the build runs in Claude Code:** keep this Cowork session open. If Claude Code asks for clarification or hits a spec ambiguity, you can refine the prompt here and re-paste, or update the technical spec and regenerate.
 >
-> **When the build finishes:** Claude Code writes a build report at `04_build-prompt_v{N}_report.md`. Review it, then run `execute-tests` here in Cowork to run the full test plan against the sandbox.
+> **When the build finishes:** Claude Code writes a build report at `07a_build-prompt-dev_v{N}_report.md`. Review it, then run `execute-tests` here in Cowork to run the full test plan against the sandbox.
 
 ## What this skill does not do
 

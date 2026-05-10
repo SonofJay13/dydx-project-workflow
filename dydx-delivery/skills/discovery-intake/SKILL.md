@@ -14,7 +14,7 @@ Capture the real operational context for a new client engagement or feature. Pro
 
 ## Output
 
-`<Client>/build-specs/<platform>/00_discovery_vN.md` — versioned, frontmatter-tagged.
+`<Client>/build-specs/<platform>/02_discovery_vN.md` — versioned, frontmatter-tagged.
 
 If `<Client>` and `<platform>` aren't obvious from context, ask once before drafting.
 
@@ -30,10 +30,10 @@ Determine the client folder and platform:
 
 ### Step 2 — Check for existing discovery
 
-Look in `<Client>/build-specs/<platform>/` for files matching `00_discovery_v*.md`.
+Look in `<Client>/build-specs/<platform>/` for files matching `02_discovery_v*.md`.
 
 - **None found** → this is the first version. Proceed to Step 3.
-- **One or more found** → ask: "I found `00_discovery_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start a fresh artefact?"
+- **One or more found** → ask: "I found `02_discovery_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start a fresh artefact?"
 
 ### Step 3 — Run the discovery interview
 
@@ -108,7 +108,7 @@ captured_at: <ISO date>
 
 ### Step 6 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/00_discovery_v{N}.md`.
+Write to `<Client>/build-specs/<platform>/02_discovery_v{N}.md`.
 
 End with this exact handoff message to the user:
 
@@ -117,7 +117,7 @@ End with this exact handoff message to the user:
 > **Review steps:**
 > 1. Open the file and check for accuracy
 > 2. Mark any `**Unknown — needs client input**` items you can fill in
-> 3. If you make significant edits, save as `00_discovery_v{N+1}.md` (Option B versioning)
+> 3. If you make significant edits, save as `02_discovery_v{N+1}.md` (Option B versioning)
 >
 > When you're ready, run **`generate-sow`** to produce the scope of work.
 

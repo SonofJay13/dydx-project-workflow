@@ -9,13 +9,13 @@ Run an approved test plan against the client's sandbox tenant and write the resu
 
 ## Inputs
 
-- The latest `<Client>/testing/<feature>/test-plan_v*.md` (required, must have `status: approved`)
+- The latest `<Client>/testing/<feature>/08b_test-plan_v*.md` (required, must have `status: approved`)
 - Sandbox tenant credentials (loaded from the client's secrets store or provided by user)
 - Platform skill loaded based on `platform:` frontmatter
 
 ## Output
 
-`<Client>/testing/<feature>/results-YYYY-MM-DD_vN.md`
+`<Client>/testing/<feature>/08d_test-results_vN.md`
 
 ## Hard rules
 
@@ -25,13 +25,13 @@ Run an approved test plan against the client's sandbox tenant and write the resu
 
 ### Step 1 — Locate test plan
 
-Find the highest-version `test-plan_v*.md` in `<Client>/testing/<feature>/`.
+Find the highest-version `08b_test-plan_v*.md` in `<Client>/testing/<feature>/`.
 
 **If not found**, run start-at-any-point triage:
 
 > I don't see a test plan for `<Client>` / `<feature>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing test plan** — I'll save it as `test-plan_v1.md` and continue
+> **(a) Paste an existing test plan** — I'll save it as `08b_test-plan_v1.md` and continue
 > **(b) Run `generate-test-plan` first** — recommended if you have a technical spec but no test plan yet
 > **(c) Cancel**
 
@@ -84,7 +84,7 @@ For each test, capture:
 
 ### Step 6 — Write results
 
-Use the format in `references/results-template.md`. Write to `<Client>/testing/<feature>/results-YYYY-MM-DD_v{N}.md`.
+Use the format in `references/results-template.md`. Write to `<Client>/testing/<feature>/08d_test-results_v{N}.md`.
 
 If multiple runs happen on the same day, increment `_v{N}` and add a run identifier in the header.
 

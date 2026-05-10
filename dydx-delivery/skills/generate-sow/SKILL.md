@@ -9,24 +9,24 @@ Produce a clean, defensible Scope of Work from an approved discovery artefact. T
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/00_discovery_v*.md` (required)
+- The latest `<Client>/build-specs/<platform>/02_discovery_v*.md` (required)
 - Any commercial framing the user provides inline (rates, time-and-materials vs fixed, milestone preferences)
 
 ## Output
 
-`<Client>/build-specs/<platform>/01_sow_vN.md`
+`<Client>/build-specs/<platform>/03_sow_vN.md`
 
 ## How to run
 
 ### Step 1 — Locate upstream artefact
 
-Find the highest-version `00_discovery_v*.md` in `<Client>/build-specs/<platform>/`.
+Find the highest-version `02_discovery_v*.md` in `<Client>/build-specs/<platform>/`.
 
 **If not found**, run the start-at-any-point triage:
 
 > I don't see a discovery artefact for `<Client>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing brief or discovery doc** — I'll save it as `00_discovery_v1.md` and continue
+> **(a) Paste an existing brief or discovery doc** — I'll save it as `02_discovery_v1.md` and continue
 > **(b) Walk through a quick inline discovery** — I'll capture the essentials in chat and stub the discovery file
 > **(c) Cancel** — exit without writing
 
@@ -34,9 +34,9 @@ Wait for the user to choose. If (a) or (b), create the discovery stub before dra
 
 ### Step 2 — Check for existing SOW
 
-Look for `01_sow_v*.md`. If found, ask:
+Look for `03_sow_v*.md`. If found, ask:
 
-> Found `01_sow_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start fresh?
+> Found `03_sow_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start fresh?
 
 ### Step 3 — Draft the SOW
 
@@ -67,7 +67,7 @@ Write a short **Architectural notes** section with anything the SOW implies but 
 
 ### Step 5 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/01_sow_v{N}.md` with frontmatter:
+Write to `<Client>/build-specs/<platform>/03_sow_v{N}.md` with frontmatter:
 
 ```yaml
 ---
@@ -89,7 +89,7 @@ End with this exact handoff message:
 > 1. Walk the document with the commercial / project lead — does the scope match what you can defend?
 > 2. Confirm exclusions are tight enough to prevent scope creep
 > 3. Validate the timeline with the implementation partner
-> 4. If you make edits, save as `01_sow_v{N+1}.md`
+> 4. If you make edits, save as `03_sow_v{N+1}.md`
 > 5. Update `status:` to `client_review` when sent, `approved` when signed
 >
 > When approved, run **`generate-functional-spec`** to convert scope into requirements.

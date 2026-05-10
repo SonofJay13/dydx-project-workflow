@@ -9,31 +9,31 @@ Translate an approved SOW into a detailed, platform-agnostic specification of wh
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/01_sow_v*.md` (required)
-- Discovery artefact (`00_discovery_v*.md`) for context
+- The latest `<Client>/build-specs/<platform>/03_sow_v*.md` (required)
+- Discovery artefact (`02_discovery_v*.md`) for context
 - Any clarifying detail the user provides inline
 
 ## Output
 
-`<Client>/build-specs/<platform>/02_functional-spec_vN.md`
+`<Client>/build-specs/<platform>/04a_fnspec-platform_vN.md`
 
 ## How to run
 
 ### Step 1 — Locate upstream artefact
 
-Find the highest-version `01_sow_v*.md`.
+Find the highest-version `03_sow_v*.md`.
 
 **If not found**, run start-at-any-point triage:
 
 > I don't see an SOW for `<Client>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing SOW** — I'll save it as `01_sow_v1.md` and continue
+> **(a) Paste an existing SOW** — I'll save it as `03_sow_v1.md` and continue
 > **(b) Walk through scope inline** — I'll capture the in-scope deliverables in chat and stub the SOW
 > **(c) Cancel**
 
 ### Step 2 — Check for existing functional spec
 
-Look for `02_functional-spec_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
+Look for `04a_fnspec-platform_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
 
 ### Step 3 — Draft the functional spec
 
@@ -69,7 +69,7 @@ Before finalising, pressure-test:
 
 ### Step 5 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/02_functional-spec_v{N}.md` with frontmatter:
+Write to `<Client>/build-specs/<platform>/04a_fnspec-platform_v{N}.md` with frontmatter:
 
 ```yaml
 ---
@@ -91,7 +91,7 @@ End with this exact handoff message:
 > 1. Walk the spec with the client SME for the workflow — does it match how they actually work?
 > 2. Validate every business rule and edge case against real cases the SME has seen
 > 3. Check that every SOW deliverable has acceptance criteria
-> 4. If you make edits, save as `02_functional-spec_v{N+1}.md`
+> 4. If you make edits, save as `04a_fnspec-platform_v{N+1}.md`
 > 5. Update `status:` to `approved` when signed off
 >
 > When approved, run **`generate-technical-spec`** to map requirements to platform implementation.
