@@ -124,7 +124,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: documented historic ceiling ~5 req/sec per token (per CHANGELIST.md Appendix E verbatim) until Phase 1 connector-validity research surfaces a 2026 revision.
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: 500 req / 30s ≈ 16.67 req/sec per token; throttle 13 req/sec (80% buffer). Re-verify at Phase 6 PLAT-01 per Q06.2. Cited at `dydx-delivery/references/connector-matrix.md:72`.
+- Status: decided
 
 **OPEN-Q06.2** — Pipefy 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
 
@@ -146,7 +147,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: documented historic ~100 req/min per user (per CHANGELIST.md Appendix E verbatim) until Phase 1 connector-validity research surfaces a 2026 revision.
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: 400 req/min per user + 5000 req/min per IP; throttle 320 req/min per user (80%). Re-verify at Phase 6 PLAT-02 per Q07.2. Cited at `dydx-delivery/references/connector-matrix.md:73`.
+- Status: decided
 
 **OPEN-Q07.2** — Wrike 2026 rate-limit consumer-throttle calibration (cross-AI C6 split: Phase 2 helper implementation)
 
@@ -179,7 +181,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: use whichever name appears canonically on https://claude.ai or the official Anthropic site at Phase 1 kickoff. *(Non-binding suggestion per cross-AI C8 — Phase 1 owner finalises whether to capture the resolution in `dydx-delivery/references/glossary.md` (FOUND-01) or elsewhere; this register does not own that destination.)*
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: Primary "Claude for Chrome" (marketing page); also "Claude in Chrome" (Help Center) — interchangeable. Glossary entry in `dydx-delivery/references/glossary.md`. Cited at `dydx-delivery/references/connector-matrix.md:74`.
+- Status: decided
 
 ## OPEN-02: Connector-availability uncertainties
 
@@ -194,7 +197,8 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 - Severity: GUARDRAIL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: assume Coda MCP wired (AUDIT-08 records present-and-working as of probe date `2026-05-09T17:05Z` per `.planning/AUDIT.md:543`); Phase 1 connector probe re-confirms version pin + capability-set at v2.1 kickoff. If absent: Stage 6 cost estimate Coda mirror writes degrade to manual-paste fallback.
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: Re-confirmed wired + authenticated 2026-05-10 (no drift vs AUDIT-08 baseline 2026-05-09T17:05Z); endpoint `apis/v1`. Cited at `dydx-delivery/references/connector-matrix.md:75`.
+- Status: decided
 
 **OPEN-Q11** — Google Workspace MCP wired (which server)?
 
@@ -205,7 +209,8 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 - Severity: GUARDRAIL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: confirm via `claude mcp list` plus per-MCP cheap-read probe at Phase 1 kickoff (mirroring the AUDIT-08 methodology at `.planning/AUDIT.md:543`). If absent: Stage 9 doc-publish degrades to manual-upload to Drive (graceful per MOD-1 prevention). *(Non-binding suggestion per cross-AI C8 — capturing the chosen server in `dydx-delivery/references/connectors.md` (FOUND-06) is recommended; Phase 1 owner finalises destination — this register does not own that destination.)*
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: 3 separate Anthropic-maintained MCP servers (Drive / Gmail / Calendar) at `*mcp.googleapis.com/mcp/v1`; NOT `taylorwilsdon` / `piotr-agier`. Cited at `dydx-delivery/references/connector-matrix.md:76`.
+- Status: decided
 
 **OPEN-Q12** — Miro MCP wired (or paste-only)?
 
@@ -216,7 +221,8 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: AUDIT-08 records Miro MCP wired and working at probe date (per `.planning/AUDIT.md:543` — `board_search_boards` returned 5 boards / total 920); paste-from-screenshot remains the documented fallback for clients without per-tenant Miro access. Stage 3 design must function without it.
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: Re-confirmed WIRED + authenticated 2026-05-10 (no drift vs AUDIT-08 baseline); endpoint `https://mcp.miro.com`. Cited at `dydx-delivery/references/connector-matrix.md:77`.
+- Status: decided
 
 **OPEN-Q13** — Wrike auth header / `host` field source-of-truth across multi-tenant deployments
 
@@ -227,7 +233,8 @@ This section catalogues connector-availability uncertainties surfaced from `.pla
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: persist `wrike_host` alongside `coda_brain_doc:` cache per DESIGN-15 carried (`.planning/DESIGN.md:455`). *(Non-binding suggestion per cross-AI C8 — exact storage location (e.g., `<Client> Brain/00_HUB.md` Coda block) is Phase 1 owner discretion; this register does not own that destination.)*
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: OAuth token response `host` field is per-tenant SoT; persisted at `<Client> Brain/00_HUB.md` Coda block; final destination at Phase 6 PLAT-02 discretion. Cited at `dydx-delivery/references/connector-matrix.md:78`.
+- Status: decided
 
 ## OPEN-03: Design-decision-deferred items
 
@@ -429,7 +436,19 @@ This section catalogues net-new questions surfaced during milestone v2.0 UAT wal
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 1
 - Proposed default: assume `exclusive` per Pipefy precedent until Phase 1 probe confirms otherwise — conservative; serialization-by-default is safer than concurrent-by-default. `client_state.yaml` `wrike.auth_concurrency_class:` + `ziflow.auth_concurrency_class:` fields populated per Phase 1 probe outcome.
-- Status: proposed
+- **Decision (2026-05-10 W4 OPEN-Q closure):** Resolution: Default `exclusive` per Pipefy precedent (UAT-4.2); LOW confidence — live tenant test deferred to Phase 6 PLAT-02/PLAT-03 kickoff. Cited at `dydx-delivery/references/connector-matrix.md:79`.
+- Status: decided
+
+**OPEN-Q26** — DESIGN-04 plugin.json `mcpServers` field deferral (Plan 05-04 C-8 follow-up)
+
+- Question: DESIGN-04 plugin.json mcpServers wiring — when does the field land?
+- Source citations: `.planning/DESIGN.md` DESIGN-04; `.planning/phases/05-foundations/05-03-PLAN.md` cross-AI flag 5
+- Owning phase: v2.6 (SURF-*) or earlier — first MCP-pinning skill
+- Verification owner: executor of the v2.6 SURF-* plan that first wires an MCP
+- Severity: LOW
+- Resolution path: Add mcpServers field to `dydx-delivery/.claude-plugin/plugin.json` when the first skill needs an MCP pinned. Phase 5 FOUND-07 scope is narrow (2.0.0 sync only) so mcpServers does NOT ship in this milestone.
+- Proposed default: defer — no field today
+- Status: deferred-to-future-phase
 
 ---
 

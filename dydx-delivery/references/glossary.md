@@ -2,7 +2,7 @@
 
 > Canonical plugin-runtime vocabulary, narrowed from `.planning/DESIGN.md` Appendix A (`.planning/DESIGN.md:1462-1549`). Design-process-only terms are excluded by design — bar for inclusion is "would a skill author at runtime need this term?".
 >
-> Two entries below carry the marker `[provisional — ratified by W4 OPEN-Q closure]` per Codex C-4 finding: `Claude for Chrome` (OPEN-Q09) and `Wrike host field` (OPEN-Q13). Wave 4 (Plan 05-04 Task 2) flips OPEN-Q09 + OPEN-Q13 to `Status: decided` and strips these provisional markers in the same edit.
+> The `Claude for Chrome` (OPEN-Q09) and `Wrike host field` (OPEN-Q13) entries were initially marked provisional by Plan 05-01 Task 5; Wave 4 (Plan 05-04 Task 2) ratified both via OPEN-Q closure and stripped the provisional markers — entries are now canonical.
 
 ## Pipeline / Stage terms
 
@@ -89,7 +89,7 @@
 **Behaviors** — Pipefy domain term — workflow-rule automations per DESIGN-14.
 **Card** — Pipefy domain term — work item per DESIGN-14.
 **Checklist** — Ziflow domain term — Public-Preview ReviewAI feature per DESIGN-16.
-**Claude for Chrome** [provisional — ratified by W4 OPEN-Q closure] — Anthropic browser extension; canonical product name per `claude.com/claude-for-chrome` marketing page; also `Claude in Chrome` per Help Center (`support.claude.com/en/articles/12012173-get-started-with-claude-in-chrome`) — terms interchangeable. Per OPEN-Q09 research, marketing/product page is canonical primary; Help Center wording is permissible cross-reference. Status as of May 2026: in beta on all paid plans.
+**Claude for Chrome** — Anthropic browser extension; canonical product name per `claude.com/claude-for-chrome` marketing page; also `Claude in Chrome` per Help Center (`support.claude.com/en/articles/12012173-get-started-with-claude-in-chrome`) — terms interchangeable. Per OPEN-Q09 research, marketing/product page is canonical primary; Help Center wording is permissible cross-reference. Status as of May 2026: in beta on all paid plans.
 **Coda** — Document + table workspace; sandbox writes permitted against `sandbox.coda_doc:` block in test plan frontmatter per safety-rules.md Rule 3 (CRIT-5 fix). Stage 11 brain-mirror push target per DESIGN-27.
 **Custom Field** — Wrike domain term — tenant-extensible task field per DESIGN-15.
 **Folder** — Wrike domain term — Space contains Folders; Folders contain Tasks per DESIGN-15.
@@ -108,7 +108,7 @@
 **wait_for_proof** — Polling helper provided by `platform-ziflow/` skill; polls a Proof until it reaches the requested state (ready / approved / completed) with exponential backoff and a hard timeout per DESIGN-16.
 **Wrike** — REST + AI Studio platform; per-tenant API base URL parsed from OAuth token `host` field per DESIGN-15.
 **Wrike Copilot** — Wrike native-AI surface (AI Studio); addressed by Stage 7b implementation prompt + Stage 10 ingestion per DESIGN-15 / DESIGN-26.
-**Wrike host field** [provisional — ratified by W4 OPEN-Q closure] — Per-tenant Wrike API base URL parsed from the OAuth token response `host` field; persisted as canonical SoT at `<Client> Brain/00_HUB.md` (per DESIGN-29 schema); hardcoding `www.wrike.com` breaks multi-tenant per MOD-5. Stage 7b implementation prompt and Stage 8 test-bot `client_state.yaml.wrike.host:` both read from this single SoT. (OPEN-Q13 research conclusion; non-binding storage destination per Phase 6 PLAT-02 discretion.)
+**Wrike host field** — Per-tenant Wrike API base URL parsed from the OAuth token response `host` field; persisted as canonical SoT at `<Client> Brain/00_HUB.md` (per DESIGN-29 schema); hardcoding `www.wrike.com` breaks multi-tenant per MOD-5. Stage 7b implementation prompt and Stage 8 test-bot `client_state.yaml.wrike.host:` both read from this single SoT. (OPEN-Q13 research conclusion; non-binding storage destination per Phase 6 PLAT-02 discretion.)
 **Ziflow** — Proof-review platform per DESIGN-16. Read-after-create consistency is per-tenant — `wait_for_proof` helper handles polling.
 **Ziflow ReviewAI** — Ziflow native-AI surface; addressed by Stage 7b implementation prompt + Stage 10 ingestion per DESIGN-16 / DESIGN-26.
 
