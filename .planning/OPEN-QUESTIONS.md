@@ -321,7 +321,24 @@ This section catalogues the policy decision on `/refine-<skill>` resolution per 
 
 ## OPEN-07: Plugin self-test scope
 
-(Populated by 04-04-PLAN.md / Wave 4. 1 row: smoke tests scope. Phase 9 owner; resolution = `policy-pending-sign-off`.)
+This section catalogues the policy decision on plugin self-test scope per REQUIREMENTS.md OPEN-07. Per D-52 carried, the row uses `Resolution path: policy-pending-sign-off` (Jason approves recommended default). The recommended default is lifted verbatim from REQUIREMENTS.md OPEN-07: smoke tests for hooks + frontmatter validator via `pytest` on the plugin's own correctness; owning phase = Phase 9 (Surfaces) per CHANGE-04. The Proposed-default field embeds the D-52 sub-fields (Decision deadline / Acceptance signal / Fallback-if-undecided) in markdown-list form.
+
+> **Cross-reference:** This row (OPEN-Q22) is the canonical home for plugin self-test scope. OPEN-03 (REQUIREMENTS.md OPEN-03 4th sub-item — `plugin self-test scope (smoke tests for hooks + frontmatter validator vs none)` mention) cross-references here per D-50 source-merging discipline (single canonical row; multi-source citation).
+
+**OPEN-Q22** — Plugin self-test scope: smoke tests vs defer
+
+- Question: Should v2.1 ship with plugin self-tests (smoke tests for hooks + frontmatter validator via `pytest` on the plugin's own correctness, target `dydx-delivery/tests/`) OR defer (v2.1 ships without self-tests; revisit at v2.2)?
+- Source citations: `.planning/REQUIREMENTS.md:96`, `.planning/DESIGN.md:122`, `.planning/CHANGELIST.md:160`
+- Owning phase: Phase 9
+- Verification owner: Phase 9 / dev
+- Severity: INFORMATIONAL
+- Resolution path: policy-pending-sign-off
+- Proposed default:
+  - **Recommendation:** "smoke tests for hooks + frontmatter validator via `pytest` on the plugin's own correctness" (recommended; pytest at `dydx-delivery/tests/` per DESIGN-04 carried at `.planning/DESIGN.md:122`). Owning phase = Phase 9 (Surfaces) per CHANGE-04 (CHANGELIST.md Phase 9 mini-table Deliverables item g at `.planning/CHANGELIST.md:160`).
+  - **Decision deadline:** before Phase 9 plan-phase locks Surfaces build (v2.6).
+  - **Acceptance signal:** Jason explicit go-ahead in chat or commit message ("approved" or equivalent — same pattern as Phase approval gates).
+  - **Fallback-if-undecided:** v2.1 ships without self-tests; revisit at v2.2 kickoff.
+- Status: proposed
 
 ---
 
