@@ -116,7 +116,29 @@ Plans:
   4. `CHANGELIST.md` flags the research-blocked phases — Phase 1 (connector availability per tenant: Coda MCP version pin, Google Workspace MCP choice, Miro MCP existence, Wrike rate-limit currency, Ziflow auth header) and Phase 7 (native-AI ingestion paths per platform — single biggest unknown: Pipefy AI KB content-upload, Wrike AI Studio knowledge-ingestion, Ziflow ReviewAI knowledge-ingestion) — recommending `/gsd-research-phase` passes before those phases lock plans.
   5. `CHANGELIST.md` captures migration cutover rules — v2 readers tolerate v0.3.0 frontmatter via `frontmatter_version` field (absent → v0.3.0 lenient mode); migration is opt-in per CR (never bulk-rewrite); `client_review` retained in canonical lifecycle (in use in `generate-sow` today); no auto-rewriting historical artefacts; `archived` is the only v2 lifecycle addition.
 **Approval gate**: Human reviews `.planning/CHANGELIST.md` and approves before Phase 4 begins. Approval signal = explicit go-ahead from the user. Rationale: open questions are triaged against the change list — each unknown gets assigned to the right downstream v2.x phase, which requires the change list to name the phases first.
-**Plans**: TBD
+**Plans:** 7 plans
+Plans:
+
+**Wave 1**
+- [ ] 03-01-PLAN.md — Wave 0 scaffold: changelist-structure-check.sh + CHANGELIST.md skeleton with all 16 D-36 H2 anchors + opening sentinels for Appendices B/D/E
+
+**Wave 2**
+- [ ] 03-02-PLAN.md — CHANGE-01 first half: populate Phases 1-5 H2 sections (v2.1 + v2.2 + v2.3 + v2.4 milestones) with 6-row D-38 mini-tables + ordering-rationale paragraphs (verbatim from research/SUMMARY.md § Phase Ordering Rationale)
+
+**Wave 3**
+- [ ] 03-03-PLAN.md — CHANGE-01 second half: populate Phases 6-9 H2 sections (v2.5 + v2.6 milestones); Phase 7 mini-table carries D-37 OPEN-01 contingent fallback verbatim sentence + DESIGN.md Appendix E bullet 1 inline marker
+
+**Wave 4**
+- [ ] 03-04-PLAN.md — CHANGE-02: populate Appendix A 20-row per-skill delta matrix per D-39 (column headers exact; Status closed enum; ordered by milestone → phase → status; cited-bullet Change cells per D-40)
+
+**Wave 5**
+- [ ] 03-05-PLAN.md — CHANGE-03 + CHANGE-05: populate Appendix B (verbatim AUDIT-07 lift — 6 fix subsections each carrying per-bullet sentinel per D-16/D-41) + Appendix D (numbered 7-rule migration cutover checklist citing DESIGN-08 per D-43)
+
+**Wave 6**
+- [ ] 03-06-PLAN.md — CHANGE-04: populate Appendix C 2-row research-blocked matrix (Phase 1 + Phase 7) per D-42 + enrich Phase 1 + Phase 2 mini-table Research-blocked cells with 6 verbatim inline `[OPEN: Phase 4 - ...]` markers (DESIGN.md Appendix E bullets 2, 3, 4, 5, 6, 7)
+
+**Wave 7** *(synthesis — terminal plan)*
+- [ ] 03-07-PLAN.md — Synthesis: finalise preamble + populate Executive Summary 5-col 9-row condensed milestone-bundling table per CONTEXT default + populate How-to-read reader-flow guide + populate Appendix E 8-bullet enumeration via Phase 2 02-10 reconciliation algorithm carried (HIGH #3 + #10) + final structural-check pass — CHANGELIST.md becomes **reviewer-ready**
 
 ### Phase 4: Open questions register
 **Goal**: Produce `.planning/OPEN-QUESTIONS.md` — every "couldn't verify" + "needs human decision" item surfaced from research and design, each assigned an owning phase from the change list and a verification owner, so v2.x build phases inherit a clean register of what to resolve before each phase locks plans (no surprises mid-build).
@@ -141,7 +163,7 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
 | 2. Design | 10/10 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
-| 3. Change list | 0/TBD | Not started | - |
+| 3. Change list | 0/7 | Plans created | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
