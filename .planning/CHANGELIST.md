@@ -5,15 +5,45 @@
 **Phase 1 Audit (v0.3.0 ground truth):** `.planning/AUDIT.md` (approved 2026-05-09)
 **Phase 2 Design (v2 architecture ground truth):** `.planning/DESIGN.md` (approved 2026-05-10)
 
-> (Preamble placeholder — finalised in synthesis plan 03-07.)
+> **What this document is.** A sequenced, justified delta from v0.3.0 to v2 — the authoritative v2.x milestone sequence per CHANGE-01. Commits the 9-phase build plan from `.planning/research/SUMMARY.md` as the milestone spine; flags Phase 1 (connector probe) and Phase 7 (native-AI ingestion paths) as research-blocked per CHANGE-04 with recommended `/gsd-research-phase` invocations before plan-phase locks; locks the migration cutover rules so v0.3.0 in-flight artefacts don't get auto-corrupted (CHANGE-05 → Appendix D restating `.planning/DESIGN.md` §DESIGN-08).
+>
+> **Reading conventions.** Each Phase H2 carries an inline milestone tag `(v2.X)`; Phase 7's H2 explicitly carries `[BLOCKED — see Appendix C]` per D-42 because it inherits OPEN-01 as a hard blocker. Per D-38, every phase opens with a brief ordering-rationale paragraph followed by a 6-row Attribute / Detail mini-table (Deliverables / Depends on / Addresses / Avoids pitfalls / Skills introduced/modified / Research-blocked). Inline `OPEN: Phase 4` deferral markers appear at point of use AND in the Appendix E closed list per D-27 carried; citations use `` `file:line` `` format with backtick wrapping per D-14 carried; every cosmetic-fix bullet in Appendix B carries the per-bullet sentinel `**Scheduled for v2.1 Foundations build (FOUND-NN), NOT this milestone.**` per D-16 carried; severity tags `[COSMETIC]` / `[NEW]` apply only to AUDIT-07 verbatim lifts in Appendix B (D-15 narrowed) — CHANGE-N rows themselves carry phase / milestone tags, not severity tags.
+>
+> **Reviewer flow.** Two paths through this document. **Read-in-order** (Executive Summary → 9-phase plan → Appendices A→E) gives the full sequencing argument. **Skip-to-contract** uses the Executive Summary table as a TOC; for specific lookups: Appendix A is the "is skill X changing in v2" lookup; Appendix B is the "what cosmetic fixes ship in v2.1" lookup; Appendix C is the "what's still unknown" lookup; Appendix D is the "how does v2 read v0.3.0 frontmatter" lookup; Appendix E is the "what's deferred to OPEN-QUESTIONS" lookup.
+>
+> **Phase boundary + approval gate.** No skill files are edited in this milestone (kickoff design-only mandate per `.planning/PROJECT.md`); v2.1+ build phases sequenced by this change list execute against `.planning/DESIGN.md` (architecture) AND this change list (sequencing) AND any `/gsd-research-phase` outputs filling Appendix C blockers. **Approval gate:** single approval at end (full CHANGELIST.md reviewed as a whole) per `.planning/ROADMAP.md` Phase 3 approval gate. Phase 4 (Open questions register) follows after this approval and builds mechanically by walking Appendix E.
 
 ## Executive Summary
 
-(Executive summary table placeholder — populated in synthesis plan 03-07. Acts as TOC: per-section page-anchor + one-line decision summary so reader can skip-to-contract.)
+This table summarises the v2.x milestone sequence in condensed form for skip-to-contract navigation. Each row's Phase column links to the full mini-table; Skills-delta-count column ties forward to Appendix A; Blocker column ties forward to Appendix C (research-blocked) or Appendix E (deferral-blocked).
+
+| Phase | Milestone | Theme | Skills delta count | Blocker |
+|---|---|---|---|---|
+| Phase 1 | v2.1 | Foundations + Connector Verification | 7 MODIFIED (existing skills repointed at canonical refs) | ⚠ Connector availability per tenant — see Appendix C |
+| Phase 2 | v2.1 | Internalise Platform Skills | 3 NEW (platform) | ⚠ Pipefy/Wrike/Ziflow API specifics — see Appendix C |
+| Phase 3 | v2.2 | Stage 1 Kickoff + Stage 4 fnspec split | 3 NEW + 1 MODIFIED + 1 UNCHANGED + 1 RETIRED | — |
+| Phase 4 | v2.3 | Tech spec + Cost + Implementation prompt | 2 NEW + 2 MODIFIED | `OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22` |
+| Phase 5 | v2.4 | Test bot rebuild | 2 NEW + 2 MODIFIED + 1 NEW agent | — |
+| Phase 6 | v2.5 | Documentation publishing | 1 NEW | — |
+| Phase 7 | v2.5 | Native-AI knowledge push **[BLOCKED]** | 1 NEW | ⚠ **HARD BLOCKER** — OPEN-01 native-AI ingestion APIs unverified. See Appendix C + Phase 7 mini-table for D-37 contingent fallback. |
+| Phase 8 | v2.6 | Sign-off + Coda mirror | 1 NEW | — |
+| Phase 9 | v2.6 | Surfaces (commands/agents/hooks) | 0 skill changes; ships plugin surfaces | — |
+
+**Re-bundling caveat.** User may re-bundle phases at the start of any v2.x milestone kickoff via `/gsd-new-milestone` — this bundling is the recommended sequence, not a contract.
+
+**OPEN-01 contingent fallback (v2.5 row).** If OPEN-01 (native-AI ingestion paths per platform) remains unresolved at v2.5 kickoff, split P6 → v2.5 (Documentation only) and P7 → v2.6 (Native-AI when unblocked); slide P8/P9 → v2.7. Phase 7 is the only blocked-by-OPEN phase; isolating it preserves cadence on the rest. (Verbatim per D-37; also present in Phase 7 mini-table Research-blocked cell per Plan 03-03.)
 
 ## How to read this change list
 
-(Populated in synthesis plan 03-07. Reader-flow guide — read-in-order vs skip-to-specific-item.)
+**Document purpose.** This change list sequences the v0.3.0 → v2 delta as the authoritative v2.x milestone sequence per CHANGE-01. The 9-phase build plan from `.planning/research/SUMMARY.md` is committed verbatim as the milestone spine; per-skill change tagging lives in Appendix A; the cosmetic-fix list (verbatim from `.planning/AUDIT.md` §AUDIT-07) lives in Appendix B; research-blocked phases are flagged in Appendix C; migration cutover rules (restating `.planning/DESIGN.md` §DESIGN-08 in implementer-readable form) live in Appendix D; every Phase-4 deferral is enumerated in Appendix E for the OPEN-QUESTIONS register handoff.
+
+**Reading conventions.** Each phase H2 carries an inline milestone tag `(v2.X)` so milestone bundling is visible without re-reading the executive summary. Phase 7's H2 explicitly carries `[BLOCKED — see Appendix C]` because it inherits OPEN-01 as a hard blocker. Per D-38, each phase section opens with a brief ordering-rationale paragraph (why this phase appears at this position) and a 6-row Attribute / Detail mini-table (Deliverables / Depends on / Addresses / Avoids pitfalls / Skills introduced/modified / Research-blocked). Cited REQ-IDs come from `.planning/REQUIREMENTS.md` § "Future Requirements (deferred — v2.1+)" (FOUND-/PLAT-/STG*-/SURF- families); cited PITFALL IDs come from `.planning/research/PITFALLS.md` (CRIT-/MOD-/MIN- families). Inline `OPEN: Phase 4` deferral markers appear at point of use AND in Appendix E closed list per D-27 carried. Citations use `` `file:line` `` format with backtick wrapping per D-14 carried. Severity tags `[COSMETIC]` / `[NEW]` apply only to AUDIT-07 lifts in Appendix B (D-15 narrowed); CHANGE-N rows themselves carry phase / milestone tags, not severity tags.
+
+**Reviewer flow.** Two paths through this document. **Read-in-order** (executive summary → 9-phase plan → appendices) gives the full sequencing argument. **Skip-to-contract** uses the executive summary table as a TOC — Phase column links to the full mini-table; Skills-delta-count column ties forward to Appendix A; Blocker column ties forward to Appendix C or Appendix E. For specific lookups: Appendix A is the "is skill X changing in v2" lookup; Appendix B is the "what cosmetic fixes ship in v2.1" lookup; Appendix C is the "what's still unknown" lookup; Appendix D is the "how does v2 read v0.3.0 frontmatter" lookup; Appendix E is the "what's deferred to OPEN-QUESTIONS" lookup.
+
+**Source-of-truth pointers.** v0.3.0 facts → `.planning/AUDIT.md` (Phase 1 deliverable, approved 2026-05-09). v2 architecture → `.planning/DESIGN.md` (Phase 2 deliverable, approved 2026-05-10). Phase ordering rationale → `.planning/research/SUMMARY.md` § "Phase Ordering Rationale". CRIT/MOD/MIN pitfall IDs → `.planning/research/PITFALLS.md`. v2.1+ deferred REQ-IDs → `.planning/REQUIREMENTS.md` § "Future Requirements (deferred — v2.1+)".
+
+**Phase boundary.** No skill files edited in this milestone (kickoff design-only mandate; per `.planning/PROJECT.md`). v2.1+ build phases sequenced by this change list execute against `.planning/DESIGN.md` (architecture) AND this change list (sequencing) AND any `/gsd-research-phase` outputs filling Appendix C blockers. **Approval gate:** single approval at end (full CHANGELIST.md reviewed as a whole) per `.planning/ROADMAP.md` Phase 3 approval gate. Phase 4 (Open questions register) follows after this approval.
 
 ---
 
