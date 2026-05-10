@@ -4,8 +4,8 @@ platform: <pipefy | wrike | other>
 integrations: []
 version: 1
 status: draft
-based_on_technical_spec: 03_technical-spec_v<N>.md
-based_on_test_plan: test-plan_v<N>.md
+based_on_technical_spec: 05_techspec_v<N>.md
+based_on_test_plan: 08b_test-plan_v<N>.md
 build_components: [platform_config, custom_code]
 generated_at: <YYYY-MM-DD>
 ---

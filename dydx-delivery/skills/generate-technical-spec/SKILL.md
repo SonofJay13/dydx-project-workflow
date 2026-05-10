@@ -102,7 +102,7 @@ platform: <pipefy | wrike | other>
 integrations: [<...>]
 version: 1
 status: draft
-based_on_functional_spec: 02_functional-spec_v{N}.md
+based_on_functional_spec: 04a_fnspec-platform_v{N}.md
 generated_at: <ISO date>
 ---
 ```

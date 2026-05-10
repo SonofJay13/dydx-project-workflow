@@ -4,7 +4,7 @@ feature: <feature-slug>
 platform: <pipefy | wrike | other>
 version: 1
 status: draft
-based_on_technical_spec: 03_technical-spec_v<N>.md
+based_on_technical_spec: 05_techspec_v<N>.md
 generated_at: <YYYY-MM-DD>
 sandbox:
   pipe_id: <id>

@@ -4,7 +4,7 @@ platform: <pipefy | wrike | other>
 integrations: []
 version: 1
 status: draft
-based_on_sow: 01_sow_v<N>.md
+based_on_sow: 03_sow_v<N>.md
 generated_at: <YYYY-MM-DD>
 ---
 
