@@ -77,11 +77,11 @@ Plugin v2 architecture decisions locked. Each requirement names a decision the d
 
 Sequenced, justified delta from v0.3.0 to v2.
 
-- [ ] **CHANGE-01**: CHANGELIST.md presents the **9-phase build plan** with rationale per ordering, mapped to milestones (v2.1 = Foundations + Platform skills; v2.2 = Stage 1 + Stage 4 split; etc. — pending the user's milestone-sizing call). Each phase carries: deliverables, dependencies, addresses-which-requirements, avoids-which-pitfalls.
-- [ ] **CHANGE-02**: CHANGELIST.md presents the **per-skill delta** — for every existing v0.3.0 skill, mark NEW / MODIFIED / RETIRED / UNCHANGED with the change description; for every NEW v2 skill, mark introduced-in-which-phase.
-- [ ] **CHANGE-03**: CHANGELIST.md presents the **cosmetic-fix list** — version-string mismatches, README truncation, residual "test sheet" wording, missing `LICENSE`, owner-email mismatch — scheduled for the Phase 1 Foundations build (v2.1), out of design milestone scope.
-- [ ] **CHANGE-04**: CHANGELIST.md flags **research-blocked phases** — Phase 1 (connector availability per tenant — Coda MCP version, Google Workspace MCP choice, Miro MCP existence, Wrike rate-limit currency, Ziflow auth header) and Phase 7 (native-AI ingestion paths per platform — single biggest unknown) — recommending `/gsd-research-phase` passes before those phases lock plans.
-- [ ] **CHANGE-05**: CHANGELIST.md captures **migration cutover rules** — v2 readers tolerate v0.3.0 frontmatter via `frontmatter_version`; migration is opt-in per CR; `client_review` retained in canonical lifecycle; no auto-rewriting historical artefacts.
+- [x] **CHANGE-01**: CHANGELIST.md presents the **9-phase build plan** with rationale per ordering, mapped to milestones (v2.1 = Foundations + Platform skills; v2.2 = Stage 1 + Stage 4 split; etc. — pending the user's milestone-sizing call). Each phase carries: deliverables, dependencies, addresses-which-requirements, avoids-which-pitfalls.
+- [x] **CHANGE-02**: CHANGELIST.md presents the **per-skill delta** — for every existing v0.3.0 skill, mark NEW / MODIFIED / RETIRED / UNCHANGED with the change description; for every NEW v2 skill, mark introduced-in-which-phase.
+- [x] **CHANGE-03**: CHANGELIST.md presents the **cosmetic-fix list** — version-string mismatches, README truncation, residual "test sheet" wording, missing `LICENSE`, owner-email mismatch — scheduled for the Phase 1 Foundations build (v2.1), out of design milestone scope.
+- [x] **CHANGE-04**: CHANGELIST.md flags **research-blocked phases** — Phase 1 (connector availability per tenant — Coda MCP version, Google Workspace MCP choice, Miro MCP existence, Wrike rate-limit currency, Ziflow auth header) and Phase 7 (native-AI ingestion paths per platform — single biggest unknown) — recommending `/gsd-research-phase` passes before those phases lock plans.
+- [x] **CHANGE-05**: CHANGELIST.md captures **migration cutover rules** — v2 readers tolerate v0.3.0 frontmatter via `frontmatter_version`; migration is opt-in per CR; `client_review` retained in canonical lifecycle; no auto-rewriting historical artefacts.
 
 ### Open questions register (OPEN-QUESTIONS.md)
 
@@ -206,11 +206,11 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | DESIGN-28 | Phase 2 | Complete (Plan 02-09) |
 | DESIGN-29 | Phase 2 | Complete (Plan 02-09) |
 | DESIGN-30 | Phase 2 | Complete (Plan 02-09) |
-| CHANGE-01 | Phase 3 | Pending |
-| CHANGE-02 | Phase 3 | Pending |
-| CHANGE-03 | Phase 3 | Pending |
-| CHANGE-04 | Phase 3 | Pending |
-| CHANGE-05 | Phase 3 | Pending |
+| CHANGE-01 | Phase 3 | Complete (awaiting approval) |
+| CHANGE-02 | Phase 3 | Complete (awaiting approval) |
+| CHANGE-03 | Phase 3 | Complete (awaiting approval) |
+| CHANGE-04 | Phase 3 | Complete (awaiting approval) |
+| CHANGE-05 | Phase 3 | Complete (awaiting approval) |
 | OPEN-01 | Phase 4 | Pending |
 | OPEN-02 | Phase 4 | Pending |
 | OPEN-03 | Phase 4 | Pending |

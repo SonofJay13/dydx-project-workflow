@@ -13,7 +13,7 @@ This is a **design-only** milestone. The deliverables are four markdown document
 
 - [x] **Phase 1: Audit** — Catalogue v0.3.0 plugin reality so v2 design rests on observation, not memory; output `.planning/AUDIT.md` ✓ APPROVED 2026-05-09
 - [x] **Phase 2: Design** — Lock v2 architecture across cross-cutting structure, 13-skill inventory, platform skills, every stage skill, and test bot; output `.planning/DESIGN.md` ✓ APPROVED 2026-05-10
-- [ ] **Phase 3: Change list** — Sequence the v0.3.0 → v2 delta as the v2.1+ build plan with per-skill delta and cosmetic-fix list; output `.planning/CHANGELIST.md`
+- [ ] **Phase 3: Change list** — Sequence the v0.3.0 → v2 delta as the v2.1+ build plan with per-skill delta and cosmetic-fix list; output `.planning/CHANGELIST.md` *(plans 7/7 complete 2026-05-10 — verifier PASS 12/12 — awaiting approval)*
 - [ ] **Phase 4: Open questions register** — Catalogue every "couldn't verify" + design-decision-deferred item, assign owner / phase; output `.planning/OPEN-QUESTIONS.md`
 
 ## Phase Details
@@ -119,26 +119,26 @@ Plans:
 **Plans:** 7 plans
 Plans:
 
-**Wave 1**
-- [ ] 03-01-PLAN.md — Wave 0 scaffold: changelist-structure-check.sh + CHANGELIST.md skeleton with all 16 D-36 H2 anchors + opening sentinels for Appendices B/D/E
+**Wave 1** *(complete)*
+- [x] 03-01-PLAN.md — Wave 0 scaffold: changelist-structure-check.sh + CHANGELIST.md skeleton with all 16 D-36 H2 anchors + opening sentinels for Appendices B/D/E *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-01-SUMMARY.md`)*
 
-**Wave 2**
-- [ ] 03-02-PLAN.md — CHANGE-01 first half: populate Phases 1-5 H2 sections (v2.1 + v2.2 + v2.3 + v2.4 milestones) with 6-row D-38 mini-tables + ordering-rationale paragraphs (verbatim from research/SUMMARY.md § Phase Ordering Rationale)
+**Wave 2** *(complete)*
+- [x] 03-02-PLAN.md — CHANGE-01 first half: populate Phases 1-5 H2 sections (v2.1 + v2.2 + v2.3 + v2.4 milestones) with 6-row D-38 mini-tables + ordering-rationale paragraphs (verbatim from research/SUMMARY.md § Phase Ordering Rationale) *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-02-SUMMARY.md`)*
 
-**Wave 3**
-- [ ] 03-03-PLAN.md — CHANGE-01 second half: populate Phases 6-9 H2 sections (v2.5 + v2.6 milestones); Phase 7 mini-table carries D-37 OPEN-01 contingent fallback verbatim sentence + DESIGN.md Appendix E bullet 1 inline marker
+**Wave 3** *(complete)*
+- [x] 03-03-PLAN.md — CHANGE-01 second half: populate Phases 6-9 H2 sections (v2.5 + v2.6 milestones); Phase 7 mini-table carries D-37 OPEN-01 contingent fallback verbatim sentence + DESIGN.md Appendix E bullet 1 inline marker *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-03-SUMMARY.md`)*
 
-**Wave 4**
-- [ ] 03-04-PLAN.md — CHANGE-02: populate Appendix A 20-row per-skill delta matrix per D-39 (column headers exact; Status closed enum; ordered by milestone → phase → status; cited-bullet Change cells per D-40)
+**Wave 4** *(complete)*
+- [x] 03-04-PLAN.md — CHANGE-02: populate Appendix A 20-row per-skill delta matrix per D-39 (column headers exact; Status closed enum; ordered by milestone → phase → status; cited-bullet Change cells per D-40) *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-04-SUMMARY.md`)*
 
-**Wave 5**
-- [ ] 03-05-PLAN.md — CHANGE-03 + CHANGE-05: populate Appendix B (verbatim AUDIT-07 lift — 6 fix subsections each carrying per-bullet sentinel per D-16/D-41) + Appendix D (numbered 7-rule migration cutover checklist citing DESIGN-08 per D-43)
+**Wave 5** *(complete)*
+- [x] 03-05-PLAN.md — CHANGE-03 + CHANGE-05: populate Appendix B (verbatim AUDIT-07 lift — 6 fix subsections each carrying per-bullet sentinel per D-16/D-41) + Appendix D (numbered 7-rule migration cutover checklist citing DESIGN-08 per D-43) *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-05-SUMMARY.md`)*
 
-**Wave 6**
-- [ ] 03-06-PLAN.md — CHANGE-04: populate Appendix C 2-row research-blocked matrix (Phase 1 + Phase 7) per D-42 + enrich Phase 1 + Phase 2 mini-table Research-blocked cells with 6 verbatim inline `[OPEN: Phase 4 - ...]` markers (DESIGN.md Appendix E bullets 2, 3, 4, 5, 6, 7)
+**Wave 6** *(complete)*
+- [x] 03-06-PLAN.md — CHANGE-04: populate Appendix C 2-row research-blocked matrix (Phase 1 + Phase 7) per D-42 + enrich Phase 1 + Phase 2 mini-table Research-blocked cells with 6 verbatim inline `[OPEN: Phase 4 - ...]` markers (DESIGN.md Appendix E bullets 2, 3, 4, 5, 6, 7) *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-06-SUMMARY.md`)*
 
-**Wave 7** *(synthesis — terminal plan)*
-- [ ] 03-07-PLAN.md — Synthesis: finalise preamble + populate Executive Summary 5-col 9-row condensed milestone-bundling table per CONTEXT default + populate How-to-read reader-flow guide + populate Appendix E 8-bullet enumeration via Phase 2 02-10 reconciliation algorithm carried (HIGH #3 + #10) + final structural-check pass — CHANGELIST.md becomes **reviewer-ready**
+**Wave 7** *(synthesis — terminal plan; complete)*
+- [x] 03-07-PLAN.md — Synthesis: finalise preamble + populate Executive Summary 5-col 9-row condensed milestone-bundling table per CONTEXT default + populate How-to-read reader-flow guide + populate Appendix E 8-bullet enumeration via Phase 2 02-10 reconciliation algorithm carried (HIGH #3 + #10) — expanded to 9 bullets at execution per D-27 (Phase 9 OPEN-07 net-new deferral); final structural-check exits 0 — **CHANGELIST.md is reviewer-ready** *(complete 2026-05-10; SUMMARY at `.planning/phases/03-changelist/03-07-SUMMARY.md`)*
 
 ### Phase 4: Open questions register
 **Goal**: Produce `.planning/OPEN-QUESTIONS.md` — every "couldn't verify" + "needs human decision" item surfaced from research and design, each assigned an owning phase from the change list and a verification owner, so v2.x build phases inherit a clean register of what to resolve before each phase locks plans (no surprises mid-build).
@@ -163,10 +163,12 @@ Phases execute sequentially: 1 → 2 → 3 → 4. Each phase requires explicit h
 |-------|----------------|--------|-----------|
 | 1. Audit | 9/9 | Complete | 2026-05-09 |
 | 2. Design | 10/10 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
-| 3. Change list | 0/7 | Plans created | - |
+| 3. Change list | 7/7 | Plans complete — verifier PASS 12/12 — awaiting approval | - |
 | 4. Open questions register | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-05-09 — milestone v2.0 Implementor Edition (design-only)*
-*Last updated: 2026-05-10 — **Phase 2 COMPLETE**: Plan 02-10 (Wave 10 — synthesis) executed — preamble blockquote finalised + Executive Summary 21-row TOC table populated + Appendix A Glossary 69 entries populated (frontmatter fields / status lifecycle / stage prefixes / platform terms / test-bot terms / plugin surfaces / doc + sign-off terms) + Appendix B 30-row DESIGN-* → DESIGN.md section traceability table populated covering DESIGN-01..30 (substage-spanning rows for DESIGN-08 + DESIGN-12 (renamed `## v2 skill inventory` anchor per cross-AI MEDIUM #4 follow-through) + DESIGN-20 (4a + 4b) + DESIGN-23 (7a + 7b) + DESIGN-29/30 (D-30 interface-only)) + Deferred OPEN-QUESTIONS list finalised with 8-bullet enumeration in document order (Pipefy AI KB / Pipefy pagination cursor / Pipefy rate-limit / Wrike AI Studio / Wrike rate-limit / Ziflow ReviewAI / Ziflow read-after-create / risk-multiplier defaults) each with explicit `owner: Phase <N> per CHANGE-04` per cross-AI #10 + reconciliation algorithm passing all 3 conditions per cross-AI HIGH #3 (cardinality match INLINE_COUNT=LIST_BULLETS=8; textual match `diff` empty; ownership-per-bullet OWNERS_PRESENT=8=LIST_BULLETS); meta-pattern Rule 2 reword on preamble + CR pre-archive sanity bullet to remove literal `[OPEN: Phase 4 — ...]` ellipsis pattern that would inflate INLINE_COUNT; final structural-check exits 0 — all 9 assertions PASS — **DESIGN.md is reviewer-ready** (cross-AI MEDIUM #7 terminal state phrase reserved for Plan 02-10). Awaiting Phase 2 approval gate review per ROADMAP. Phase 3 (Change list) next via `/gsd-discuss-phase 3` after approval.*
+*Last updated: 2026-05-10 — **Phase 3 EXECUTION COMPLETE — awaiting approval**: All 7 plans executed sequentially across 7 waves (file-ownership on `.planning/CHANGELIST.md` forced serial execution). Wave 1 (03-01) scaffold + 15-assertion structural-check; Wave 2-3 (03-02 + 03-03) full 9-phase build-plan mini-tables (Phase 7 carries verbatim D-37 fallback); Wave 4 (03-04) Appendix A 20-row per-skill delta matrix; Wave 5 (03-05) Appendix B 6 cosmetic-fix subsections (verbatim AUDIT-07 lift) + Appendix D 7-rule migration cutover checklist; Wave 6 (03-06) Appendix C research-blocked Phase 1 + Phase 7 + Phase 1/2 mini-table enrichment with 6 verbatim DESIGN.md Appendix E bullets; Wave 7 (03-07) reviewer-ready synthesis (preamble + Executive Summary 5-col 9-row milestone-bundling table + How-to-read + Appendix E 9-bullet reconciliation expanded from baseline 8 per D-27 net-new Phase 3 OPEN-07 deferral). Final structural-check exits 0 (all 14 assertions pass). gsd-verifier PASS 12/12 must-haves; VERIFICATION.md at `.planning/phases/03-changelist/03-VERIFICATION.md`. CHANGE-01..05 all met; ROADMAP success criteria 1-5 all addressed; D-N pool frozen at D-45. Awaiting Phase 3 approval gate review per ROADMAP. Phase 4 (Open questions register) next via `/gsd-discuss-phase 4` after approval — Phase 4 builds mechanically by walking the 9 Appendix E bullets.*
+
+*Original Phase 2 last-update note: **Phase 2 COMPLETE**: Plan 02-10 (Wave 10 — synthesis) executed — preamble blockquote finalised + Executive Summary 21-row TOC table populated + Appendix A Glossary 69 entries populated (frontmatter fields / status lifecycle / stage prefixes / platform terms / test-bot terms / plugin surfaces / doc + sign-off terms) + Appendix B 30-row DESIGN-* → DESIGN.md section traceability table populated covering DESIGN-01..30 (substage-spanning rows for DESIGN-08 + DESIGN-12 (renamed `## v2 skill inventory` anchor per cross-AI MEDIUM #4 follow-through) + DESIGN-20 (4a + 4b) + DESIGN-23 (7a + 7b) + DESIGN-29/30 (D-30 interface-only)) + Deferred OPEN-QUESTIONS list finalised with 8-bullet enumeration in document order (Pipefy AI KB / Pipefy pagination cursor / Pipefy rate-limit / Wrike AI Studio / Wrike rate-limit / Ziflow ReviewAI / Ziflow read-after-create / risk-multiplier defaults) each with explicit `owner: Phase <N> per CHANGE-04` per cross-AI #10 + reconciliation algorithm passing all 3 conditions per cross-AI HIGH #3 (cardinality match INLINE_COUNT=LIST_BULLETS=8; textual match `diff` empty; ownership-per-bullet OWNERS_PRESENT=8=LIST_BULLETS); meta-pattern Rule 2 reword on preamble + CR pre-archive sanity bullet to remove literal `[OPEN: Phase 4 — ...]` ellipsis pattern that would inflate INLINE_COUNT; final structural-check exits 0 — all 9 assertions PASS — **DESIGN.md is reviewer-ready** (cross-AI MEDIUM #7 terminal state phrase reserved for Plan 02-10). Awaiting Phase 2 approval gate review per ROADMAP. Phase 3 (Change list) next via `/gsd-discuss-phase 3` after approval.*
