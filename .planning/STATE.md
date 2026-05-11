@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Foundations + Platform Skills
-status: executing
-stopped_at: Phase 6 context gathered (D-63..D-68 locked)
-last_updated: "2026-05-11T06:02:35.813Z"
+status: phase-6-reviewer-ready
+stopped_at: Phase 6 complete — awaiting milestone v2.1 approval gate
+last_updated: "2026-05-11T07:00:00.000Z"
 last_activity: 2026-05-11
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 39
-  percent: 98
+  completed_plans: 40
+  percent: 100
 ---
 
 # STATE
@@ -27,11 +27,11 @@ See: `.planning/PROJECT.md` (updated 2026-05-10)
 ## Current Position
 
 Milestone: v2.1 Foundations + Platform Skills — started 2026-05-10
-Phase: 6 (Internalise Platform Skills) — EXECUTING
-Plan: 2 of 4
-Status: Ready to execute
+Phase: 6 (Internalise Platform Skills) — REVIEWER-READY (4/4 plans complete)
+Plan: 4 of 4
+Status: Awaiting milestone v2.1 approval gate
 Last activity: 2026-05-11
-Next: human approval → `/gsd-discuss-phase 6` (Internalise Platform Skills — Pipefy/Wrike/Ziflow with 5-file references/ shape per D-60).
+Next: human approval of Phase 6 deliverables (3 platform-skill trees + 3 OPEN-Q row flips + phase6-structure-check.sh exit 0) → milestone v2.2 begins (Stage 1 Kickoff + Stage 4 Fnspec split per CHANGE-01).
 
 Status (legacy detail — v2.0 superseded by milestone-switch 2026-05-10): Phase 4 discuss-phase complete (no interactive deep-dive — user selected "propose recommended defaults" mode). 10 D-N decisions D-46..D-55 grounded in Phase 1-3 precedent. D-46 hybrid OPEN-NN-primary + per-phase secondary index; D-47 closed 9-field row schema; D-48 3-tier severity (BLOCKER/GUARDRAIL/INFORMATIONAL); D-49 5-value resolution-path enum; D-50 single-canonical-row dedup with multi-source citation + reconciliation algorithm; D-51 hub-link OPEN-04 pointer-only; D-52 policy-decisions formalise deadline+owner+acceptance-signal+fallback; D-53 full reviewer-ready synthesis structure mirroring Phase 3 03-07; D-54 wave count deferred to planner per D-45; D-55 new-question discovery bi-directional carry-forward. Cross-cutting D-14/D-16/D-25/D-27/D-28/D-37/D-42/D-45 carried. Phase 3 ✓ APPROVED 2026-05-10 — all 7 plans landed sequentially across 7 waves; gsd-verifier PASS 12/12; structural-check exits 0; CHANGELIST.md reviewer-ready. Cross-AI review (gemini + codex) raised 9 concerns C1-C9 across 4 severity tiers (HIGH × 2, MEDIUM × 5, LOW × 2); all 9 mitigated via /gsd-plan-phase 3 --reviews replan touching 03-01 (script regex anchor on D-39 Status closed enum + H2 uniqueness loop + no-placeholder assertion), 03-02/03 (sequential-not-parallel objective wording), 03-04 (status enum shrunk back to D-39 + one-authoritative-count reconciliation paragraph), 03-05 (reworded "content-verbatim with two allowed transformations" + sentinel-diff acceptance), 03-06 (verbatim D-37 fallback in Appendix C Phase 7 row), 03-07 (synthesis-end no-placeholder pass), 03-CONTEXT.md (D-38 H3→H2 wording amendment). Plan-checker VERIFICATION PASSED twice (initial + post-revision). 7 plans across 7 sequential waves (file-ownership on `.planning/CHANGELIST.md` forces serialisation; deviation from D-45 parallel-Wave-1 hint sanctioned by D-45's "final shape stays planner discretion" clause). Wave 1: 03-01 scaffold (changelist-structure-check.sh + CHANGELIST.md skeleton — 16 D-36 H2 anchors + Appendix B/D/E opening sentinels + Phase 7 [BLOCKED] tag). Wave 2: 03-02 CHANGE-01 first half (Phases 1-5 mini-tables — v2.1/v2.2/v2.3/v2.4 milestones). Wave 3: 03-03 CHANGE-01 second half (Phases 6-9 mini-tables; Phase 7 carries D-37 OPEN-01 contingent fallback verbatim). Wave 4: 03-04 CHANGE-02 Appendix A (20-row per-skill delta matrix per D-39 + cited bullets per D-40 + bottom totals reconciliation). Wave 5: 03-05 CHANGE-03 + CHANGE-05 (Appendix B verbatim AUDIT-07 lift with 6 D-16 sentinels per D-41 + Appendix D 7-rule migration checklist citing DESIGN-08 per D-43). Wave 6: 03-06 CHANGE-04 (Appendix C 2-row research-blocked matrix + Phase 1 / Phase 2 inline `[OPEN: Phase 4]` enrichment per D-42). Wave 7: 03-07 synthesis (preamble + Executive Summary 5-col 9-row condensed milestone-bundling table + How-to-read + Appendix E 8-bullet enumeration via Phase 2 02-10 reconciliation algorithm — cardinality + diff + ownership-per-bullet — + final structural-check exits 0). gsd-plan-checker: VERIFICATION PASSED — 3 non-blocker NIT/WARNINGs (all marked acceptable). Coverage: CHANGE-01..05 all covered; ROADMAP success criteria 1-5 all addressed; D-36..D-45 + carried D-14/15/16/17/25/27/28 all implemented. Resume file: `.planning/phases/03-changelist/03-01-PLAN.md`. Next: `/gsd-execute-phase 3`.
 
@@ -91,6 +91,7 @@ Legacy v2.0 progress (superseded): [██████████] 100% (4 of 4
 
 *Updated after each plan completion*
 | Phase 06 P03 | 4 min | 4 tasks | 6 files |
+| Phase 06 P04 | 3 min | 2 tasks | 1 modified + 1 created |
 
 ## Accumulated Context
 
@@ -193,6 +194,10 @@ Full log in PROJECT.md Key Decisions table. Recent decisions affecting current w
 - [Phase ?]: Q05 inline resolution: webhook-PRIMARY + wait_for_proof 30s/2s fallback (per D-67); row flip deferred to 06-04 synthesis
 - [Phase ?]: REVIEWS C7 429 fix: dedicated ZiflowRateLimitExceeded class distinct from ZiflowServerError (5xx)
 - [Phase ?]: REVIEWS C4: 06-03 Task 1 owns mkdir -p platform-ziflow/references/ (no .gitkeep placeholders)
+- Phase 6 P04: Q05 / Q06.2 / Q07.2 OPEN-QUESTIONS row flips proposed → decided with resolution citations to platform-skill api-contract.md paths (PLAT-06 satisfied)
+- Phase 6 P04: REVIEWS C8 A16 verification uses awk-between-OPEN-Q-headings extraction shape (NOT grep -A 11) — robust against decision-bullet insertions that shift Status: line position
+- Phase 6 P04: D-66 vocabulary dedup gate PASS + T-06-02 + T-06-04 cross-tree YAML-field-assignment gates PASS — REVIEWS C2 + C3 tightened regex confirms project-wide glossary terms / forbidden tokens / removed configuration field shapes absent at YAML field-assignment level
+- Phase 6 P04: phase6-structure-check.sh exits 0 with all 17 assertions A1..A17 PASS — Phase 6 reviewer-ready signal; milestone v2.1 ready to close on approval
 
 ### Pending Todos
 
@@ -210,8 +215,8 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 
 ## Session Continuity
 
-Last session: 2026-05-11T06:02:18.993Z
-Stopped at: Phase 6 context gathered (D-63..D-68 locked)
+Last session: 2026-05-11T07:00:00.000Z
+Stopped at: Phase 6 complete (4/4 plans landed) — awaiting milestone v2.1 approval gate
 
 Previously: Phase 2 Plan 09 (Wave 9 — Test bot architecture DESIGN-28/29/30) complete — 2 atomic commits (`9e05a5e` Task 1 ## Test bot architecture H2 opening framing paragraph + DESIGN-28 tier-1 / tier-2 boundary 6-column table + verbatim Out-of-Scope anti-feature citation + mixed-layer cases + 1 worked Pipefy card-create TC classification example; `752e85c` Task 2 DESIGN-29 client_state.yaml skeleton 7 top-level keys + 4 sandbox sub-blocks Coda CRIT-5 + wrike.host PERSISTED per DESIGN-15 + 3 worked per-platform examples + field-by-field rationale + DESIGN-30 drift-detection contract WITHOUT numbered pseudocode + 2-path human-action). Echo count progressed 29 → 32/30. Inline `[OPEN: Phase 4]` count unchanged at 17 (closed enums). Structural-check exits 0 — DESIGN.md was structurally passable (Plan 02-10 synthesis advances to reviewer-ready terminal state).
 
@@ -219,3 +224,5 @@ Previously: Phase 2 Plan 08 (Wave 8 — Stages 8/9/10/11 skills DESIGN-24/25/26/
 
 Previous: Phase 2 Plan 07 (Wave 7 — Stages 6/7a/7b skills DESIGN-22/23) complete — 2 atomic commits (`9063c85` Stage 6 cost estimate DESIGN-22 + matrix Stage 6 → 7a alignment; `209e84f` Stage 7a + 7b dual build prompts DESIGN-23 + matrix Stage 7a/7b → 8a alignment). Echo line count progressed 22 → 25 (DESIGN-22 under Stage 6 + DESIGN-23 dual-echo under Stage 7a + Stage 7b). 1 net-new canonical inline `[OPEN: Phase 4]` marker added (D-22 risk-multiplier deferral at point of use in Stage 6 H tier row of taxonomy table per D-27) PLUS 3 research-recommended-but-deferred citation echoes in L / M default-value cells (not net-new deferrals — Plan 02-10 dedups against canonical seed); total inline `[OPEN]` count across DESIGN.md = 17 (>= 8 floor with margin). Structural-check assertion #4 (echo count >= 30) short-circuits at 25/30 — expected mid-phase invariant. Plans 02-08..02-10 next; resume execution via `/gsd-execute-phase 2`.
 Resume file: None
+
+Latest: Phase 6 Plan 04 (Wave 3 — cross-platform synthesis) complete — 1 atomic commit (`58210b4` Task 1 OPEN-Q05/Q06.2/Q07.2 row flips proposed → decided with resolution citations to platform-skill api-contract.md paths). Task 2 verification-only — D-66 vocabulary dedup gate PASS + T-06-02 cross-tree YAML-field-assignment gate PASS (REVIEWS C3 tightened regex) + T-06-04 cross-tree YAML-field-assignment gate PASS (REVIEWS C2 tightened regex) + phase6-structure-check.sh full-run exits 0 with all 17 assertions A1..A17 PASS. **Phase 6 is reviewer-ready** — all 5 ROADMAP success criteria mapped (SC1=06-01 / SC2=06-02 / SC3=06-03 / SC4=cross-tree A5+A6+A7 / SC5=06-04 A16 via REVIEWS C8 awk shape). Pre-edit baseline: proposed=7 decided=17; post-edit: proposed=4 decided=20 (net -3 / +3 as expected). Awaiting milestone v2.1 approval gate — once approved, milestone v2.2 begins (Stage 1 Kickoff + Stage 4 Fnspec split per CHANGE-01).

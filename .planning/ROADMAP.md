@@ -221,7 +221,7 @@ Plans:
   4. **Frontmatter contracts locked across all 3 platform skills.** `tier_claims_last_verified:` frontmatter populated on `platform-pipefy/SKILL.md`, `platform-wrike/SKILL.md`, `platform-ziflow/SKILL.md` per MOD-7 (date stamps when native-AI tier claims were last verified against vendor docs); `native_ai_path:` flag enum locked to `paste | none` ONLY across all 3 platform skills (UAT-6.1 — `api` branch removed; native-AI ingestion APIs OUT-OF-SCOPE entirely; Stage 10 [v2.5] = paste bundle + upload audit log only); `grep -r 'native_ai_path: api' skills/platform-*/` returns ZERO hits.
   5. **3 throttle/consistency OPEN-QUESTIONS resolved.** Q05 Ziflow read-after-create consistency window resolved (informs `wait_for_proof` defaults in `platform-ziflow/references/api-contract.md`); Q06.2 Pipefy throttle calibration resolved (depends on Q06.1 / FOUND-13 from Phase 5); Q07.2 Wrike throttle calibration resolved (depends on Q07.1 / FOUND-13 from Phase 5); resolved values land in respective `api-contract.md` files; OPEN-QUESTIONS.md status fields flipped from `proposed` to `decided` for Q05 / Q06.2 / Q07.2.
 **Approval gate**: Human reviews 3 platform skills + 5-file `references/` shape parity + revised DESIGN-14 contract verification + frontmatter contracts. Approval signal = explicit go-ahead from the user. Rationale: closes milestone v2.1 — every later v2.x phase that loads a platform skill (Stage 4 fnspec split, Stage 5 tech spec, Stage 7b implementation prompt, Stage 8 test bot, Stage 10 native-AI push) inherits clean platform-skill contracts.
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans executed — **Phase 6 reviewer-ready**
 Plans:
 
 **Wave 1**
@@ -231,8 +231,8 @@ Plans:
 - [x] 06-02-PLAN.md — Wrike SKILL.md + 5 references/ (PLAT-02, PLAT-04 wrike, PLAT-05 wrike, PLAT-06 inline Q07.2)
 - [x] 06-03-PLAN.md — Ziflow SKILL.md + 5 references/ (PLAT-03, PLAT-04 ziflow, PLAT-05 ziflow, PLAT-06 inline Q05)
 
-**Wave 3** *(synthesis)*
-- [ ] 06-04-PLAN.md — OPEN-QUESTIONS row flips (Q05 / Q06.2 / Q07.2) + D-66 vocabulary dedup gate + cross-tree T-06-02 / T-06-04 grep gates + phase6-structure-check.sh exit 0
+**Wave 3** *(synthesis — complete)*
+- [x] 06-04-PLAN.md — OPEN-QUESTIONS row flips (Q05 / Q06.2 / Q07.2) + D-66 vocabulary dedup gate + cross-tree T-06-02 / T-06-04 grep gates + phase6-structure-check.sh exit 0 *(complete 2026-05-11; SUMMARY at `.planning/phases/06-internalise-platform-skills/06-04-SUMMARY.md`; **Phase 6 reviewer-ready** — all 17 A1..A17 PASS)*
 
 
 ## Progress
@@ -247,7 +247,7 @@ Phases 1 → 2 → 3 → 4 (v2.0 milestone, design-only, complete 2026-05-10) �
 | 3. Change list | 7/7 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
 | 4. Open questions register | 5/5 | Complete ✓ APPROVED 2026-05-10 | 2026-05-10 |
 | 5. Foundations + Connector Verification (v2.1) | 0/TBD | Not started — roadmap-locked | — |
-| 6. Internalise Platform Skills (v2.1) | 3/4 | In Progress|  |
+| 6. Internalise Platform Skills (v2.1) | 4/4 | Reviewer-ready — awaiting milestone v2.1 approval | 2026-05-11 |
 
 ---
 
