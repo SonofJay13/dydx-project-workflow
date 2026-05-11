@@ -3,10 +3,10 @@ phase: 8
 phase_name: Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)
 audit_date: 2026-05-11
 asvs_level: 1
-threats_total: 12
-threats_closed: 10
+threats_total: 15
+threats_closed: 12
 threats_open: 0
-threats_accepted: 2
+threats_accepted: 3
 register_authored_at_plan_time: true
 final_verdict: SECURED
 verified_via: phase8-structure-check.sh --all (32 assertions PASS, exit 0)
@@ -98,8 +98,8 @@ Per-assertion mapping to threats:
 
 | Metric | Count |
 |--------|-------|
-| Threats found (register) | 12 |
-| Closed (mitigation verified) | 10 |
+| Threats found (register) | 15 |
+| Closed (mitigation verified) | 12 |
 | Open (BLOCKERS) | 0 |
 | Accepted (with documented rationale) | 3 (T-08-05, T-08-09, T-08-10) |
 | Unregistered flags | 0 |
