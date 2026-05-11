@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Stage 1 Kickoff + Stage 4 Fnspec Split
-status: Phase 8 plans authored — ready for execution
-stopped_at: Phase 8 plan-phase complete (plan-checker iter-2 PASS; 0 blockers, 0 warnings)
-last_updated: "2026-05-11T14:30:00.000Z"
-last_activity: 2026-05-11 — Phase 8 plan-phase complete (3 plans authored; plan-checker iter-2 PASS)
+status: Phase 8 in execution — Wave 1 (08-01) complete; 08-02 + 08-03 pending
+stopped_at: Phase 8 plan 08-01 SHIPPED — 4 new files at dydx-delivery/skills/generate-fnspec-platform/; T5 P1-P8 plan-local gate PASS (8/8)
+last_updated: "2026-05-11T13:44:41.000Z"
+last_activity: 2026-05-11 — Phase 8 plan 08-01 (Wave 1) executed (Stage 4a fnspec-platform skill authored; 4 files; P1-P8 verified)
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 7
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # STATE
@@ -21,15 +21,15 @@ See: `.planning/PROJECT.md` (updated 2026-05-11)
 
 **Core value:** Plugin behaves as a senior implementation partner end-to-end — every stage produces an artefact polished enough to send to a client or hand to a developer without rework, and every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
 
-**Current focus:** v2.2 milestone — Phase 7 SHIPPED 2026-05-11. Phase 8 plan-phase complete; 3 plans ready for execution.
+**Current focus:** v2.2 milestone — Phase 7 SHIPPED 2026-05-11. Phase 8 in execution; Wave 1 (08-01) SHIPPED 2026-05-11; Wave 2 (08-02) + Wave 3 (08-03) pending.
 
 ## Current Position
 
-Phase: 8 — Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline) — **PLANNING COMPLETE**
-Plan: 0/3 executed (plans authored; execution pending)
-Status: Plans authored — plan-checker iter-2 PASS (0 blockers); ready for `/gsd-execute-phase 8`
-Last activity: 2026-05-11 — Phase 8 plan-phase complete (3 plans; all reqs covered; D-78..D-86 locked)
-Next step: `/gsd-execute-phase 8`
+Phase: 8 — Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline) — **IN EXECUTION**
+Plan: 1/3 executed (08-01 SHIPPED; 08-02 + 08-03 pending)
+Status: Wave 1 complete — Stage 4a fnspec-platform skill authored end-to-end (4 files; P1-P8 plan-local gate PASS); ready for Wave 2 (08-02)
+Last activity: 2026-05-11 — Phase 8 plan 08-01 executed (Stage 4a fnspec-platform/ skill + 3 references/ files; D-78 4-enum baked in; D-82 row markup contract locked; D-79 addendum body skeleton authored; ## Key decisions block with D-78/D-79/D-82/D-84/D-85 — 4a half of T-02-06-02 / ROUTE-01 two-place declaration)
+Next step: Execute plan 08-02 (Wave 2 — generate-fnspec-integration; reads 04a_fnspec-platform_v* upstream; authors 4b half of ## Key decisions cross-reference)
 
 ## Deferred Items
 
@@ -53,7 +53,7 @@ Items acknowledged and deferred at v2.1 milestone close on 2026-05-11:
 | Phase | Plans | Notes |
 |-------|-------|-------|
 | 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | 4 ✓ | Shipped 2026-05-11 — 3 waves (1+2+1), parallel Wave 2 (07-02 ‖ 07-03) on disjoint skill files |
-| 8. Stage 4 Fnspec Split + ROUTE | 3 (W1→W2→W3) | W1: 08-01 generate-fnspec-platform; W2: 08-02 generate-fnspec-integration (depends on 08-01); W3: 08-03 cross-cutting closeout (autonomous:false; depends on 08-01+08-02) |
+| 8. Stage 4 Fnspec Split + ROUTE | 3 (W1→W2→W3) | W1: 08-01 generate-fnspec-platform ✓ SHIPPED 2026-05-11 (~25 min, 4 files, P1-P8 PASS); W2: 08-02 generate-fnspec-integration (depends on 08-01); W3: 08-03 cross-cutting closeout (autonomous:false; depends on 08-01+08-02) |
 
 ## Accumulated Context
 
@@ -81,13 +81,16 @@ None at v2.2 roadmap lock. Phase 7 and Phase 8 are NOT research-blocked per CHAN
 
 ## Session Continuity
 
-Last session: 2026-05-11T14:30:00.000Z
-Stopped at: Phase 8 plan-phase complete — proceed to /gsd-execute-phase 8
+Last session: 2026-05-11T13:44:41Z — Phase 8 Wave 1 (08-01) executed; SHIPPED
+Stopped at: 08-01-SUMMARY.md committed; 4 new files + SUMMARY in place; Wave 2 (08-02) ready to spawn
 
 Previously: Phase 8 plan-phase ran 2026-05-11: discuss (D-78..D-86 locked), research (08-RESEARCH.md, 676 lines, R-01..R-05), validation (08-VALIDATION.md, Nyquist Dim-8), 3 plans authored (08-01 W1, 08-02 W2, 08-03 W3). Plan-checker iter-1 found 1 BLOCKER + 2 WARNINGS in 08-03; planner revised; plan-checker iter-2 PASS (0 blockers, 0 warnings). All 3 plans committed and ready.
 
-Resume file: .planning/phases/08-stage-4-fnspec-split-route/08-VALIDATION.md
+Today (2026-05-11 afternoon): 08-01 executed atomically in 5 tasks; one Rule 1 auto-fix (removed reversed-enum literal from SKILL.md Step 4 body to keep STG4-04 P5 complementary assertion clean); T5 P1-P8 plan-local gate PASS (8/8); 08-01-SUMMARY.md committed.
+
+Resume file: .planning/phases/08-stage-4-fnspec-split-route/08-01-SUMMARY.md
 
 ## Operator Next Steps
 
-- Run `/gsd-execute-phase 8` to execute Stage 4 Fnspec Split + ROUTE (3 sequential waves; Wave 3 autonomous:false — human verify required)
+- Spawn executor for plan 08-02 (Wave 2 — generate-fnspec-integration). Reads `04a_fnspec-platform_v*.md` upstream from 08-01. Authors 4b half of `## Key decisions` cross-reference (T-02-06-02 / ROUTE-01 I8 assertion).
+- After 08-02 completes, spawn executor for plan 08-03 (Wave 3 — cross-cutting closeout; autonomous: false — human verify required).
