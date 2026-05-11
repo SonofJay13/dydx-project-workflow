@@ -1,9 +1,12 @@
 ---
 client: <CLIENT_NAME>
+project: <PROJECT_NAME>
 platform: <pipefy | wrike | ziflow | other>
 integrations: []
 version: 1
 status: draft
+frontmatter_version: 2
+based_on_kickoff: 01_kickoff_v<N>.md
 captured_by: <USER>
 captured_at: <YYYY-MM-DD>
 ---

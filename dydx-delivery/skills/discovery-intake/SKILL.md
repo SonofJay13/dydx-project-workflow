@@ -1,150 +1,166 @@
 ---
 name: discovery-intake
-description: Capture client discovery for a new engagement or feature by consuming an approved kickoff artefact (`01_kickoff_v<N>.md`). Use when the user says "start discovery for X", "capture intake for X", "run discovery", or "kick off Stage 2 for X". Discovery is a pure transform of an approved kickoff — raw-notes / pasted-transcript entry is RETIRED per STG2-01. Produces a versioned discovery artefact that downstream stages (SOW, functional spec, technical spec) consume.
+description: Capture Stage 2 discovery from an approved kickoff artefact. Use when the user says "start discovery for X", "capture intake for X", "run discovery", or "kick off Stage 2 for X".
 ---
 
 # discovery-intake
 
-Capture the real operational context for a new client engagement or feature. Produce a structured discovery artefact that downstream skills consume.
+Stage 2 of the dYdX delivery pipeline. Turn an approved kickoff into a structured discovery artefact for SOW and specification work.
+
+For normal execution, use:
+
+- `../../references/runtime-stage-map.md`
+- `../../references/runtime-frontmatter.md`
+- `../../references/runtime-safety-summary.md`
+- `references/intake-template.md`
+
+Discovery does not accept raw notes directly. Raw notes, Miro narration, and Field Notes rows go through `kickoff-capture` first.
 
 ## Inputs
 
-- Approved `01_kickoff_v<N>.md` (sole upstream artefact, MANDATORY) — carries `status: approved` + `kickoff_branch:` enum (`discovery-ready` → run; `draft-sow` → skip per Step 1).
-- (Optional) Existing `02_discovery_v<N>.md` the reviewer wants to extend or revise as `_v{N+1}`.
+Required:
 
-**Write-path contract (D-76):** Every NEW `02_discovery_v<N>.md` artefact MUST carry `based_on_kickoff: 01_kickoff_v<N>.md` in frontmatter. The `validate-frontmatter` hook (deferred to v2.6 / SURF-01..03) will enforce this on disk; until then the SKILL body is the contract source. Read-path stays lenient per DESIGN-08 — legacy v0.3.0 `00_discovery_v*.md` artefacts without `based_on_kickoff:` still parse.
+- Latest approved `01_kickoff_v<N>.md` for the client/project.
+- `status: approved` in kickoff frontmatter.
+- Concrete `client:`, `project:`, `platform:`, and `kickoff_branch:` values.
+
+Optional:
+
+- Existing `02_discovery_v<N>.md` when the reviewer wants a revision or extension.
 
 ## Output
 
-`<Client>/build-specs/<platform>/02_discovery_vN.md` — versioned, frontmatter-tagged.
+Write:
 
-If `<Client>` and `<platform>` aren't obvious from context, ask once before drafting.
+`<Client> Brain/build-specs/<platform>/02_discovery_v<N>.md`
+
+Every new discovery artefact must include:
+
+```yaml
+based_on_kickoff: 01_kickoff_v<N>.md
+```
+
+If client or platform is missing from the approved kickoff, stop and ask the reviewer to fix the kickoff before continuing.
 
 ## How to run
 
-### Step 1 — Locate upstream kickoff and route by branch
+### Step 1 - Locate and route from kickoff
 
-**Locate upstream kickoff.** Read the latest `status: approved` `01_kickoff_v<N>.md` for this client+project. If no approved kickoff exists, emit an explicit error directing the reviewer to run `kickoff-capture` first (raw-notes entry is RETIRED — see "What this skill does not do").
+Read the latest approved `01_kickoff_v<N>.md`.
 
-**Read `kickoff_branch:` from kickoff frontmatter:**
+If no approved kickoff exists, stop and tell the reviewer to run `kickoff-capture` first.
 
-- If `kickoff_branch: discovery-ready` → proceed to Step 2 (run discovery interview).
-- If `kickoff_branch: draft-sow` → emit the following message verbatim to stdout / handoff log and EXIT WITHOUT WRITING any `02_discovery_v<N>.md` artefact:
+Route by `kickoff_branch:`:
 
-  ```
-  Stage 2 SKIPPED — kickoff branch = draft-sow
-  ```
+- `discovery-ready` - continue to Step 2.
+- `draft-sow` - emit exactly:
 
-  Audit trail lives in git (kickoff approval commit) and the handoff log — no marker file is written (per D-74). Stage 3 (`generate-sow`) reads the kickoff directly via `based_on_kickoff:`.
+```text
+Stage 2 SKIPPED — kickoff branch = draft-sow
+```
 
-**Establish target location.** Client folder and platform come from the kickoff frontmatter (`client:`, `platform:` fields):
+Then exit without writing a `02_discovery_v<N>.md` artefact.
 
-1. Use the `client:` and `platform:` values from `01_kickoff_v<N>.md` directly — these were captured and reviewer-approved at Stage 1.
-2. If either field is missing or `[unknown — needs human classification]`, halt and direct the reviewer to fix the kickoff artefact before re-running discovery. Do not draft without knowing where the file lands.
+### Step 2 - Check for existing discovery
 
-### Step 2 — Check for existing discovery
+Look in `<Client> Brain/build-specs/<platform>/` for `02_discovery_v*.md`.
 
-Look in `<Client>/build-specs/<platform>/` for files matching `02_discovery_v*.md`.
+- If none exists, write `_v1`.
+- If one or more exists, ask whether to revise as `_v{N+1}`, extend in place, or start fresh.
 
-- **None found** → this is the first version. Proceed to Step 3.
-- **One or more found** → ask: "I found `02_discovery_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start a fresh artefact?"
+### Step 3 - Run the discovery interview
 
-### Step 3 — Run the discovery interview
+Walk through these eight dimensions. If the approved kickoff already answers a dimension, summarise what is known and ask only for the gap.
 
-Walk the user through the eight discovery dimensions. Ask them in this order. If the user has provided notes that already cover a dimension, summarise back what you captured and ask only for gaps. Do not interrogate — keep it conversational and efficient.
+1. **Business outcome**
+   - What measurable outcome does the client want?
+   - Why now?
+   - What does success look like in three months?
 
-**1. Business outcome**
-- What's the measurable outcome the client wants?
-- Why now? What changes if this doesn't get done?
-- What does success look like in three months?
+2. **Users**
+   - Who interacts with the workflow?
+   - Who owns it?
+   - Who depends on it?
+   - What is their technical level?
 
-**2. Users**
-- Who interacts with this workflow? (roles, not names — but capture names if useful)
-- Who owns it? Who depends on it?
-- What's their technical level?
+3. **Systems**
+   - What platforms are in play?
+   - What is the system of record for each key data item?
+   - What is already automated vs manual?
 
-**3. Systems**
-- What platforms are in play? (primary + supporting)
-- What's the system of record for each piece of data?
-- What's already automated vs manual?
+4. **Triggers**
+   - What starts the workflow?
+   - How often does it happen?
+   - Are there multiple entry points?
 
-**4. Triggers**
-- What kicks off the workflow? (user action, time, event, integration)
-- How frequently?
-- Are there multiple entry points?
+5. **Data**
+   - What information moves through the workflow?
+   - Where does it originate and end up?
+   - Is any of it sensitive?
 
-**5. Data**
-- What information moves through the workflow?
-- Where does it originate? Where does it end up?
-- Any sensitive data? (PII, financial, health)
+6. **Rules**
+   - What decision logic changes the path?
+   - Who approves what?
+   - Are there SLAs or deadlines?
 
-**6. Rules**
-- Decision logic — what determines which path a piece of work takes?
-- Approvals — who approves what, and what triggers them?
-- SLAs or deadlines?
+7. **Integrations**
+   - What external systems are involved?
+   - What is the direction of each integration?
+   - What is known about auth, frequency, and error handling?
 
-**7. Integrations**
-- What external systems does this touch?
-- Direction (inbound, outbound, bidirectional)?
-- Auth method, frequency, error handling today?
+8. **Exceptions and failure points**
+   - What goes wrong today?
+   - What is manually patched up?
+   - What happens if a system goes down mid-workflow?
 
-**8. Exceptions and failure points**
-- What goes wrong today? How is it caught?
-- What's manually patched up that shouldn't be?
-- What happens if a system goes down mid-workflow?
+### Step 4 - Confirm platform and integrations
 
-### Step 4 — Identify platform and integrations
+Use the kickoff frontmatter as the starting point:
 
-Based on the user's answers, determine:
+- `platform:` must be one of `pipefy`, `wrike`, `ziflow`, or `other`.
+- `integrations:` should list supporting systems such as Ziflow, Workato, Frontify, Slack, or other named tools.
 
-- **Primary platform**: pipefy, wrike, or other (ask if unclear)
-- **Integration tools**: ziflow, workato, frontify, slack, others — captured as a list
+Ask only if the kickoff and discovery answers conflict.
 
-These become frontmatter fields and dictate which platform skill the technical spec stage will load later.
+### Step 5 - Draft the artefact
 
-### Step 5 — Draft the artefact
-
-Use the template at `references/intake-template.md`. Fill every section. For anything genuinely unknown, write `**Unknown — needs client input**` rather than guessing.
-
-Frontmatter is mandatory:
+Use `references/intake-template.md`. Required frontmatter:
 
 ```yaml
 ---
-client: <Client>
+client: <CLIENT_NAME>
+project: <PROJECT_NAME>
 platform: <pipefy | wrike | ziflow | other>
 integrations: [<ziflow>, <workato>, ...]
 version: <N>
 status: draft
-based_on_kickoff: 01_kickoff_v<N>.md   # MANDATORY per D-76 / STG2-01
+frontmatter_version: 2
+based_on_kickoff: 01_kickoff_v<N>.md
 captured_by: <user>
-captured_at: <ISO date>
+captured_at: <YYYY-MM-DD>
 ---
 ```
 
-The `based_on_kickoff:` field is MANDATORY on every NEW write per D-76 / STG2-01. Read-path is lenient (DESIGN-08): legacy v0.3.0 artefacts without the field still parse. Hook-level enforcement (`validate-frontmatter`) is deferred to v2.6 / SURF-01..03 — until then this SKILL body is the contract source.
+Fill every section. For anything genuinely unknown, write `[unknown — needs client input]`. Do not invent answers.
 
-### Step 6 — Write and hand off
+### Step 6 - Write and hand off
 
-Write to `<Client>/build-specs/<platform>/02_discovery_v{N}.md`.
+Write to `<Client> Brain/build-specs/<platform>/02_discovery_v<N>.md`.
 
-End with this exact handoff message to the user:
+End with this handoff:
 
-> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
+```text
+Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
+```
 
-## What this skill does not do
-
-- **Does NOT accept raw notes.** The raw-notes entry path is RETIRED in v2.2 — discovery is a pure transform of an approved `01_kickoff_v<N>.md` artefact per STG2-01 + DESIGN-18. Pasted meeting notes / Miro / Field Notes content flows through `kickoff-capture` first (see `dydx-delivery/skills/kickoff-capture/SKILL.md`).
-- Does not draft scope, spec, or technical detail — that's downstream
-- Does not commit the user to a platform choice if it's genuinely unclear; asks instead
-- Does not invent answers to "Unknown" items — flags them explicitly
-- Does not run the next skill automatically
+Do not auto-run `generate-sow`.
 
 ## Quality bar
 
 A good discovery artefact:
 
-- Reads like the team understands the actual operational reality, not the idealised version
-- Surfaces edge cases and failure points, not just the happy path
-- Names the platforms, integrations, and ownership crisply
-- Marks every unknown — never silent
-- Is short enough to read in 5 minutes
+- Builds directly on an approved kickoff.
+- Surfaces edge cases and failure points, not only the happy path.
+- Names platforms, integrations, owners, and systems of record clearly.
+- Marks unknowns explicitly.
+- Stays short enough to review in about five minutes.

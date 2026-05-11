@@ -1,7 +1,7 @@
 {
   "name": "dydx-delivery",
   "version": "2.0.0",
-  "description": "Stage-gated client delivery pipeline for dYdX Digital. Twelve skills (nine stage + three platform reference) covering kickoff, discovery, SOW, split functional specs (4a platform + 4b integration), technical spec, test plan, Claude-Code-ready build prompt, and sandbox test execution; Pipefy, Wrike, and Ziflow live as first-class platform skills. Cowork is the strategy seat, Claude Code is the build seat. Every stage produces a versioned, human-reviewed artefact.",
+  "description": "Stage-gated client delivery pipeline for dYdX Digital. Covers kickoff, discovery, SOW, functional specs, technical spec, test plan, build prompt, and sandbox test execution with Pipefy, Wrike, and Ziflow platform references.",
   "author": {
     "name": "Jason Blignaut",
     "email": "jasonmichaelb@gmail.com"

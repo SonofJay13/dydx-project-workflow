@@ -1,121 +1,105 @@
 # dydx-delivery
 
-Stage-gated client delivery pipeline for dYdX Digital. Turns a discovery conversation into a fully tested implementation through seven skills, each gated by human review.
+Stage-gated client delivery pipeline for dYdX Digital. It turns a kickoff into approved delivery artefacts, then into a build prompt and sandbox test execution. Every stage is human-reviewed before the next stage runs.
 
-**Cowork is the strategy seat. Claude Code is the build seat.** The plugin runs in both — discovery, specs, and test runs happen in Cowork; the build itself happens in Claude Code, executed from a prompt this plugin generates.
+**Cowork is the strategy seat. Claude Code is the build seat.** Cowork handles messy discovery, specs, and test planning. Claude Code executes the generated build prompt when implementation work is ready.
 
-## The pipeline
+## Main Flow
 
+```text
+kickoff-capture
+  -> discovery-intake OR generate-sow
+  -> generate-sow
+  -> generate-fnspec-platform
+  -> generate-fnspec-integration, when integration scope exists
+  -> generate-technical-spec
+  -> generate-test-plan
+  -> generate-build-prompt
+  -> Claude Code build
+  -> execute-tests
 ```
-┌──────────────── Cowork ────────────────┐    ┌──── Claude Code ────┐    ┌─── Cowork ──┐
-│                                        │    │                      │    │             │
-│  discovery-intake                      │    │  (Build executes     │    │ execute-    │
-│         ↓                              │    │   from build prompt) │    │  tests      │
-│  generate-sow                          │    │                      │    │             │
-│         ↓                              │    │  • Reads spec        │    │             │
-│  generate-fnspec-platform (4a)         │    │  • Runs build steps  │    │             │
-│         ↓                              │    │  • Self-tests        │    │             │
-│  generate-fnspec-integration (4b)      │    │                      │    │             │
-│         ↓                              │    │                      │    │             │
-│  generate-technical-spec               │    │  • Writes report     │    │             │
-│         ↓                              │    │                      │    │             │
-│  generate-test-plan                    │    └──────────┬───────────┘    └─────────────┘
-│         ↓                              │               │
-│  generate-build-prompt  ───┐           │   ←───────────┘
-│                            │           │   (Cowork stays open during the build —
-└────────────────────────────┼───────────┘    refines prompts, answers spec questions)
-                             │
-                             ↓
-                       Switch to Claude Code,
-                       paste build prompt
-```
+
+No skill auto-runs the next skill. The human approval gate is always explicit.
 
 ## Skills
 
 | Skill | What it does | Runs in |
 |---|---|---|
-| `discovery-intake` | Captures business outcome, users, systems, triggers, data, rules, integrations, exceptions, failure points. Sets `platform:` frontmatter. | Cowork |
-| `generate-sow` | Produces scope, deliverables, exclusions, assumptions, risks, dependencies, commercial framing. | Cowork |
-| `generate-fnspec-platform` (Stage 4a) | Produces platform-shaped functional spec: business rules, field-level requirements, acceptance criteria. Per-row `delivery: native-ai \| api` routing tag (D-78 / D-82). Authors `## Platform-API Addendum` H2 when no 4b is in scope per D-79. | Cowork |
-| `generate-fnspec-integration` (Stage 4b) | Produces integration-shaped functional spec: integration touchpoints, API endpoints, acceptance criteria. Runs three cross-spec consistency checks against 4a FIRST per D-84; halt-on-failure emits `04b_consistency_check_v<N>.md`. Skip-path emits verbatim `Stage 4b SKIPPED — no integration work in scope` per D-85. | Cowork |
-| `generate-technical-spec` | Loads the right platform skill (pipefy or wrike) by frontmatter. Produces pipes/blueprints, automation logic, field mappings, integration contracts, error handling. | Cowork |
-| `generate-test-plan` | Produces a structured markdown test plan: scenario, setup, action, expected, assertion type. Maps every row to an acceptance criterion. | Cowork |
-| `generate-build-prompt` | Produces a Claude-Code-ready build prompt — context, inputs to read, build sequence, constraints, self-test loop, done criteria. | Cowork (generates), Claude Code (executes) |
-| `execute-tests` | A bot runs the test plan against the client's sandbox tenant via platform API. Read-write only, no deletes, no destructive actions. | Cowork |
+| `kickoff-capture` | Structures raw kickoff notes, Miro narration, or Field Notes rows into `01_kickoff_v<N>.md`. Sets `kickoff_branch:`. | Cowork |
+| `discovery-intake` | Expands an approved kickoff into `02_discovery_v<N>.md` when `kickoff_branch: discovery-ready`. | Cowork |
+| `generate-sow` | Produces scope, deliverables, exclusions, assumptions, risks, dependencies, and commercial framing. | Cowork |
+| `generate-fnspec-platform` | Produces platform-shaped functional requirements with per-row `delivery: native-ai | api` routing. | Cowork |
+| `generate-fnspec-integration` | Produces integration-shaped functional requirements and cross-checks them against the platform spec. | Cowork |
+| `generate-technical-spec` | Loads the relevant platform skill and produces implementation-level technical detail. | Cowork |
+| `generate-test-plan` | Produces structured test cases mapped to acceptance criteria. | Cowork |
+| `generate-build-prompt` | Produces a Claude-Code-ready build prompt. | Cowork generates; Claude Code executes |
+| `execute-tests` | Runs the approved test plan against the named sandbox tenant. Read-write only; no destructive actions. | Cowork |
 
-> The plugin works in both tools — every skill is portable. But for typical dYdX engagements, Cowork is the entry point (better at handling messy human input) and Claude Code is the build target (better at filesystem and shell work). See `skills/generate-build-prompt/references/when-to-open-claude-code.md` for the full guide.
+## Runtime References
 
-## Every stage runs the same loop
+Early-stage skills use compact runtime references to keep token use down:
 
-1. Read the highest-version artefact from the previous stage
-2. If missing, run the **start-at-any-point triage**: paste it, walk through inline, or cancel
-3. Draft the next artefact at `_v1.md`
-4. Hand back to the human for review
-5. Reviewer either edits in place (then bumps to `_v2.md`) or runs `/refine-<skill>` to regenerate
+- `references/runtime-stage-map.md`
+- `references/runtime-frontmatter.md`
+- `references/runtime-safety-summary.md`
 
-No skill auto-runs the next skill. The human is always the gate.
+The larger canonical references remain available for maintenance and later-stage work:
 
-## File locations
+- `references/stage-numbering.md`
+- `references/frontmatter-scheme.md`
+- `references/safety-rules.md`
+- `references/glossary.md`
+- `references/connector-matrix.md`
 
-Artefacts land in the standard client folder shape (see workspace `hub.md`):
+## File Locations
 
-```
-<Client>/
+Typical artefacts land in this shape:
+
+```text
+<Client> Brain/
+├── <Project>/
+│   └── 01_kickoff_v1.md
 ├── build-specs/
-│   └── <platform>/                       # pipefy | wrike | ziflow
-│       ├── 00_discovery_v1.md
-│       ├── 01_sow_v1.md
-│       ├── 02_functional-spec_v1.md
-│       ├── 03_technical-spec_v1.md
-│       └── 04_build-prompt_v1.md          # ← Claude Code reads this
-└── testing/
-    └── <feature>/
-        ├── test-plan_v1.md
-        └── results-2026-05-05_v1.md
+│   └── <platform>/
+│       ├── 02_discovery_v1.md
+│       ├── 03_sow_v1.md
+│       ├── 04a_fnspec-platform_v1.md
+│       ├── 04b_fnspec-integration_v1.md
+│       ├── 05_techspec_v1.md
+│       └── 07a_build-prompt_v1.md
+└── test-bot/
+    └── test_cases/
+        └── 08b_test-plan_v1.md
 ```
 
-After Claude Code executes the build, it writes a sibling report:
+After Claude Code executes the build prompt, it writes a sibling report next to the prompt:
 
+```text
+<Client> Brain/build-specs/<platform>/07a_build-prompt_v1_report.md
 ```
-<Client>/build-specs/<platform>/04_build-prompt_v1_report.md
-```
 
-## Versioning (Option B)
+## Versioning
 
-- Every skill writes `_v1.md` on first run
-- Reviewer either edits the file in place, or saves their reviewed version as `_v2.md`
-- Next skill always reads the highest version it can find
-- Optional sibling `_review.md` for major iteration notes (used by `/refine-<skill>` if added later)
+- First drafts write `_v1.md`.
+- Reviewed revisions write `_v2.md`, `_v3.md`, and so on.
+- Downstream stages read the highest approved upstream version.
+- Optional `_review.md` siblings may capture major review notes.
 
-## Platform handling
+## Platform Handling
 
-`discovery-intake` sets a `platform:` field in the frontmatter (e.g. `pipefy`, `wrike`). Downstream skills (`generate-technical-spec`, `generate-build-prompt`, `execute-tests`) read this and dynamically load the matching platform skill (`platform-pipefy` or `platform-wrike`). Integration tools (Ziflow, Workato, etc.) are tagged in the same frontmatter under `integrations:` and handled inside the technical spec, not as primary platforms.
+`kickoff-capture` and `discovery-intake` carry `platform:` in frontmatter: `pipefy`, `wrike`, `ziflow`, or `other`. Downstream technical stages use that value to load the matching platform skill.
 
-## When to switch from Cowork to Claude Code
+Supporting tools such as Ziflow, Workato, Frontify, and Slack belong in `integrations:` unless they are the primary platform.
 
-Short answer: when the build prompt is ready and you're going to execute the build.
+## Test Execution Safety
 
-Long answer: see `skills/generate-build-prompt/references/when-to-open-claude-code.md`. Includes the decision matrix, the full flow with tool transitions, and the "stay in Cowork while Claude Code builds" pattern.
-
-## Test execution — safety rules
-
-> **Hard rules:** Sandbox-only operations. Read-write only against named sandbox tenants. Refuses destructive actions. See `dydx-delivery/references/safety-rules.md` for the canonical ruleset.
+Sandbox-only operations. Test execution is read-write against named sandbox tenants only. Destructive actions are refused.
 
 ## Installing
 
-This plugin is distributed via the dYdX Digital private marketplace. Install via:
-
-```
+```text
 /plugin marketplace add https://github.com/SonofJay13/dydx-project-workflow
 /plugin install dydx-delivery
 ```
 
-Install in **both** Cowork and Claude Code so the team can use it in either tool.
-
-## Author
-
-Jason Blignaut — Solutions Architect, dYdX Digital
-
-## Changelog
-
-- **0.3.0** — Renamed `generate-test-sheet` → `generate-test-plan` (and `test-sheet_v*.md` → `test-plan_v*.md`) for clearer team-facing language. The bot-run terminal stage (`execute-tests`) now carries explicit sandbox-enforcement rules in `references/safety-rules.md`; results are written to versioned `results-YYYY-MM-DD_vN.md` files.
+Install in both Cowork and Claude Code if you want the same delivery language available in both tools.
