@@ -4,15 +4,15 @@ platform: <pipefy | wrike | other>
 integrations: []
 version: 1
 status: draft
-based_on_technical_spec: 03_technical-spec_v<N>.md
-based_on_test_plan: test-plan_v<N>.md
+based_on_technical_spec: 05_techspec_v<N>.md
+based_on_test_plan: 08b_test-plan_v<N>.md
 build_components: [platform_config, custom_code]
 generated_at: <YYYY-MM-DD>
 ---
 
 # Build Prompt — <CLIENT_NAME> · <ENGAGEMENT_NAME>
 
-> Stage 6 of the dydx-delivery pipeline. **Paste this into a fresh Claude Code session to execute the build.**
+> Stage 7a of the dydx-delivery pipeline. **Paste this into a fresh Claude Code session to execute the build.**
 > Cowork is the strategy seat; Claude Code is the build seat.
 
 ---
@@ -31,11 +31,11 @@ You are Claude Code, executing a build for **<CLIENT_NAME>** on the **<PLATFORM>
 
 Before doing anything, read these files:
 
-1. `<Client>/build-specs/<platform>/00_discovery_v<N>.md` — operational context
-2. `<Client>/build-specs/<platform>/01_sow_v<N>.md` — scope and exclusions
-3. `<Client>/build-specs/<platform>/02_functional-spec_v<N>.md` — what the system must do
-4. `<Client>/build-specs/<platform>/03_technical-spec_v<N>.md` — **source of truth** for how it should be built
-5. `<Client>/testing/<feature>/test-plan_v<N>.md` — what passing looks like (you'll self-check against this)
+1. `<Client>/build-specs/<platform>/02_discovery_v<N>.md` — operational context
+2. `<Client>/build-specs/<platform>/03_sow_v<N>.md` — scope and exclusions
+3. `<Client>/build-specs/<platform>/04a_fnspec-platform_v<N>.md` — what the system must do
+4. `<Client>/build-specs/<platform>/05_techspec_v<N>.md` — **source of truth** for how it should be built
+5. `<Client>/testing/<feature>/08b_test-plan_v<N>.md` — what passing looks like (you'll self-check against this)
 
 The technical spec is the source of truth. If anything in this prompt contradicts it, follow the spec and flag the contradiction back to the user.
 
@@ -123,10 +123,10 @@ Follow the build sequence from section 12 of the technical spec. For each step:
 
 ### Where to write outputs
 
-- Build report: `<Client>/build-specs/<platform>/04_build-prompt_v<N>_report.md`
+- Build report: `<Client>/build-specs/<platform>/07a_build-prompt-dev_v<N>_report.md`
 - Generated identifiers: appended to build report
 - Code (if applicable): committed to the build branch only
-- Deviation log (if any): `<Client>/build-specs/<platform>/04_build-prompt_v<N>_deviations.md`
+- Deviation log (if any): `<Client>/build-specs/<platform>/07a_build-prompt-dev_v<N>_deviations.md`
 
 ---
 
@@ -153,7 +153,7 @@ Build is complete when ALL of the following are true:
 - [ ] Smoke test subset runs green in the sandbox tenant
 - [ ] Generated identifiers (automation IDs, webhook IDs) recorded in build report
 - [ ] No deviations from technical spec, OR every deviation logged with reasoning
-- [ ] Build report written at `<Client>/build-specs/<platform>/04_build-prompt_v<N>_report.md` containing:
+- [ ] Build report written at `<Client>/build-specs/<platform>/07a_build-prompt-dev_v<N>_report.md` containing:
   - Build summary (what shipped)
   - Identifiers list
   - Deviations (if any)

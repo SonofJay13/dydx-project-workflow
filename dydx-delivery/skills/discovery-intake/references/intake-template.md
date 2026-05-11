@@ -10,7 +10,7 @@ captured_at: <YYYY-MM-DD>
 
 # Discovery — <CLIENT_NAME> · <FEATURE_OR_ENGAGEMENT>
 
-> Stage 0 of the dydx-delivery pipeline. Captures the operational reality so downstream stages (SOW, functional spec, technical spec, test plan) have a real foundation. Mark every unknown explicitly — do not guess.
+> Stage 2 of the dydx-delivery pipeline. Captures the operational reality so downstream stages (SOW, functional spec, technical spec, test plan) have a real foundation. Mark every unknown explicitly — do not guess.
 
 ---
 
@@ -154,4 +154,4 @@ When this artefact is reviewed and approved:
 1. Bump status to `status: approved` in frontmatter (or save edited version as `_v{N+1}.md`)
 2. Run `generate-sow` to produce the scope of work
 
-**Next stage reads:** the highest-version `00_discovery_v*.md` in this folder.
+**Next stage reads:** the highest-version `02_discovery_v*.md` in this folder.

@@ -9,25 +9,25 @@ Translate an approved functional spec into a platform-specific implementation pl
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/02_functional-spec_v*.md` (required)
+- The latest `<Client>/build-specs/<platform>/04a_fnspec-platform_v*.md` (required)
 - Frontmatter `platform:` field (drives platform skill selection)
 - Discovery + SOW for context
 
 ## Output
 
-`<Client>/build-specs/<platform>/03_technical-spec_vN.md`
+`<Client>/build-specs/<platform>/05_techspec_vN.md`
 
 ## How to run
 
 ### Step 1 — Locate upstream artefact and platform
 
-Find the highest-version `02_functional-spec_v*.md`. Read its frontmatter to get `platform:` and `integrations:`.
+Find the highest-version `04a_fnspec-platform_v*.md`. Read its frontmatter to get `platform:` and `integrations:`.
 
 **If functional spec not found**, run start-at-any-point triage:
 
 > I don't see a functional spec for `<Client>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing functional spec** — I'll save it as `02_functional-spec_v1.md`
+> **(a) Paste an existing functional spec** — I'll save it as `04a_fnspec-platform_v1.md`
 > **(b) Walk through requirements inline** — I'll capture user journeys, business rules, and acceptance criteria, stub the functional spec, then proceed
 > **(c) Cancel**
 
@@ -43,7 +43,7 @@ The platform skill provides the vocabulary and constructs (Pipefy phases, fields
 
 ### Step 3 — Check for existing technical spec
 
-Look for `03_technical-spec_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
+Look for `05_techspec_v*.md`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
 
 ### Step 4 — Draft the technical spec
 
@@ -93,7 +93,7 @@ Write a short **Trade-offs and decisions** section with anything where you chose
 
 ### Step 6 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/03_technical-spec_v{N}.md` with frontmatter:
+Write to `<Client>/build-specs/<platform>/05_techspec_v{N}.md` with frontmatter:
 
 ```yaml
 ---
@@ -102,7 +102,7 @@ platform: <pipefy | wrike | other>
 integrations: [<...>]
 version: 1
 status: draft
-based_on_functional_spec: 02_functional-spec_v{N}.md
+based_on_functional_spec: 04a_fnspec-platform_v{N}.md
 generated_at: <ISO date>
 ---
 ```
@@ -115,7 +115,7 @@ End with this exact handoff message:
 > 1. Walk the spec with the implementation partner — can they build from it without follow-up?
 > 2. Validate platform constructs against the actual tenant (does the licence support what we need?)
 > 3. Confirm integration contracts with integration owners (real auth, real endpoints, real rate limits)
-> 4. If you make edits, save as `03_technical-spec_v{N+1}.md`
+> 4. If you make edits, save as `05_techspec_v{N+1}.md`
 > 5. Update `status:` to `approved` when signed off
 >
 > When approved, run **`generate-test-plan`** to derive test cases from the acceptance criteria and platform mappings.

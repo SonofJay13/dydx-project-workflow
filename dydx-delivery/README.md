@@ -94,17 +94,9 @@ Short answer: when the build prompt is ready and you're going to execute the bui
 
 Long answer: see `skills/generate-build-prompt/references/when-to-open-claude-code.md`. Includes the decision matrix, the full flow with tool transitions, and the "stay in Cowork while Claude Code builds" pattern.
 
-## Test execution — safety rules (hard)
+## Test execution — safety rules
 
-Enforced by the `execute-tests` skill regardless of what the test plan says:
-
-- **Sandbox only** — runs only against pipes/spaces explicitly marked `sandbox: true` in the test plan header
-- **No deletions** — no `delete_*` API calls, ever
-- **No destructive automations** — won't trigger phase moves or webhooks that fire external integrations not in scope (real emails, invoices, billing, third-party publishing)
-- **Read-write only** — create and update operations allowed; deletes refused with a logged warning
-- **Audit trail** — every API call logged in the results file with timestamp, payload, and response
-
-If a test row violates a rule, the skill logs a refusal and continues to the next row.
+> **Hard rules:** Sandbox-only operations. Read-write only against named sandbox tenants. Refuses destructive actions. See `dydx-delivery/references/safety-rules.md` for the canonical ruleset.
 
 ## Installing
 
@@ -123,4 +115,4 @@ Jason Blignaut — Solutions Architect, dYdX Digital
 
 ## Changelog
 
-- **0.3.0** — Renamed `generate-test-sheet` → `generate-test-plan` (and `test-sheet_v*.md` → `test-plan_v*.md`) for clearer team-facing language. The bot-run terminal stage (`execute-tests`) now c
+- **0.3.0** — Renamed `generate-test-sheet` → `generate-test-plan` (and `test-sheet_v*.md` → `test-plan_v*.md`) for clearer team-facing language. The bot-run terminal stage (`execute-tests`) now carries explicit sandbox-enforcement rules in `references/safety-rules.md`; results are written to versioned `results-YYYY-MM-DD_vN.md` files.

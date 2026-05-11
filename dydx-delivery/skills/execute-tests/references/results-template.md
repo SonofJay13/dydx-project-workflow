@@ -3,7 +3,7 @@ client: <CLIENT_NAME>
 feature: <feature-slug>
 platform: <pipefy | wrike | other>
 version: 1
-based_on_test_plan: test-plan_v<N>.md
+based_on_test_plan: 08b_test-plan_v<N>.md
 run_started_at: <ISO datetime>
 run_finished_at: <ISO datetime>
 runner: dydx-delivery/execute-tests v0.1.0
@@ -15,7 +15,7 @@ sandbox:
 
 # Test Results — <CLIENT_NAME> · <feature> · <YYYY-MM-DD>
 
-> Stage 6 of the dydx-delivery pipeline. Output of one test run.
+> Stage 8d of the dydx-delivery pipeline. Output of one test run.
 
 ---
 
@@ -117,7 +117,7 @@ sandbox:
   ...
 ```
 
-(Full audit log appended below or in a sibling file `results-YYYY-MM-DD_v<N>_audit.log` if very large.)
+(Full audit log appended below or in a sibling file `08d_test-results_v<N>_audit.log` if very large.)
 
 ---
 

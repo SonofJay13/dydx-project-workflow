@@ -4,13 +4,13 @@ platform: <pipefy | wrike | other>
 integrations: []
 version: 1
 status: draft
-based_on_functional_spec: 02_functional-spec_v<N>.md
+based_on_functional_spec: 04a_fnspec-platform_v<N>.md
 generated_at: <YYYY-MM-DD>
 ---
 
 # Technical Specification — <CLIENT_NAME> · <ENGAGEMENT_NAME>
 
-> Stage 3 of the dydx-delivery pipeline. Maps the functional spec onto the chosen platform. Every functional requirement must trace to a concrete platform construct.
+> Stage 5 of the dydx-delivery pipeline. Maps the functional spec onto the chosen platform. Every functional requirement must trace to a concrete platform construct.
 
 ---
 
@@ -210,4 +210,4 @@ When this technical spec is approved:
 2. Confirm tenant access for the implementation partner
 3. Run `generate-test-plan` to produce the test plan against this spec
 
-**Next stage reads:** the highest-version `03_technical-spec_v*.md`.
+**Next stage reads:** the highest-version `05_techspec_v*.md`.

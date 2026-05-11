@@ -1,0 +1,150 @@
+# Requirements: dydx-delivery v2.2 — Stage 1 Kickoff + Stage 4 Fnspec Split
+
+**Defined:** 2026-05-11
+**Milestone:** v2.2 (CHANGE-01 bundle 2 of N per `.planning/CHANGELIST.md` Phase 3)
+**Core Value:** Plugin behaves as a senior implementation partner end-to-end. Every stage produces an artefact polished enough to send to a client or hand to a developer without rework. Every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
+
+> **Milestone framing.** This milestone implements the second build bundle of CHANGE-01: the missing Stage 1 Kickoff skill and the Stage 4 functional-spec split. All requirements derive from locked design contracts in `.planning/DESIGN.md` (DESIGN-17/18/19/20/21) and the sequenced delta in `.planning/CHANGELIST.md` Phase 3 (v2.2). No re-derivation — apply DESIGN.md verbatim per user prompt.
+>
+> **Scope locks carried forward (do NOT re-litigate; documented in PROJECT.md Out of Scope):**
+> - UAT-3.5 — MCPs OUT-OF-SCOPE through v2.6 (API-first across all platforms)
+> - UAT-6.1 — Native-AI ingestion APIs OUT-OF-SCOPE entirely (paste-only through v2.6)
+> - UAT-3.1 — Private email `jasonmichaelb@gmail.com` on plugin manifests is INTENTIONAL (dYdX-approved)
+> - D-65 — Client-shape-gotchas use VodafoneZiggo + Up & Up Group; other clients TBD-at-first-engagement
+> - D-67 — Each phase resolves its own OPEN-Q rows inline; synthesis plans flip the OPEN-QUESTIONS register
+>
+> **Phase numbering.** v2.2 continues numbering from v2.1 — phases start at **Phase 7**. (No `--reset-phase-numbers` flag.)
+
+---
+
+## v2.2 Requirements
+
+### Stage 1 Kickoff (STG1)
+
+`kickoff-capture/` skill is NEW (no v0.3.0 ancestor). Stage 1 sits between signed SOW (client engagement spin-up trigger) and Stage 2 Discovery. Locked contract: DESIGN-17.
+
+- [x] **STG1-01**: `kickoff-capture/` skill exists at `dydx-delivery/skills/kickoff-capture/` with `SKILL.md` (+ standard `references/` shape where applicable), points at canonical references (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`) per FOUND-01..04, and produces `01_kickoff_v<N>.md` artefact per DESIGN-02 file-prefix scheme.
+- [x] **STG1-02**: Kickoff artefact carries a single `kickoff_branch:` enum field on frontmatter — `discovery-ready` routes to Stage 2 (`discovery-intake`); `draft-sow` SKIPS Stage 2 and routes to Stage 3 (`generate-sow`). Both downstream stages read this same field; no separate routing flags. (DESIGN-17 + DESIGN-18 + DESIGN-19)
+- [x] **STG1-03**: Field Notes triage filter defaults to `processed_at IS NULL` per DESIGN-09 directional boundary. Field Notes Coda table is read-only input queue; kickoff never auto-merges entries into the brain (kickoff quotes the note + asks human keep/drop/edit-and-keep). (MOD-8 prevention)
+- [x] **STG1-04**: Auto-classification of captured inputs into kickoff template sections (system / users / triggers / data / rules / integrations / exceptions / failure points) emits explicit `[unknown — needs human classification]` inline markers where confidence is low. No silent guesswork; forces visible reviewer triage. (DESIGN-17)
+- [x] **STG1-05**: Capture paths supported — (a) meeting-notes paste (freeform); (b) Miro paste fallback per DESIGN-07 + AUDIT-08 (image paste; no "render whole board" assumption); (c) Field Notes Coda table read. No raw-notes-direct-to-discovery shortcut — all inputs flow through kickoff first (consolidates v0.3.0's two entry paths into one).
+
+### Stage 2 Discovery (STG2)
+
+`discovery-intake/` MODIFIED to consume kickoff. v0.3.0 raw-notes entry path is RETIRED. Locked contract: DESIGN-18.
+
+- [x] **STG2-01**: `discovery-intake/` MODIFIED to consume `01_kickoff_v<N>.md` as sole upstream artefact. `based_on_kickoff:` frontmatter field is MANDATORY on every `02_discovery_v<N>.md` artefact (no v0.3.0 lenient absence). Raw-notes entry path RETIRED — discovery becomes pure transform of approved kickoff.
+- [x] **STG2-02**: When `kickoff_branch: draft-sow`, `discovery-intake/` emits `Stage 2 SKIPPED — kickoff branch = draft-sow` hand-off message and exits without writing a `02_discovery_v<N>.md` artefact. Skip behaviour is explicit (not silent); downstream Stage 3 reads kickoff directly via `based_on_kickoff:` when discovery is skipped.
+- [x] **STG2-03**: Same discovery template structure as v0.3.0 (system / users / triggers / data / rules / integrations / exceptions / failure points). Only the upstream input contract and skip behaviour change; body unchanged.
+
+### Stage 3 SOW (STG3)
+
+`generate-sow/` MODIFIED — status lifecycle lock + single-SOW scope. Locked contract: DESIGN-19.
+
+- [x] **STG3-01**: `generate-sow/` status lifecycle locked to canonical `draft → client_review → approved → archived` per DESIGN-08. `client_review` retained explicitly per AUDIT-01.2 + DESIGN-08 "Live status-lifecycle survey" — interim commercial-review state is a real workflow stage, not a v0.3.0 quirk. (`generate-sow` is the sole skill carrying `client_review` in v0.3.0.)
+- [x] **STG3-02**: Single SOW covers both platform AND integration scope (no Stage 3 split). The platform/integration split happens at Stage 4 (Fnspec split per DESIGN-20). Stage 3 stays unified for client commercial review.
+
+### Stage 4 Fnspec Split (STG4)
+
+`generate-functional-spec/` RETIRED → SPLIT into `generate-fnspec-platform/` (Stage 4a, NEW) and `generate-fnspec-integration/` (Stage 4b, NEW). Highest-leverage v2 feature — the `delivery: native-ai | api` tag is the routing key for Stages 5/6/7b/10. Locked contract: DESIGN-20.
+
+- [ ] **STG4-01**: `generate-fnspec-platform/` skill exists at `dydx-delivery/skills/generate-fnspec-platform/` (Stage 4a, NEW). Reads approved discovery (`02_discovery_v*`) + approved SOW (`03_sow_v*`) + per-platform `references/native-ai-inventory.md`. Writes `04a_fnspec-platform_v<N>.md` per DESIGN-02 file-prefix scheme.
+- [ ] **STG4-02**: `generate-fnspec-integration/` skill exists at `dydx-delivery/skills/generate-fnspec-integration/` (Stage 4b, NEW). Reads approved discovery + approved SOW + Stage 4a output. Writes `04b_fnspec-integration_v<N>.md` per DESIGN-02.
+- [ ] **STG4-03**: v0.3.0 `generate-functional-spec/` skill RETIRED — directory removed from `dydx-delivery/skills/` once 4a + 4b ship. Any references to `generate-functional-spec` in v0.3.0 templates / READMEs / changelogs updated to point at 4a + 4b. v0.3.0 artefacts using old filename (`02_functional-spec_v*.md` or `04_functional-spec_v*.md`) remain readable per DESIGN-08 lenient mode; no auto-migration of existing artefacts.
+- [ ] **STG4-04**: Both 4a and 4b emit per-requirement `delivery: native-ai | api` routing-key tagging on every requirement row in their respective fnspec artefacts. Canonical enum order (`native-ai | api`); never reversed. Routing key drives Stages 5 / 6 / 7b / 10 without re-classification downstream.
+- [ ] **STG4-05**: Stage 4a classifier reads loaded platform skill's `references/native-ai-inventory.md` (per DESIGN-14/15/16). HIGH/MEDIUM confidence rows → suggest `delivery: native-ai`; LOW confidence (`[OPEN]`-flagged) → default to `delivery: api`. Default-to-api avoids optimistic native-AI claims when only copy-paste works. Human reviewer can override per row.
+- [ ] **STG4-06**: 4a and 4b are independently optional for single-track projects — three valid topologies: (a) 4a only (no integration work in scope); (b) 4b only (no platform configuration in scope); (c) both (typical case). Either-spec-skip explicitly supported per DESIGN-20; downstream stages handle the skip per DESIGN-21 Stage 5 scope-gate.
+
+### Routing key + Cross-spec consistency check + TD-2 (ROUTE)
+
+Cross-cutting requirements that don't fit cleanly into a single stage. Locked contracts: DESIGN-20 (consistency check) + DESIGN-21 (Stage 5 scope-gate, forward-compatible) + TD-2 (v2.1 carry-forward).
+
+- [ ] **ROUTE-01**: Cross-spec consistency check is OWNED by Stage 4b (`generate-fnspec-integration/`). Runs FIRST — before fnspec-integration write. Three checks, all required: (a) no requirement ID with conflicting `delivery:` tags across 4a and 4b; (b) every integration touchpoint in 4b cites a referenced platform requirement ID from 4a (no dangling refs); (c) no orphan API endpoints in 4b (every endpoint maps to a requirement). Two-place declaration in 4a + 4b key-decisions sections per T-02-06-02 mitigation.
+- [ ] **ROUTE-02**: Consistency check failure halts Stage 4b BEFORE fnspec-integration write and emits `04b_consistency_check_v<N>.md` listing the specific failure rows for human triage. No silent write of an inconsistent fnspec; reviewer must resolve before retry.
+- [ ] **ROUTE-03**: Stage 5 scope-gate contract DOCUMENTED in Stage 4a/4b skill bodies as forward-compatible interface — three explicit branches per DESIGN-21: (a) default — 4b exists with `delivery: api` rows → full tech spec written by Stage 5 in v2.3; (b) skip-with-addendum — no 4b but 4a has `delivery: api` rows → 4a carries `## Platform-API Addendum` H2 + `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only` frontmatter; (c) skip-entirely — no 4b AND no `delivery: api` rows anywhere → no tech spec, no addendum, no 4a frontmatter change. No silent default. **v2.2 scope:** 4a/4b emit the necessary frontmatter fields and addendum H2 to make Stage 5 scope-gating work; actual Stage 5 consumption lives in v2.3.
+- [ ] **ROUTE-04**: TD-2 carry-forward from v2.1 audit RESOLVED. Stage-skill `platform:` enum currently `pipefy | wrike | other` (per `dydx-delivery/skills/generate-functional-spec/SKILL.md:14` and sibling stage skills); `platform-ziflow/SKILL.md:14` claims `platform: ziflow` is the routing key but no stage-side wiring maps that value. Resolution path (decide and document during Stage 4 split work): either (a) ADD `ziflow` to the stage-skill `platform:` enum and update all consuming skills + `platform-ziflow/SKILL.md` to align; OR (b) document Ziflow as integration-only (never a primary platform routing key) and update `platform-ziflow/SKILL.md:14` to remove the routing-key claim. Outcome captured in DESIGN-20 sub-decision or `dydx-delivery/references/glossary.md` routing-key entry.
+- [ ] **ROUTE-05**: `delivery:` routing key declared in 4a/4b propagates forward through `based_on_*` chains to Stage 5 (tech spec) / Stage 6 (cost) / Stage 7b (implementation prompt) / Stage 10 (push-native-ai-knowledge). v2.2 emits the tag; downstream consumption is forward-compatible interface only — actual consumption ships in v2.3+ milestones per CHANGELIST.md Phase 4..7. Verification: 4a/4b artefacts produced in v2.2 round-trip through a forward-compatibility smoke check showing the `delivery:` field survives at the canonical position on every requirement row.
+
+## Future Requirements
+
+Deferred to v2.3+ per CHANGELIST.md CHANGE-01 phasing. Tracked but not in v2.2 roadmap.
+
+### Stage 5 Tech Spec + Stage 6 Cost + Stage 7 Build Prompts (v2.3)
+
+- **STG5-01**: `generate-technical-spec/` MODIFIED — scope-gated to Stage 4b existence; emits platform-API addendum on 4a when no 4b; never hand-waves error paths (per DESIGN-21).
+- **STG6-01**: `generate-cost-estimate/` NEW — Stage 6 Coda integration (read schema → upsert via `keyColumns` → poll `mutationStatus`); rate-limit 4 req/10s; risk-multiplier taxonomy structure-locked with mandatory `rationale` per row (per DESIGN-22).
+- **STG6-02**: Wait-for-commercial-inputs gate before client-facing cost summary (per DESIGN-22 `commercial_inputs_status: provided` gate).
+- **STG7-01**: `generate-build-prompt/` MODIFIED — Stage 7a dev prompt; pulls `delivery: api` rows from 4a/4b (per DESIGN-23).
+- **STG7-02**: `generate-implementation-prompt/` NEW — Stage 7b per-platform shape (Pipefy Behaviors + KB; Wrike Copilot narrative; Ziflow ReviewAI checklists) (per DESIGN-23).
+
+### Stage 8 Test Bot Rebuild (v2.4)
+
+- **STG8-01..04**: `provision-test-harness/` NEW (Stage 8a) + `generate-test-plan/` MODIFIED (Stage 8b) + `generate-uat-plan/` NEW (Stage 8c) + `execute-tests/` MODIFIED (Stage 8d) + `agents/test-bot-orchestrator/` NEW + `client_state.yaml` schema + drift detection per DESIGN-24/28/29/30.
+
+### Stage 9 Documentation Publishing (v2.5)
+
+- **STG9-01..02**: `update-documentation/` NEW — Stage 9 doc-diff + Drive MCP publish + closed `doc_type` 9-value enum + double-underscore naming + graceful halt on missing `Documentation:` hub link (per DESIGN-25).
+
+### Stage 10 Native-AI Upload Bundle (v2.5)
+
+- **STG10-01..03**: `push-native-ai-knowledge/` NEW — paste bundle + upload audit log per UAT-6.1 (no API ingestion); `doc_published_at` invariant; multi-tenant client-frontmatter target check (per DESIGN-26).
+
+### Stage 11 Sign-off + Coda Mirror (v2.6)
+
+- **STG11-01..03**: `sign-off-and-archive/` NEW — local brain update + one-way Coda mirror push + 7-section spoke template + `tone_lint` + CR archive + 00_Index bump (per DESIGN-27).
+
+### Plugin Surfaces (v2.6)
+
+- **SURF-01..03**: `commands/refine.md` parameterised + 4 GSD-prefixed shortcuts + frontmatter validation hook + artefact version-bump hook + approval-gate hook + optional `mcpServers` field + optional plugin self-tests (per DESIGN-04/05/06).
+
+## Out of Scope
+
+Explicit exclusions for v2.2. Documented to prevent scope creep. Most exclusions are LOCKED at project level (see `.planning/PROJECT.md` "Out of Scope" table); v2.2-specific additions below.
+
+| Exclusion | Reason |
+|---|---|
+| New platform skills (Pipefy/Wrike/Ziflow LOCKED at v2.1) | Future platforms = post-MVP milestone; v2.1 sealed the platform-skill catalogue at 3. |
+| Native-AI API ingestion (`delivery: native-ai` consumption in Stage 10) | UAT-6.1 LOCKED through v2.6 — paste-only path; Stage 10 ships in v2.5 with paste bundle + audit log. |
+| Stage 5/6/7/8/9/10/11 build (Stages 5+) | Sequenced for v2.3-v2.6 per CHANGELIST.md Phase 4..8. v2.2 only needs forward-compatible interfaces (per ROUTE-03 + ROUTE-05). |
+| Stage 8 test bot runtime | Deferred to v2.4 / v2.5 per CHANGELIST.md Phase 5. |
+| Auto-migration of v0.3.0 `02_functional-spec_v*.md` artefacts | Migration is opt-in per CR per DESIGN-08; v2.2 ships lenient-read support only. |
+| Auto-progression hooks between Stage 1 → Stage 2/3 (or 4a → 4b) | Approval gates non-negotiable; humans approve every artefact per DESIGN-06. |
+| Native-AI ingestion path changes for `platform-ziflow` ReviewAI | OUT-OF-SCOPE per UAT-6.1. ROUTE-04 TD-2 reconciliation only addresses the stage-skill `platform:` enum vs platform-ziflow SKILL.md routing claim — not ReviewAI ingestion API integration. |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| STG1-01 | Phase 7 | Satisfied |
+| STG1-02 | Phase 7 | Satisfied |
+| STG1-03 | Phase 7 | Satisfied |
+| STG1-04 | Phase 7 | Satisfied |
+| STG1-05 | Phase 7 | Satisfied |
+| STG2-01 | Phase 7 | Satisfied |
+| STG2-02 | Phase 7 | Satisfied |
+| STG2-03 | Phase 7 | Satisfied |
+| STG3-01 | Phase 7 | Satisfied |
+| STG3-02 | Phase 7 | Satisfied |
+| STG4-01 | Phase 8 | Pending |
+| STG4-02 | Phase 8 | Pending |
+| STG4-03 | Phase 8 | Pending |
+| STG4-04 | Phase 8 | Pending |
+| STG4-05 | Phase 8 | Pending |
+| STG4-06 | Phase 8 | Pending |
+| ROUTE-01 | Phase 8 | Pending |
+| ROUTE-02 | Phase 8 | Pending |
+| ROUTE-03 | Phase 8 | Pending |
+| ROUTE-04 | Phase 8 | Pending |
+| ROUTE-05 | Phase 8 | Pending |
+
+**Coverage:**
+- v2.2 requirements: 21 total (5 STG1 + 3 STG2 + 2 STG3 + 6 STG4 + 5 ROUTE)
+- Mapped to phases: 21 (Phase 7: 10 reqs / Phase 8: 11 reqs)
+- Unmapped: 0 ✓ (resolved 2026-05-11 at v2.2 roadmap lock)
+
+---
+*Requirements defined: 2026-05-11 for v2.2 milestone start*
+*Source-of-truth contracts: `.planning/DESIGN.md` DESIGN-17/18/19/20/21; sequencing: `.planning/CHANGELIST.md` Phase 3 (v2.2)*
+*Phase mapping locked: 2026-05-11 — Phase 7 (STG1+STG2+STG3) + Phase 8 (STG4+ROUTE)*

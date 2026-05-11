@@ -1,6 +1,6 @@
 ---
 name: discovery-intake
-description: Capture client discovery for a new engagement or feature. Use when the user says "start discovery for X", "capture intake for X", "run discovery", "client intake", "kick off a new engagement", or pastes meeting notes / a transcript and asks Claude to structure it. Produces a versioned discovery artefact that downstream stages (SOW, functional spec, technical spec) consume.
+description: Capture client discovery for a new engagement or feature by consuming an approved kickoff artefact (`01_kickoff_v<N>.md`). Use when the user says "start discovery for X", "capture intake for X", "run discovery", or "kick off Stage 2 for X". Discovery is a pure transform of an approved kickoff — raw-notes / pasted-transcript entry is RETIRED per STG2-01. Produces a versioned discovery artefact that downstream stages (SOW, functional spec, technical spec) consume.
 ---
 
 # discovery-intake
@@ -9,31 +9,45 @@ Capture the real operational context for a new client engagement or feature. Pro
 
 ## Inputs
 
-- Free-form context: chat, pasted meeting notes, transcript, brief, email thread
-- (Optional) Existing discovery file the user wants to extend or revise
+- Approved `01_kickoff_v<N>.md` (sole upstream artefact, MANDATORY) — carries `status: approved` + `kickoff_branch:` enum (`discovery-ready` → run; `draft-sow` → skip per Step 1).
+- (Optional) Existing `02_discovery_v<N>.md` the reviewer wants to extend or revise as `_v{N+1}`.
+
+**Write-path contract (D-76):** Every NEW `02_discovery_v<N>.md` artefact MUST carry `based_on_kickoff: 01_kickoff_v<N>.md` in frontmatter. The `validate-frontmatter` hook (deferred to v2.6 / SURF-01..03) will enforce this on disk; until then the SKILL body is the contract source. Read-path stays lenient per DESIGN-08 — legacy v0.3.0 `00_discovery_v*.md` artefacts without `based_on_kickoff:` still parse.
 
 ## Output
 
-`<Client>/build-specs/<platform>/00_discovery_vN.md` — versioned, frontmatter-tagged.
+`<Client>/build-specs/<platform>/02_discovery_vN.md` — versioned, frontmatter-tagged.
 
 If `<Client>` and `<platform>` aren't obvious from context, ask once before drafting.
 
 ## How to run
 
-### Step 1 — Establish target location
+### Step 1 — Locate upstream kickoff and route by branch
 
-Determine the client folder and platform:
+**Locate upstream kickoff.** Read the latest `status: approved` `01_kickoff_v<N>.md` for this client+project. If no approved kickoff exists, emit an explicit error directing the reviewer to run `kickoff-capture` first (raw-notes entry is RETIRED — see "What this skill does not do").
 
-1. If the user named a client (e.g. "discovery for Up & Up"), match it against the workspace `hub.md` client index.
-2. If the platform is obvious from the client folder (most clients have one primary platform — see `hub.md`), use it.
-3. If either is ambiguous, ask the user to confirm. Do not draft without knowing where the file lands.
+**Read `kickoff_branch:` from kickoff frontmatter:**
+
+- If `kickoff_branch: discovery-ready` → proceed to Step 2 (run discovery interview).
+- If `kickoff_branch: draft-sow` → emit the following message verbatim to stdout / handoff log and EXIT WITHOUT WRITING any `02_discovery_v<N>.md` artefact:
+
+  ```
+  Stage 2 SKIPPED — kickoff branch = draft-sow
+  ```
+
+  Audit trail lives in git (kickoff approval commit) and the handoff log — no marker file is written (per D-74). Stage 3 (`generate-sow`) reads the kickoff directly via `based_on_kickoff:`.
+
+**Establish target location.** Client folder and platform come from the kickoff frontmatter (`client:`, `platform:` fields):
+
+1. Use the `client:` and `platform:` values from `01_kickoff_v<N>.md` directly — these were captured and reviewer-approved at Stage 1.
+2. If either field is missing or `[unknown — needs human classification]`, halt and direct the reviewer to fix the kickoff artefact before re-running discovery. Do not draft without knowing where the file lands.
 
 ### Step 2 — Check for existing discovery
 
-Look in `<Client>/build-specs/<platform>/` for files matching `00_discovery_v*.md`.
+Look in `<Client>/build-specs/<platform>/` for files matching `02_discovery_v*.md`.
 
 - **None found** → this is the first version. Proceed to Step 3.
-- **One or more found** → ask: "I found `00_discovery_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start a fresh artefact?"
+- **One or more found** → ask: "I found `02_discovery_v{N}.md`. Do you want to (a) revise it as `_v{N+1}`, (b) extend in place, or (c) start a fresh artefact?"
 
 ### Step 3 — Run the discovery interview
 
@@ -99,39 +113,27 @@ Frontmatter is mandatory:
 client: <Client>
 platform: <pipefy | wrike | other>
 integrations: [<ziflow>, <workato>, ...]
-version: 1
+version: <N>
 status: draft
+based_on_kickoff: 01_kickoff_v<N>.md   # MANDATORY per D-76 / STG2-01
 captured_by: <user>
 captured_at: <ISO date>
 ---
 ```
 
+The `based_on_kickoff:` field is MANDATORY on every NEW write per D-76 / STG2-01. Read-path is lenient (DESIGN-08): legacy v0.3.0 artefacts without the field still parse. Hook-level enforcement (`validate-frontmatter`) is deferred to v2.6 / SURF-01..03 — until then this SKILL body is the contract source.
+
 ### Step 6 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/00_discovery_v{N}.md`.
+Write to `<Client>/build-specs/<platform>/02_discovery_v{N}.md`.
 
 End with this exact handoff message to the user:
 
-> Discovery captured at `<path>`.
->
-> **Review steps:**
-> 1. Open the file and check for accuracy
-> 2. Mark any `**Unknown — needs client input**` items you can fill in
-> 3. If you make significant edits, save as `00_discovery_v{N+1}.md` (Option B versioning)
->
-> When you're ready, run **`generate-sow`** to produce the scope of work.
-
-## Start-at-any-point handling
-
-This is the entry skill — it doesn't depend on upstream artefacts. But if the user calls a *later* skill (e.g. `generate-sow`) without running discovery, that skill will offer to either: (a) paste an existing discovery doc, (b) run a quick inline capture, or (c) cancel.
-
-This skill itself accepts shortcut inputs:
-
-- "I already have a brief — here it is" → parse the brief into the template structure, ask only for missing dimensions
-- "Just structure these notes" → take pasted notes, infer what you can, ask for the rest
+> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
 
 ## What this skill does not do
 
+- **Does NOT accept raw notes.** The raw-notes entry path is RETIRED in v2.2 — discovery is a pure transform of an approved `01_kickoff_v<N>.md` artefact per STG2-01 + DESIGN-18. Pasted meeting notes / Miro / Field Notes content flows through `kickoff-capture` first (see `dydx-delivery/skills/kickoff-capture/SKILL.md`).
 - Does not draft scope, spec, or technical detail — that's downstream
 - Does not commit the user to a platform choice if it's genuinely unclear; asks instead
 - Does not invent answers to "Unknown" items — flags them explicitly

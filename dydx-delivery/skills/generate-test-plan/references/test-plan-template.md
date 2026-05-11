@@ -4,7 +4,7 @@ feature: <feature-slug>
 platform: <pipefy | wrike | other>
 version: 1
 status: draft
-based_on_technical_spec: 03_technical-spec_v<N>.md
+based_on_technical_spec: 05_techspec_v<N>.md
 generated_at: <YYYY-MM-DD>
 sandbox:
   pipe_id: <id>
@@ -14,7 +14,7 @@ sandbox:
 
 # Test Plan — <CLIENT_NAME> · <feature>
 
-> Stage 5 of the dydx-delivery pipeline. Executable test plan derived from the technical spec. Each row is one runnable test.
+> Stage 8b of the dydx-delivery pipeline. Executable test plan derived from the technical spec. Each row is one runnable test.
 
 ---
 
@@ -33,15 +33,9 @@ sandbox:
 
 ---
 
-## Hard rules (enforced by `execute-tests`)
+## Hard rules
 
-> Do not modify these. They are enforced regardless of test plan content.
-
-- **Sandbox only** — runs only against the IDs above
-- **No deletions** — `delete_*` API calls are refused
-- **No destructive automations** — won't trigger phase moves or webhooks that fire external integrations not in scope (real emails, invoices, billing, third-party publishing)
-- **Read-write only** — create / update allowed; deletes refused with a logged warning
-- **Audit trail** — every API call logged in the results file
+> **Hard rules:** Sandbox-only operations. Read-write only against named sandbox tenants. Refuses destructive actions. See `dydx-delivery/references/safety-rules.md` for the canonical ruleset.
 
 ---
 
@@ -146,4 +140,4 @@ When this test plan is approved:
 3. Once the build is complete, run `execute-tests` to run this plan against the sandbox tenant
 
 **Next stage (`generate-build-prompt`) reads:** this test plan plus the technical spec.
-**Final stage (`execute-tests`) reads:** the highest-version `test-plan_v*.md` in this folder.
+**Final stage (`execute-tests`) reads:** the highest-version `08b_test-plan_v*.md` in this folder.

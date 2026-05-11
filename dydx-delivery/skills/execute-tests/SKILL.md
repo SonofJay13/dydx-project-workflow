@@ -9,37 +9,29 @@ Run an approved test plan against the client's sandbox tenant and write the resu
 
 ## Inputs
 
-- The latest `<Client>/testing/<feature>/test-plan_v*.md` (required, must have `status: approved`)
+- The latest `<Client>/testing/<feature>/08b_test-plan_v*.md` (required, must have `status: approved`)
 - Sandbox tenant credentials (loaded from the client's secrets store or provided by user)
 - Platform skill loaded based on `platform:` frontmatter
 
 ## Output
 
-`<Client>/testing/<feature>/results-YYYY-MM-DD_vN.md`
+`<Client>/testing/<feature>/08d_test-results_vN.md`
 
-## Hard rules — enforced regardless of test plan content
+## Hard rules
 
-> Read these in `references/safety-rules.md`. Apply them to every test row before execution.
-
-1. **Sandbox only** — the runner verifies that the target tenant matches the `sandbox:` block in the test plan frontmatter. If it doesn't, abort with a refusal entry.
-2. **No deletions** — any test row whose action contains a `delete_*` API call is refused. Logged as `REFUSED: destructive action` in the results.
-3. **No destructive automations outside scope** — runner won't execute actions that would fire real external integrations not in test scope (real emails to real recipients, real invoices, real publishing). The test plan must mark these as `Sandbox-safe? No` and the runner refuses them.
-4. **Read-write allowed** — create, update, read operations are permitted in sandbox.
-5. **Audit trail** — every API call (and every refusal) is logged in the results file with timestamp, payload, and response.
-6. **Rate limiting** — respect the platform's documented rate limits. Default to 80% of the limit. Back off on 429.
-7. **Stop on infrastructure failure** — if 3 consecutive tests fail with infrastructure errors (e.g. 5xx, network), stop the run and report. Don't blast the sandbox.
+> **Hard rules:** Sandbox-only operations. Read-write only against named sandbox tenants. Refuses destructive actions. See `dydx-delivery/references/safety-rules.md` for the canonical ruleset.
 
 ## How to run
 
 ### Step 1 — Locate test plan
 
-Find the highest-version `test-plan_v*.md` in `<Client>/testing/<feature>/`.
+Find the highest-version `08b_test-plan_v*.md` in `<Client>/testing/<feature>/`.
 
 **If not found**, run start-at-any-point triage:
 
 > I don't see a test plan for `<Client>` / `<feature>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing test plan** — I'll save it as `test-plan_v1.md` and continue
+> **(a) Paste an existing test plan** — I'll save it as `08b_test-plan_v1.md` and continue
 > **(b) Run `generate-test-plan` first** — recommended if you have a technical spec but no test plan yet
 > **(c) Cancel**
 
@@ -92,7 +84,7 @@ For each test, capture:
 
 ### Step 6 — Write results
 
-Use the format in `references/results-template.md`. Write to `<Client>/testing/<feature>/results-YYYY-MM-DD_v{N}.md`.
+Use the format in `references/results-template.md`. Write to `<Client>/testing/<feature>/08d_test-results_v{N}.md`.
 
 If multiple runs happen on the same day, increment `_v{N}` and add a run identifier in the header.
 

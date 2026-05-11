@@ -1,0 +1,1637 @@
+# Design: dydx-delivery v2.0 — Implementor Edition architecture
+
+**Design Date:** 2026-05-09
+**Branch / commit:** dydx-delivery-v2 / (record current commit at synthesis plan)
+**Phase 1 Audit (ground truth):** `.planning/AUDIT.md` (approved 2026-05-09)
+
+> **How to read this design.** This document locks the v2 architecture for the dydx-delivery plugin so the v2.1+ rebuild can execute without re-deciding. Each major section opens with a one-line success-criteria echo (`> **DESIGN-NN:** <plain-English statement>` per D-35) so reviewer can match section to REQUIREMENTS.md without cross-referencing. Inline OPEN-Phase-4 markers (square-bracketed `OPEN: Phase 4 — <subject>` strings) flag undecided contracts at point of use; the closing `## Deferred to Phase 4 OPEN-QUESTIONS` section (per D-27 / D-33) enumerates every marker for Phase 4 register handoff. Citations use `file:line` format (Phase 1 D-14 / Phase 2 D-32 convention). DESIGN.md cites `AUDIT.md §X.Y` for v0.3.0 facts (Phase 2 D-34) — does NOT re-derive observations from v0.3.0 source.
+>
+> **Reviewer flow.** Two paths through this document. (1) **Read in order** — preamble → Cross-cutting decisions → Skill layout → v2 skill inventory → Stage-by-stage hand-off contract → Platform skills → Stages 1..11 → Test bot architecture → Live status-lifecycle survey → Deferred OPEN-QUESTIONS list → Appendices A/B/C. (2) **Skip-to-contract** — open the `## Executive Summary` table below; each row's Section column links to the H2 anchor of a major design contract; the Decision summary column captures the one-line lock; Locking IDs cite the REQUIREMENTS DESIGN-NN AND CONTEXT D-NN that produced the contract. Use this table when you need a single contract's text without reading the entire design.
+>
+> **Phase boundary.** No skill files (`dydx-delivery/`) are edited in this Phase 2 design milestone. v2.1+ build phases — sequenced by Phase 3 CHANGELIST.md — execute against this design. Approval is a single gate at the end (full DESIGN.md reviewed as a whole) per ROADMAP Phase 2 approval gate; sub-section approvals during synthesis are NOT required.
+
+## Executive Summary
+
+This table summarises every major design contract for skip-to-contract navigation. Each row's Section column links to the full contract; Decision summary captures the one-line lock; Locking IDs cite the REQUIREMENTS DESIGN-NN AND CONTEXT D-NN that produced the contract.
+
+| Section | Decision summary | Locking IDs |
+|---------|------------------|-------------|
+| `## Cross-cutting decisions` | 10 cross-cutting contracts (frontmatter scheme, stage numbering, hard-rules SoT, plugin surfaces, /refine resolution, approval-gate, connector probe, migration co-existence, directional boundary, persona) | DESIGN-01..10; D-23, D-24, D-25, D-29 |
+| `## Skill layout` | v2 7-directory plugin layout (`commands/`, `agents/`, `hooks/`, `skills/`, `references/`, `tests/`, `.claude-plugin/`) | DESIGN-11; FOUND-01 |
+| `## v2 skill inventory` | v2 end-state inventory: 15 ship-ready skills (10 NEW stage + 5 MODIFIED + 1 UNCHANGED-structure + 3 NEW platform = 19 categorical entries; 1 RETIRED `generate-functional-spec` removed; reconciled in matrix) | DESIGN-12 |
+| `## Stage-by-stage hand-off contract` | 12-row stage-transition matrix; carrier file path + propagated frontmatter + gating status flag + verbatim hand-off message per row | DESIGN-13; D-26 |
+| `## Platform skills` | 3 platform skills (`platform-pipefy/`, `platform-wrike/`, `platform-ziflow/`) — 5-file `references/` shape; 2026-grounded native-AI capability matrix; per-platform API surface + sandbox + knowledge-ingestion | DESIGN-14, DESIGN-15, DESIGN-16 |
+| `## Stage 1: Kickoff capture` | NEW dual-branch artefact (`01_kickoff_v<N>.md`) feeding either Stage 2 discovery OR Stage 3 SOW depending on `kickoff_branch:` | DESIGN-17 |
+| `## Stage 2: Discovery refactor` | MODIFIED to consume `01_kickoff_v*` (was free-form) — `based_on_kickoff:` mandatory; output is `02_discovery_v<N>.md` | DESIGN-18 |
+| `## Stage 3: SOW refactor` | UNCHANGED-structure; behaviour-modified to fork by `kickoff_branch` (discovery-ready vs draft-sow) and emit `03_sow_v<N>.md` with `based_on_kickoff:` AND/OR `based_on_discovery:` | DESIGN-19 |
+| `## Stage 4a: Functional spec — platform` | NEW skill `generate-fnspec-platform/` replacing RETIRED single fnspec; per-requirement `delivery: native-ai \| api` routing key | DESIGN-20 |
+| `## Stage 4b: Functional spec — integration` | NEW skill `generate-fnspec-integration/`; consumes `03_sow_v*` + (optional) `04a_*`; cross-spec consistency check vs 4a | DESIGN-20 |
+| `## Stage 5: Tech spec` | MODIFIED `generate-technical-spec/` with scope-gate (full / addendum-only / skip-entirely) + error-paths discipline | DESIGN-21 |
+| `## Stage 6: Cost estimate` | NEW `generate-cost-estimate/` with closed L/M/H risk-multiplier taxonomy STRUCTURE; numerics deferred per D-22; 4 assignee classes (dev / non-dev / QA / lead); Coda mirror via `table_rows_manage` + `keyColumns` + `mutationStatus` polling at 4 req/10s; 2-halt-point wait-for-commercial-inputs gate | DESIGN-22; D-22 |
+| `## Stage 7a: Build prompt — dev` | MODIFIED `generate-build-prompt/` (dev path) — emits `07a_build-prompt_v<N>.md` from `04b_*` + `05_techspec_v*` + `06_cost_v*` | DESIGN-23 |
+| `## Stage 7b: Build prompt — implementation per platform` | NEW `generate-implementation-prompt/` (per-platform non-dev) — emits `07b_implementation-prompt_v<N>.md` from `04a_*` + `06_cost_v*` + per-platform shape | DESIGN-23 |
+| `## Stage 8: Test bot — overview` | Persistent harness; 4 substages (8a provision-test-harness / 8b generate-test-plan / 8c generate-uat-plan / 8d execute-tests); CRIT-5 Coda sandbox extension; harness_drift failure_class; `sandbox_lock.yaml`; lifecycle states `active / quarantined / obsolete` | DESIGN-24 |
+| `## Stage 9: Documentation publishing` | Closed `doc_type` 9-enum; double-underscore naming (`<Project>__<DocSlug>`); doc-diff gate; `doc_published_at:` field; MOD-1 mitigation | DESIGN-25 |
+| `## Stage 10: Native-AI enablement` | `native_ai_path: api \| paste \| internal_skill` branching; copy-paste default; CRIT-8 + MIN-4 refusal gates with verbatim refusal language | DESIGN-26 |
+| `## Stage 11: Sign-off, brain update, archive` | Brain-mirror Coda template (7 canonical sections in canonical order: Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes); `tone_lint` MOD-9 prevention; pre-archive sanity check; one-way mirror per DESIGN-09 | DESIGN-27 |
+| `## Test bot architecture` | Tier-1 (Python deterministic HUMAN-AUTHORED) ↔ Tier-2 (AI orchestrator AI-GENERATED) layer-separation contract; `client_state.yaml` 7-key skeleton with 4 sandbox sub-blocks (incl. Coda CRIT-5) and `wrike.host:` PERSISTED per DESIGN-15; drift-detection contract (interface-only — no pseudocode per D-30) | DESIGN-28, DESIGN-29, DESIGN-30; D-30 |
+| `## Live status-lifecycle survey` | Survey methodology + result: `client_review` retained as canonical lifecycle state | DESIGN-08; D-25 |
+| `## Appendix C: Persona contract worked examples` | 3 before/after voice-rewrite examples (truncated changelog; "test sheet" residual; AI-style hedging) | DESIGN-10; D-29 |
+
+---
+
+## Cross-cutting decisions
+
+These ten cross-cutting decisions ground every later section. Each is locked here as a contract — substages that depend on a contract cite it back rather than re-arguing the decision. Per D-19, this section opens with a scannable decision-summary table; per-decision prose follows under H3 anchors below.
+
+frontmatter_version: 2
+
+| ID | Decision area | Locked contract (one line) | Locking decision |
+|----|---------------|-----------------------------|------------------|
+| DESIGN-01 | Frontmatter scheme | `frontmatter_version: 2`; status `draft → client_review → approved → archived`; underscore-snake-case keys; platform-gated identifiers | D-25 (survey) |
+| DESIGN-02 | Stage numbering | File-prefix = stage number `01..11`; substages `4a/4b/7a/7b/8a..8d`; canonical at `dydx-delivery/references/stage-numbering.md` | — |
+| DESIGN-03 | Hard-rules SoT | Single SoT at `dydx-delivery/references/safety-rules.md` + per-client `safety-overrides.yaml` overlay (only `overridable: true` fields) | AUDIT.md §AUDIT-05 (4 hard-rules duplicates collapsed) |
+| DESIGN-04 | Plugin surfaces | `commands/`: 1 parameterised `refine.md` + 4 GSD shortcuts; `agents/`: 1 test-bot-orchestrator; `hooks/`: 2 (`validate-frontmatter` + `bump-artefact-version`, NOT auto-progression); `mcpServers` field; manifest `2.0.0`; pytest self-tests at `dydx-delivery/tests/` per D-24 | D-24 |
+| DESIGN-05 | `/refine-<skill>` resolution | Single parameterised `commands/refine.md` taking skill name as `$1`; namespace `/dydx-refine-*` (NOT bare `/refine-*`) | D-23 |
+| DESIGN-06 | Approval-gate enforcement | Mandatory `approved_by` + `approved_at` on `status: approved` writes; hook refuses writes lacking these fields | — |
+| DESIGN-07 | Connector probe + degradation | Session-start MCP probe + per-stage fallback per AUDIT.md §AUDIT-03 PITFALLS-cited fallback table | AUDIT.md §AUDIT-03 |
+| DESIGN-08 | Frontmatter migration co-existence | CR-driven opt-in; `client_review` retained (live in `generate-sow`); v0.3.0 absent → lenient mode; in-flight artefacts NEVER auto-flip | D-25 (survey result locks) |
+| DESIGN-09 | Directional boundary | Local `<Client> Brain/` canonical; Coda one-way mirror; Field Notes read-only triage queue; never auto-merged | — |
+| DESIGN-10 | Persona contract | ~5 senior-implementer voice principles + forbidden-phrasings list inline; 3 worked before/after examples in Appendix C | D-29 |
+
+### DESIGN-01 — Canonical frontmatter scheme
+
+> **DESIGN-01:** Canonical frontmatter scheme — status lifecycle, field-name convention, platform-gated identifiers, frontmatter_version semantics.
+
+**Contract.**
+
+- `frontmatter_version: 2` is mandatory on every new artefact written by a v2 skill. Absent value → v0.3.0 lenient mode (per DESIGN-08).
+- Status lifecycle (canonical): `draft → client_review → approved → archived`. `client_review` is retained per AUDIT.md §AUDIT-01.2 (live in `dydx-delivery/skills/generate-sow/SKILL.md:93`); see `### Live status-lifecycle survey` above for the reconciliation confirming no live value is orphaned.
+- Field-name convention: underscore-snake-case for keys (`based_on_kickoff`, `pipe_id`, `approved_by`, `approved_at`, `tier_claims_last_verified`); hyphen-kebab-case for file paths inside `based_on_*` values (`02_kickoff_v1`).
+- Platform-gated identifiers: `pipe_id` / `space_id` / `project_id` may only appear when the artefact's `platform:` value is active for that identifier (Pipefy / Wrike / Ziflow respectively). Carrying `pipe_id` on a Wrike artefact is a validation failure raised by the `validate-frontmatter` hook (DESIGN-04).
+- `frontmatter_version: 2` lenient-mode reader behaviour is specified in DESIGN-08; v2 readers MUST NOT auto-flip in-flight artefacts.
+
+**Cross-references.** DESIGN-04 (hook implementation); DESIGN-06 (approval-gate field requirements `approved_by` + `approved_at`); DESIGN-08 (migration semantics + lenient mode); DESIGN-27 (Stage 11 writes `status: archived`).
+
+---
+
+### DESIGN-02 — Canonical stage-numbering scheme
+
+> **DESIGN-02:** Canonical stage-numbering scheme — file-prefix as stage number, substages, canonical reference doc, old→new mapping.
+
+**Contract.**
+
+- File-prefix = stage number across the v2 pipeline: `01_kickoff_*` (Stage 1) → `02_discovery_*` (Stage 2) → `03_sow_*` (Stage 3) → `04a_fnspec-platform_*` / `04b_fnspec-integration_*` (Stages 4a / 4b) → `05_techspec_*` (Stage 5) → `06_cost_*` (Stage 6) → `07a_build-prompt-dev_*` / `07b_build-prompt-impl_*` (Stages 7a / 7b) → `08_test-results_*` (Stage 8) → `09_doc-diff_*` (Stage 9) → `10_native-ai_*` (Stage 10) → `11_signoff_*` (Stage 11).
+- Substage letter suffixes: `4a` / `4b` (fnspec split per DESIGN-20); `7a` / `7b` (build-prompt dual per DESIGN-23); `8a` / `8b` / `8c` / `8d` (provision-test-harness / test plan / UAT plan / execute-tests refactor per DESIGN-24).
+- Canonical reference document at `dydx-delivery/references/stage-numbering.md` (NEW in v2; lands in v2.1 Foundations build) carries the full stage→file-prefix mapping plus the v0.3.0→v2 migration table. Skills cite this doc rather than re-asserting numbering.
+- Old→new mapping table: v0.3.0 `00_discovery_*` → v2 `02_discovery_*`; v0.3.0 `01_sow_*` → v2 `03_sow_*`; v0.3.0 `02_functional-spec_*` → v2 `04a_fnspec-platform_*` (split per DESIGN-20); v0.3.0 `03_technical-spec_*` → v2 `05_techspec_*`; v0.3.0 `04_build-prompt_*` → v2 `07a_build-prompt-dev_*`; v0.3.0 `test-plan_v*` → v2 `08b_test-plan_*` (path moves to `<Client> Brain/test-bot/test_cases/`); v0.3.0 `results-YYYY-MM-DD_v*` → v2 `08_test-results_*`. Resolves the two-scheme conflict cited at AUDIT.md §AUDIT-01.1 (`intake-template.md:13` self-labels "Stage 0" while file-prefix is `00_`).
+
+**Cross-references.** DESIGN-08 (migration co-existence — old prefixes coexist during opt-in CR-driven upgrade); DESIGN-13 (hand-off contract uses v2 carrier file paths); DESIGN-20 (fnspec split anchors `4a` / `4b`); DESIGN-23 (build prompt dual anchors `7a` / `7b`).
+
+---
+
+### DESIGN-03 — Single source of truth for hard rules
+
+> **DESIGN-03:** Single source of truth for hard rules at `dydx-delivery/references/safety-rules.md` plus per-client overrides overlay.
+
+**Contract.**
+
+- Single SoT location: `dydx-delivery/references/safety-rules.md` (canonical hard-rules document; v0.3.0 lives at `dydx-delivery/skills/execute-tests/references/safety-rules.md` per AUDIT.md §AUDIT-05; v2 promotes it to plugin-level `references/`).
+- Per-client overlay: `<Client> Brain/safety-overrides.yaml` overlays ONLY fields marked `overridable: true` in the canonical SoT. Non-overridable rules (sandbox-only test execution, hard-stop integration safety) cannot be relaxed by a client overlay.
+- Skills inline a one-line summary plus a pointer at `dydx-delivery/references/safety-rules.md`; never copy the full ruleset. AUDIT.md §AUDIT-05 catalogues the 4 hard-rules duplicates (3 copies + 1 canonical) collapsed by this contract.
+- Override resolution at runtime: skill loads canonical SoT → loads per-client overlay if present → applies overrides only to `overridable: true` fields → final ruleset assembled in memory.
+
+**Cross-references.** DESIGN-04 (`validate-frontmatter` and `bump-artefact-version` hooks read from canonical SoT); DESIGN-24 (Stage 8 test bot sandbox-only enforcement reads canonical SoT); DESIGN-27 (Stage 11 archive checks pre-archive sanity against canonical rules).
+
+---
+
+### DESIGN-04 — Plugin surfaces
+
+> **DESIGN-04:** Plugin surfaces — commands/agents/hooks/mcpServers/version + plugin self-tests (D-24).
+
+**Contract.**
+
+- `commands/`: 1 parameterised `commands/refine.md` (per DESIGN-05) + 4 GSD-prefixed shortcut commands (namespace: `/dydx-*`).
+- `agents/`: 1 — `test-bot-orchestrator.md` (drives Stage 8 tier-2 AI orchestration per DESIGN-24).
+- `hooks/`: 2 (NOT auto-progression hooks — explicit non-goal per kickoff mandate):
+  - `validate-frontmatter.py` — validates `frontmatter_version`, status-lifecycle membership, platform-gated identifier rules, `approved_by` + `approved_at` mandatory on `status: approved` writes (DESIGN-06).
+  - `bump-artefact-version.py` — increments `version` field in frontmatter and renames `_v{N}.md` → `_v{N+1}.md` idempotently (Option B versioning carried forward from v0.3.0).
+- `mcpServers` field in `dydx-delivery/.claude-plugin/plugin.json` lists the 5 wired MCPs (Coda, Google Drive, Gmail, Calendar, Miro per AUDIT.md §AUDIT-08).
+- Plugin manifest version `2.0.0` synced across `dydx-delivery/.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` metadata + `marketplace.json:plugins[0]` (resolves AUDIT.md §AUDIT-06 version-string mismatches).
+
+**Plugin self-tests subsection (per D-24).** Plugin v2.1 ships pytest smoke tests for plugin-level correctness at `dydx-delivery/tests/` (NEW directory). Coverage:
+- `validate-frontmatter` hook — positive cases (valid v2 frontmatter passes) + negative cases (missing `approved_by` on `status: approved` write rejected; `pipe_id` on Wrike artefact rejected; non-canonical status value rejected).
+- `bump-artefact-version` hook — idempotency (running twice on `_v3.md` produces `_v4.md` then `_v5.md` without artefact corruption); version-bump correctness (`version: 3` → `version: 4`).
+- Frontmatter parser — status-lifecycle membership, platform-gated identifier rules, `frontmatter_version` field handling (absent → lenient mode per DESIGN-08).
+- Test framework: pytest. CI integration: tests run on every PR via plugin CI (CI infrastructure lands with v2.1 Foundations build).
+
+**Cross-references.** DESIGN-01 (frontmatter scheme — what hooks validate); DESIGN-05 (`commands/refine.md` parameterisation); DESIGN-06 (approval-gate fields enforced by `validate-frontmatter`); DESIGN-08 (lenient-mode reader behaviour); AUDIT.md §AUDIT-06 (version-string mismatch closure); AUDIT.md §AUDIT-08 (live MCP wiring snapshot).
+
+---
+
+### DESIGN-05 — `/refine-<skill>` resolution
+
+> **DESIGN-05:** `/refine-<skill>` resolution — single parameterised `commands/refine.md`, namespace `/dydx-refine-*` (D-23).
+
+**Contract.**
+
+- Single parameterised `commands/refine.md` taking the skill name as `$1`. The command body dispatches to the named skill's refinement flow; new skills get refine-coverage automatically without N more command files.
+- Namespace: `/dydx-refine-*` (NOT bare `/refine-*` — D-23). Avoids collision with other plugins or native shortcuts; clients invoke `/dydx-refine-discovery-intake`, `/dydx-refine-generate-sow`, etc.
+- Resolves AUDIT.md §AUDIT-04.2 orphan-reference finding: v0.3.0 SKILL.md files reference `/refine-<skill>` commands that never shipped. v2.1 cutover: parameterised `refine.md` resolves all orphan references; documentation updates SKILL.md prose to use `/dydx-refine-*` namespace.
+- Phase 3 CHANGELIST.md schedules the refine-command build for v2.1 Foundations.
+
+**Cross-references.** DESIGN-04 (commands/ directory shape); AUDIT.md §AUDIT-04.2 (orphan `/refine-<skill>` references catalogued).
+
+---
+
+### DESIGN-06 — Approval-gate enforcement
+
+> **DESIGN-06:** Approval-gate enforcement — mandatory `approved_by` + `approved_at` on `status: approved` writes, hook refuses otherwise.
+
+**Contract.**
+
+- Every stage skill ends with an explicit hand-off message naming the approval action (e.g., "Run `generate-sow` after `00_discovery_v{N}.md` is `status: approved`"). The hand-off message shape is locked per-stage in DESIGN-13.
+- Mandatory frontmatter fields on every `status: approved` write: `approved_by: <human-name>` (NOT `Claude` / `AI` / `system`) + `approved_at: <ISO-8601 timestamp>`.
+- The `validate-frontmatter` hook (DESIGN-04) refuses any write that sets `status: approved` and lacks either `approved_by` or `approved_at`. The hook returns a non-zero exit and surfaces the missing fields by name.
+- Auto-progression between stages remains an explicit non-goal (kickoff mandate). Approval is a human action; the hook is the enforcement floor, not a substitute for review.
+
+**Cross-references.** DESIGN-01 (status-lifecycle membership); DESIGN-04 (`validate-frontmatter` hook implementation); DESIGN-13 (hand-off message shape per stage transition).
+
+---
+
+### DESIGN-07 — Connector-availability probe + degradation matrix
+
+> **DESIGN-07:** Connector-availability probe + per-stage graceful-degradation matrix.
+
+**Contract.**
+
+- Session-start MCP probe: at the start of each Claude Code session, the plugin probes each wired MCP (Coda, Google Drive, Gmail, Calendar, Miro per AUDIT.md §AUDIT-08) with a cheap-read endpoint. Probe outcome cached for the session: `connected | degraded | missing`.
+- Per-stage graceful-degradation matrix: each stage skill's behaviour when a required connector returns `missing` is locked. Examples (full 10-row matrix lands in DESIGN-07 per the PITFALLS-cited fallback table referenced in AUDIT.md §AUDIT-03):
+  - Stage 1 Kickoff (Miro missing) → paste-fallback mode (workflow-map ingest via copy-paste).
+  - Stage 6 Cost estimate (Coda missing) → manual mode (cost estimate emitted as local `.md` only; Coda upsert deferred).
+  - Stage 9 Documentation (Drive missing) → halt with explicit error; Stage 9 cannot complete without Drive.
+  - Stage 10 Native-AI enablement (platform native-AI API missing) → copy-paste fallback per `native_ai_path: paste`.
+- Probe is non-blocking at session start; failure to reach a connector does NOT block plugin load. Stages that require the connector halt at their own gates per the matrix.
+- Probe results plus per-stage matrix are written to a session-scoped `connector_probe.yaml` cache so skills do not re-probe.
+
+**Cross-references.** AUDIT.md §AUDIT-03 (per-stage connector dependencies); AUDIT.md §AUDIT-08 (live MCP wiring snapshot — probe baseline); DESIGN-26 (Stage 10 `native_ai_path` flag drives degradation).
+
+---
+
+### DESIGN-08 — Frontmatter migration co-existence
+
+> **DESIGN-08:** Frontmatter migration co-existence — CR-driven opt-in, `client_review` retained, lenient mode for v0.3.0 absent (D-25 survey locks).
+
+**Contract.**
+
+- v2 readers tolerate v0.3.0 frontmatter via the `frontmatter_version` field. Absent value → lenient mode (reader assumes v0.3.0 conventions; does not raise on missing `archived` status, missing `frontmatter_version: 2`, or missing `approved_by` / `approved_at` on `status: approved` artefacts written before v2.1).
+- Migration is opt-in per change request (CR-driven). When a CR fires that touches an artefact, the artefact upgrades to v2 frontmatter as part of that CR's diff. No date-based cutover.
+- In-flight `client_review` artefacts NEVER auto-flip to `approved`. The migration upgrade preserves the in-flight status verbatim.
+- Status lifecycle MUST retain `client_review` (live in `generate-sow:93` per AUDIT.md §AUDIT-01.2 and confirmed by the survey above).
+- Survey result locks the contract: see `### Live status-lifecycle survey` above for methodology, sampled sources, distinct values found, and reconciliation against canonical `{draft, client_review, approved, archived}`. No live value is orphaned. No `[MIGRATION-RISK]` marker required.
+
+**Cross-references.** DESIGN-01 (canonical frontmatter scheme — what v2 enforces); DESIGN-04 (`validate-frontmatter` hook lenient-mode behaviour); `### Live status-lifecycle survey` (above — D-25 methodology + result).
+
+---
+
+### DESIGN-09 — Directional-boundary contract
+
+> **DESIGN-09:** Directional-boundary contract — local canonical, Coda one-way mirror, Field Notes read-only triage queue.
+
+**Contract.**
+
+- Local `<Client> Brain/` is canonical: every artefact, decision, and brain-spoke document lives locally first. Drafts edit locally; reviews happen against local files.
+- Coda is a one-way mirror: Stage 11 (DESIGN-27) pushes brain content to a Coda mirror doc using the brain-mirror Coda doc template (Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes). No Coda → local sync; no two-way merge.
+- Field Notes table on Coda is a read-only triage queue: clients and team members add notes; the plugin reads notes during Stage 1 Kickoff (DESIGN-17) for triage but NEVER auto-merges. Kickoff quotes the note + asks human to keep / drop / edit-and-keep before integrating into the brain.
+- Field Notes are NEVER auto-merged into the brain; the directional boundary is enforced by skill design, not by Coda permissions. Kickoff is the only stage that reads Field Notes.
+
+**Cross-references.** DESIGN-17 (Stage 1 Kickoff — Field Notes triage); DESIGN-27 (Stage 11 — Coda one-way push); AUDIT.md §AUDIT-04 (existing brain-mirror references).
+
+---
+
+### DESIGN-10 — Persona contract
+
+> **DESIGN-10:** Persona contract — senior-implementer voice principles + forbidden-phrasings list inline + 3 worked examples in Appendix C (D-29).
+
+**Contract.**
+
+Senior-implementer voice principles (5):
+
+1. **No AI hedging.** Statements are claims, not suggestions. Avoid soft modal verbs ("might", "could", "perhaps").
+2. **Specific over abstract.** Cite `file:line` when stating a fact about the codebase. Replace vague references with concrete paths or names.
+3. **No apology-prefaces.** Skip "Note that…", "It's worth noting…", "Please be aware…". State the fact directly.
+4. **Imperative over advisory.** Prefer "Update README:14" over "we recommend updating the README". The reader is the implementor; tell them what to do.
+5. **End with hand-off, not summary.** The closing sentence names the next action and the artefact it produces; not a recap of what was just said.
+
+Forbidden phrasings (verbatim — these strings MUST NOT appear in v2 prose authored by skills):
+
+- "we recommend"
+- "as an AI"
+- "I would suggest"
+- "perhaps consider"
+- "might want to"
+- "it's worth noting"
+- "please be aware"
+- "in order to"
+- "make sure to"
+- "feel free to"
+
+3 worked before/after examples — see `## Appendix C: Persona contract worked examples`.
+
+**Cross-references.** DESIGN-13 (hand-off message shape — closing sentence per principle 5); DESIGN-25 (`tone_lint` pass at Stage 11 enforces persona compliance pre-archive); `## Appendix C: Persona contract worked examples`.
+
+---
+
+### Live status-lifecycle survey
+
+**Methodology.** No live `<Client> Brain/` folders are reachable from this workspace at probe time (2026-05-09; checked sibling directories under `C:/Users/Jason Blignaut/Documents/Coding/` — only non-client project folders present: `AWS`, `Anaconda`, `Ardit Sluice` (non-dYdX project subfolders), `dydx-project-workflow`). Per D-25 fallback, the survey enumerates every `status:` value visible in v0.3.0 SKILL.md sources: every literal `status:` token (frontmatter sample, `status:` flow assignment, prose status-flag reference, hand-off-message status reference) is captured with `file:line` per D-32. Fallback is documented transparently rather than fabricating live-folder results (T-02-02-01 mitigation).
+
+**Sampled sources.**
+
+| Source | Type | `status:` values observed |
+|--------|------|---------------------------|
+| `dydx-delivery/skills/discovery-intake/SKILL.md:103` | v0.3.0 frontmatter sample | `draft` |
+| `dydx-delivery/skills/generate-sow/SKILL.md:78` | v0.3.0 frontmatter sample | `draft` |
+| `dydx-delivery/skills/generate-sow/SKILL.md:93` | v0.3.0 hand-off prose | `client_review`, `approved` |
+| `dydx-delivery/skills/generate-functional-spec/SKILL.md:80` | v0.3.0 frontmatter sample | `draft` |
+| `dydx-delivery/skills/generate-functional-spec/SKILL.md:95` | v0.3.0 hand-off prose | `approved` |
+| `dydx-delivery/skills/generate-build-prompt/SKILL.md:12` | v0.3.0 input requirement | `approved` |
+| `dydx-delivery/skills/generate-build-prompt/SKILL.md:117` | v0.3.0 frontmatter sample | `draft` |
+| `dydx-delivery/skills/generate-build-prompt/SKILL.md:138` | v0.3.0 prose | `approved` |
+| `dydx-delivery/skills/execute-tests/SKILL.md:12` | v0.3.0 input requirement | `approved` |
+| `dydx-delivery/skills/execute-tests/SKILL.md:50` | v0.3.0 prompt fallback | `approved` |
+| `.planning/AUDIT.md §AUDIT-01.2` | Phase 1 ground truth — generate-sow lifecycle | `draft → client_review → approved` |
+| `.planning/AUDIT.md §AUDIT-01.3` | Phase 1 ground truth — generate-functional-spec lifecycle | `draft → approved` (no `client_review`) |
+
+**Distinct values found:** `{draft, client_review, approved}`.
+
+**Reconciliation against canonical `{draft, client_review, approved, archived}`:**
+- `draft` — observed; locked as canonical opening status. No reconciliation required.
+- `client_review` — observed only in `generate-sow:93` (per AUDIT.md §AUDIT-01.2, the sole skill carrying `client_review` in its hand-off prose). Locked as canonical. DESIGN-08 mandates retention so in-flight `client_review` artefacts NEVER auto-flip on migration.
+- `approved` — observed; locked as canonical sign-off status. DESIGN-06 layers `approved_by` + `approved_at` mandatory fields on every `status: approved` write.
+- `archived` — NOT observed in v0.3.0 sources. Adding `archived` to the canonical lifecycle is net-new in v2 (DESIGN-27 Stage 11 sign-off-and-archive lands the write). No live value is orphaned by introducing `archived`.
+
+**Conclusion.** Canonical lifecycle `draft → client_review → approved → archived` does not orphan any observed `status:` value. Every value present in v0.3.0 (`draft`, `client_review`, `approved`) is preserved unchanged; `archived` is additive and writes only at Stage 11. DESIGN-08 contract is locked: v2 readers tolerate v0.3.0 frontmatter via `frontmatter_version` (absent → lenient), CR-driven opt-in upgrade, no auto-flip. No `[MIGRATION-RISK]` marker required from this survey result.
+
+---
+
+## Skill layout
+
+> **DESIGN-11:** v2 folder layout — `skills/`, `commands/`, `agents/`, `hooks/`, `.claude-plugin/`, plus the new plugin-level `references/` directory.
+
+The v2 plugin folder layout extends the v0.3.0 shape (which had `skills/` + `.claude-plugin/` only — per AUDIT.md §AUDIT-01 + §AUDIT-08) with the surfaces locked in DESIGN-04 plus a plugin-level `references/` directory for canonical SoT documents per DESIGN-02 / DESIGN-03. The four canonical reference files (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`) land per FOUND-01 in the v2.1 Foundations build; skills cite them via relative path (`../../references/<file>.md`) rather than copy the content. The `tests/` directory (NEW per D-24) holds plugin-level pytest smoke tests run on every PR.
+
+```text
+dydx-delivery/
+├── .claude-plugin/
+│   ├── plugin.json                       # manifest version 2.0.0 (DESIGN-04, AUDIT-06)
+│   └── marketplace.json                  # marketplace metadata synced 2.0.0 (AUDIT-06)
+├── references/                           # NEW in v2 — plugin-level canonical SoT docs (FOUND-01)
+│   ├── safety-rules.md                   # canonical hard-rules SoT (DESIGN-03, AUDIT-05)
+│   ├── stage-numbering.md                # canonical stage→file-prefix mapping (DESIGN-02)
+│   ├── frontmatter-scheme.md             # canonical frontmatter scheme (DESIGN-01)
+│   └── glossary.md                       # canonical vocabulary (FOUND-01)
+├── skills/                               # 15 v2 end-state skill folders (DESIGN-12)
+│   ├── kickoff-capture/                  # NEW (Stage 1) — DESIGN-17
+│   ├── discovery-intake/                 # MODIFIED (Stage 2) — DESIGN-18
+│   ├── generate-sow/                     # UNCHANGED-structure (Stage 3) — DESIGN-19
+│   ├── generate-fnspec-platform/         # NEW (Stage 4a) — DESIGN-20
+│   ├── generate-fnspec-integration/      # NEW (Stage 4b) — DESIGN-20
+│   ├── generate-technical-spec/          # MODIFIED (Stage 5) — DESIGN-21
+│   ├── generate-cost-estimate/           # NEW (Stage 6) — DESIGN-22
+│   ├── generate-build-prompt/            # MODIFIED (Stage 7a) — DESIGN-23
+│   ├── generate-implementation-prompt/   # NEW (Stage 7b) — DESIGN-23
+│   ├── provision-test-harness/           # NEW (Stage 8a) — DESIGN-24
+│   ├── generate-test-plan/               # MODIFIED (Stage 8b) — DESIGN-24
+│   ├── generate-uat-plan/                # NEW (Stage 8c) — DESIGN-24
+│   ├── execute-tests/                    # MODIFIED (Stage 8d) — DESIGN-24
+│   ├── update-documentation/             # NEW (Stage 9) — DESIGN-25
+│   ├── push-native-ai-knowledge/         # NEW (Stage 10) — DESIGN-26
+│   ├── sign-off-and-archive/             # NEW (Stage 11) — DESIGN-27
+│   ├── platform-pipefy/                  # NEW platform — DESIGN-14
+│   ├── platform-wrike/                   # NEW platform — DESIGN-15
+│   └── platform-ziflow/                  # NEW platform — DESIGN-16
+├── commands/                             # NEW in v2 (DESIGN-04)
+│   ├── refine.md                         # parameterised — takes skill name as $1 (DESIGN-05, D-23)
+│   ├── gsd-research-phase.md             # GSD shortcut (namespace /dydx-*)
+│   ├── gsd-plan-phase.md                 # GSD shortcut
+│   ├── gsd-execute-phase.md              # GSD shortcut
+│   └── gsd-review-phase.md               # GSD shortcut
+├── agents/                               # NEW in v2 (DESIGN-04, DESIGN-24)
+│   └── test-bot-orchestrator.md          # drives Stage 8 tier-2 AI orchestration (DESIGN-28)
+├── hooks/                                # NEW in v2 (DESIGN-04) — NOT auto-progression hooks
+│   ├── validate-frontmatter.py           # enforces DESIGN-01/06 frontmatter rules
+│   └── bump-artefact-version.py          # enforces Option B versioning idempotently
+└── tests/                                # NEW in v2 (D-24) — plugin-level pytest smoke tests
+    ├── test_validate_frontmatter.py      # positive + negative hook coverage
+    ├── test_bump_artefact_version.py     # idempotency + version-bump correctness
+    └── test_frontmatter_parser.py        # lifecycle / platform-gated / lenient mode
+```
+
+**RETIRED in v2:** `skills/generate-functional-spec/` (replaced by `generate-fnspec-platform/` + `generate-fnspec-integration/` per Stage 4 split / DESIGN-20).
+
+---
+
+## v2 skill inventory
+
+> **DESIGN-12:** v2 skill inventory — 6 NEW stage + 3 NEW platform + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED per REQUIREMENTS DESIGN-12 categorical breakdown. End-state count = 15 skill folders that ship in v2 (the 1 RETIRED is removed; logged separately for migration mapping). Each skill carries purpose, inputs, outputs, downstream consumer, complexity, dependencies, hand-off message shape per D-20.
+
+**Reconciliation (per cross-AI review MEDIUM #4).** REQUIREMENTS.md DESIGN-12 sub-bullet describes the v2 inventory in 5 categories totalling 16 categorical items: 6 NEW stage skills + 3 NEW platform skills + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED. The "X skills total" headline figure in different framings (legacy "13", categorical "16") is reconciled here against the actual end-state count of skill folders that ship: **15 v2 end-state skills** (16 categorical items minus the 1 RETIRED `generate-functional-spec` which is removed and replaced by the Stage 4 split — `generate-fnspec-platform` + `generate-fnspec-integration`). The matrix below lists the 15 v2 end-state skills; the migration-mapping note at the bottom captures the RETIRED skill. Per Phase 1 D-32 / D-34 honesty precedent: this reconciliation cites architecture research (`.planning/research/SUMMARY.md` + `.planning/research/ARCHITECTURE.md`) as the source of truth for the count; AUDIT.md §AUDIT-01 grounds the v0.3.0 starting state (7 existing skills); the section title uses neutral "v2 skill inventory" (no number) so the H2 anchor is resilient if the count adjusts in v2.x.
+
+**Inventory matrix.**
+
+| # | Skill name | Tag | Stage | Inputs (frontmatter + upstream artefact) | Outputs | Downstream consumer | Complexity | Dependencies | Detailed contract section |
+|---|------------|-----|-------|------------------------------------------|---------|---------------------|------------|--------------|---------------------------|
+| 1 | `kickoff-capture/` | NEW | 1 | meeting notes / requirements / Field Notes; `client:` `project:` | `01_kickoff_v<N>.md` | `discovery-intake` OR `generate-sow` | Medium | Miro paste fallback; Field Notes triage | `## Stage 1: Kickoff capture` |
+| 2 | `discovery-intake/` | MODIFIED | 2 | `01_kickoff_v*` artefact; `based_on_kickoff:` | `02_discovery_v<N>.md` | `generate-sow` | Low | none new | `## Stage 2: Discovery refactor` |
+| 3 | `generate-sow/` | UNCHANGED-structure / behaviour-modified | 3 | `02_discovery_v*` OR `01_kickoff_v*`; `based_on_discovery:` | `03_sow_v<N>.md` | `generate-fnspec-platform` AND/OR `generate-fnspec-integration` | Medium | none new | `## Stage 3: SOW refactor` |
+| 4 | `generate-fnspec-platform/` | NEW | 4a | `03_sow_v*`; `based_on_sow:` | `04a_fnspec-platform_v<N>.md` with `delivery: native-ai \| api` per requirement | `generate-fnspec-integration` AND `generate-cost-estimate` AND `generate-implementation-prompt` AND `push-native-ai-knowledge` | Medium-high | per-platform capability matrix | `## Stage 4a: Functional spec — platform` |
+| 5 | `generate-fnspec-integration/` | NEW | 4b | `03_sow_v*` + (optional) `04a_fnspec-platform_v*` | `04b_fnspec-integration_v<N>.md` | `generate-technical-spec` AND `generate-cost-estimate` AND `generate-build-prompt` | Medium-high | cross-spec consistency check vs 4a | `## Stage 4b: Functional spec — integration` |
+| 6 | `generate-technical-spec/` | MODIFIED | 5 | `04b_fnspec-integration_v*` + (optional) `04a_*` | `05_techspec_v<N>.md` | `generate-cost-estimate`; `generate-build-prompt` | Medium | none new | `## Stage 5: Tech spec` |
+| 7 | `generate-cost-estimate/` | NEW | 6 | `04a_*` AND/OR `04b_*` AND `05_techspec_v*` | `06_cost_v<N>.md` + Coda task-table rows | client-facing cost estimate | High (Coda) | `platform-<X>` for schema introspection | `## Stage 6: Cost estimate` |
+| 8 | `generate-build-prompt/` | MODIFIED | 7a | `04b_*` AND `05_techspec_v*` AND `06_cost_v*` | `07a_build-prompt_v<N>.md` | dev | Medium | none new | `## Stage 7a: Build prompt — dev` |
+| 9 | `generate-implementation-prompt/` | NEW | 7b | `04a_*` AND `06_cost_v*`; per-platform shape | `07b_implementation-prompt_v<N>.md` | non-dev per platform | Medium | `platform-<X>` reference | `## Stage 7b: Build prompt — implementation per platform` |
+| 10 | `provision-test-harness/` | NEW | 8a | `04a_*` AND `04b_*` AND `client_state.yaml` | `08a_test-harness_v<N>.md` + persistent harness | `execute-tests` | High | `platform-<X>` + `sandbox_lock` | `## Stage 8: Test bot — overview` |
+| 11 | `generate-test-plan/` | MODIFIED | 8b | `04b_*` AND `05_techspec_v*` AND `08a_*` | `08b_test-plan_v<N>.md` | `execute-tests` | Medium | DESIGN-28 layer boundary | `## Stage 8: Test bot — overview` |
+| 12 | `generate-uat-plan/` | NEW | 8c | `04a_*` AND `04b_*` AND `08b_*` | `08c_uat-plan_v<N>.md` | client | Low-medium | none new | `## Stage 8: Test bot — overview` |
+| 13 | `execute-tests/` | MODIFIED | 8d | `08a_*` AND `08b_*` AND `08c_*` | `08d_test-results_v<N>.md` | `update-documentation` | High (sandbox + AI orchestrator) | `test-bot-orchestrator` agent | `## Stage 8: Test bot — overview` |
+| 14 | `update-documentation/` | NEW | 9 | `08d_test-results_v*` (approved) AND all upstream | `ChangeRequests/<CR>/doc-diff.md` + Drive doc | reviewer; `push-native-ai-knowledge` | Medium | Drive MCP | `## Stage 9: Documentation publishing` |
+| 15 | `push-native-ai-knowledge/` | NEW | 10 | `04a_*` AND approved `09_doc-diff_v*` AND per-platform `native-ai-inventory.md` | per-platform native-AI ingestion + `doc_version:` `ingested_at:` | client native-AI surface | High | `platform-<X>`; CRIT-8 + MIN-4 refusal gates | `## Stage 10: Native-AI enablement` |
+| 16 | `sign-off-and-archive/` | NEW | 11 | All approved upstream artefacts; `tone_lint` pass | `<Client> Brain/<spokes>/` updated + Coda mirror push + CR archived | Field Notes preserved; next CR's Stage 1 | Medium | brain-mirror Coda template | `## Stage 11: Sign-off, brain update, archive` |
+| 17 | `platform-pipefy/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: pipefy` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Pipefy GraphQL pagination cursor + 2026 rate-limit currency `[OPEN: Phase 4]` | `## platform-pipefy` |
+| 18 | `platform-wrike/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: wrike` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Wrike OAuth `host` persistence + AI Studio knowledge-ingestion API `[OPEN: Phase 4]` | `## platform-wrike` |
+| 19 | `platform-ziflow/` | NEW (platform) | n/a — referenced by stages 4a/5/7b/8/10 | `platform: ziflow` artefacts | platform-API contract + native-AI capability matrix + knowledge ingestion path | Stage skills that load by `platform:` dispatch | Medium-high | Ziflow read-after-create consistency + ReviewAI knowledge-ingestion API `[OPEN: Phase 4]` | `## platform-ziflow` |
+
+**Tag breakdown reconciliation against REQUIREMENTS DESIGN-12 categorical totals.** Counting matrix tags above: NEW (stage) = rows 1, 4, 5, 7, 9, 10, 12, 14, 15, 16 = 10; MODIFIED (stage) = rows 2, 6, 8, 11, 13 = 5; UNCHANGED-structure / behaviour-modified = row 3 = 1; NEW (platform) = rows 17, 18, 19 = 3. Plus 1 RETIRED-AND-REPLACED (`generate-functional-spec/`, NOT shipped — see migration mapping note below). REQUIREMENTS DESIGN-12 sub-bullet ("6 NEW + 3 NEW platform + 4 MODIFIED + 2 UNCHANGED + 1 RETIRED-AND-REPLACED") describes a tighter scoping; the matrix's 10 NEW / 5 MODIFIED / 1 UNCHANGED / 3 NEW-platform / 1 RETIRED follows architecture research's enumeration (Stage 4 split + Stage 7 dual + Stage 8 four-substage + Stage 11 NEW skills push the NEW count above 6). Honesty precedent (Phase 1 D-32 / D-34): the matrix follows the research enumeration; the discrepancy is logged here rather than padded or trimmed.
+
+**Per-skill prose subsections.** Per-skill decision contracts (purpose, inputs, outputs, downstream consumer, complexity tag, dependencies, hand-off message shape) live in their respective sections per the "Detailed contract section" column. Per D-20, full SKILL.md prose is NOT drafted in this milestone; v2.1+ build phases authoring each skill produce its `SKILL.md` against the contract laid here.
+
+**Migration mapping note (RETIRED skill).** RETIRED `generate-functional-spec/` maps to the new Stage 4a + Stage 4b skills per DESIGN-20. v0.3.0 artefacts using the old skill name (`02_functional-spec_v*.md`) remain readable per DESIGN-08 lenient mode; CR-driven opt-in upgrades them to the new names (`04a_fnspec-platform_v*.md` / `04b_fnspec-integration_v*.md` per DESIGN-02 stage-numbering scheme) during their owning CR. v0.3.0 references to the retired skill in `generate-technical-spec/SKILL.md` and `generate-build-prompt/SKILL.md` (per AUDIT.md §AUDIT-01) update to the new pair as part of the v2.1 Foundations build.
+
+---
+
+## Stage-by-stage hand-off contract
+
+> **DESIGN-13:** Stage-by-stage hand-off contract — for every stage transition, the carrier file path, the frontmatter fields that propagate, and the status flag that gates the next stage. Single transition matrix per D-26 (matrix-then-prose); per-stage subsections (Stage 1..11) restate hand-off message verbatim for grep-ability.
+
+The hand-off matrix is the single most-cited section of DESIGN.md (per CONTEXT specifics). v2.1+ build phases reference these rows when authoring per-stage SKILL.md files — every carrier file path, frontmatter field name, and gating status flag value here is grep-canonical. Per D-26, the matrix is the source of truth; per-stage subsections (under `## Stage 1: Kickoff capture` through `## Stage 11: Sign-off, brain update, archive`) restate the hand-off message verbatim for navigability. Carrier file paths follow DESIGN-02 stage-prefixed naming; gating status flags use the canonical DESIGN-01 lifecycle vocabulary.
+
+| From | To | Carrier file path | Frontmatter fields propagated | Gating status flag | Hand-off message |
+|------|-----|-------------------|-------------------------------|--------------------|--------------------|
+| Stage 1 | Stage 2 | `01_kickoff_v<N>.md` | `client:` `project:` `frontmatter_version: 2` | `status: approved` | `> Awaiting status: approved write to 01_kickoff_v<N>.md. Branch routing on kickoff_branch: value (discovery-ready -> Stage 2; draft-sow -> SKIP Stage 2 -> Stage 3).` |
+| Stage 2 | Stage 3 | `02_discovery_v<N>.md` | `based_on_kickoff: 01_kickoff_v<N>` `client:` `project:` | `status: approved` | `> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.` |
+| Stage 3 | Stage 4a | `03_sow_v<N>.md` | `based_on_discovery:` (or `based_on_kickoff:`) `platform:` (if known) | `status: approved` AND `client_review` allowed | `> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.` |
+| Stage 4a | Stage 4b | `04a_fnspec-platform_v<N>.md` | `based_on_sow:` `platform:` `delivery: native-ai \| api` | `status: approved` (4a optional for integration-only) | > Awaiting `status: approved` to `04a`; cross-spec consistency check runs at start of 4b. |
+| Stage 4b | Stage 5 | `04b_fnspec-integration_v<N>.md` | `based_on_sow:` `based_on_fnspec_platform:` (if 4a exists) | `status: approved` (Stage 5 SKIPPED if no 4b) | > Awaiting `status: approved` to `04b`; Stage 5 tech spec runs (or SKIPS if no `04b`, with platform-API addendum on `04a` instead per DESIGN-21). |
+| Stage 5 | Stage 6 | `05_techspec_v<N>.md` | `based_on_fnspec_integration:` `based_on_fnspec_platform:` | `status: approved` | `> Awaiting status: approved on 05_techspec_v<N>.md AND wait-for-commercial-inputs gate before generate-cost-estimate runs (per DESIGN-22).` |
+| Stage 6 | Stage 7a | `06_cost_v<N>.md` + Coda task-table rows | `based_on_techspec:` `based_on_fnspec_*:` `risk_multiplier_version:` `commercial_inputs_status:` | `status: approved` AND `commercial_inputs_status: provided` | > Awaiting `status: approved` to `06`; locks costed scope before build-prompt generation. |
+| Stage 7a / 7b | Stage 8a | `07a_build-prompt_v<N>.md` AND/OR `07b_implementation-prompt_v<N>.md` | `based_on_fnspec_*:` `based_on_cost:` `delivery_filter:` | `status: approved` on both (when both run) | > Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing. |
+| Stage 8a/b/c | Stage 8d | `08a_test-harness_v<N>.md` + `08b_test-plan_v<N>.md` + `08c_uat-plan_v<N>.md` + `client_state.yaml` | `based_on_fnspec_*:` `client_state_version:` `harness_version:` `last_known_schema_version:` | `status: approved` on 8a + 8b; 8c human-facing | `> Awaiting status: approved on 08a_test-harness_v<N>.md AND 08b_test-plan_v<N>.md; execute-tests runs against current client_state.yaml; sandbox_lock.yaml acquired before run.` |
+| Stage 8d | Stage 9 | `08d_test-results_v<N>.md` | `based_on_test_plan:` `based_on_harness:` `failure_classes:` | `status: approved` | `> Awaiting status: approved on 08d_test-results_v<N>.md; doc-diff generation requires test approval.` |
+| Stage 9 | Stage 10 | `ChangeRequests/<CR>/doc-diff.md` + Drive doc per closed `doc_type` enum | `doc_type:` `doc_version:` `doc_published_at:` `last_diff_review_at:` | `status: approved` on doc-diff | `> Awaiting status: approved on doc-diff.md AND doc_published_at set; push-native-ai-knowledge refuses ingest if doc_published_at < last_diff_review_at (CRIT-8 fix).` |
+| Stage 10 | Stage 11 | per-platform native-AI ingestion artefact + `doc_version:` `ingested_at:` per ingested doc | `native_ai_path:` `target_id:` | `status: approved` on per-platform ingestion record | `> Awaiting status: approved on per-platform native-AI ingestion records; sign-off-and-archive runs only after all push-native-ai-knowledge runs succeed (or native_ai_path: none).` |
+
+---
+
+## Platform skills
+
+The three platform skills (`platform-pipefy/`, `platform-wrike/`, `platform-ziflow/`) internalise per-platform knowledge that v0.3.0 referenced as missing artefacts (per AUDIT.md §AUDIT-04.1). Each carries an identical 5-file `references/` shape: `api-contract.md` + `native-ai-inventory.md` + `knowledge-ingestion.md` + `client-shape-gotchas.md` + `vocabulary.md`. The native-AI capability matrices are 2026-grounded per RESEARCH.md / FEATURES.md. Per D-21, this section ships decision contracts only — full SKILL.md and references/*.md prose authoring runs in v2.2 per CHANGELIST.md PLAT-01..03. Each platform contract carries a `tier_claims_last_verified: <ISO date>` frontmatter requirement so the v2.x build's first action against any platform skill re-verifies the native-AI capability matrix against then-current platform reality (locks the contract against silent drift).
+
+**Platform-comparison matrix (per D-19).**
+
+| Platform | Native-AI surface (2026) | API protocol | Sandbox access | `native_ai_path` default | Known research-blocked items |
+|----------|--------------------------|--------------|-----------------|--------------------------|------------------------------|
+| pipefy | AI Agents (KB + Skills + MCP + IDP + Web Search + BYO-LLM) | GraphQL | Sandbox tenant per client | `api` (HIGH on Behaviors/Skills; LOW on KB content-upload) | KB content-upload endpoint; GraphQL pagination cursor field names; 2026 rate-limit currency |
+| wrike | Copilot + 16 MCP tools | REST | Sandbox space per client; `host` from OAuth token persisted (NOT hardcoded `www.wrike.com`) | `api` (MEDIUM; depends on Copilot knowledge-ingestion API) | AI Studio knowledge-ingestion API; 2026 rate-limit currency |
+| ziflow | ReviewAI Checklists Public Preview (Change Verification + Brand Standards Coming Soon) | REST | Sandbox project per client | `paste` (Checklists Public Preview is the documented path; copy-paste fallback default) | ReviewAI knowledge-ingestion API; read-after-create consistency window |
+
+### platform-pipefy
+
+> **DESIGN-14:** `platform-pipefy/` skill structure — 5-file `references/` shape (`api-contract.md`, `native-ai-inventory.md`, `knowledge-ingestion.md`, `client-shape-gotchas.md`, `vocabulary.md`); 2026-grounded native-AI capability matrix; API surface for the gap; sandbox access pattern; `native_ai_path: api | paste | none` flag with confidence; `tier_claims_last_verified` frontmatter.
+
+**Skill folder layout (5-file references/ shape per DESIGN-14):**
+
+```text
+dydx-delivery/skills/platform-pipefy/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # GraphQL endpoints, paginate_all helper, rate-limit handling
+    ├── native-ai-inventory.md    # AI Agents capability matrix (KB / Skills / MCP / IDP / Web Search / BYO-LLM)
+    ├── knowledge-ingestion.md    # KB content-upload path (LOW-confidence — see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client pipe shape variations
+    └── vocabulary.md             # Pipefy-specific terms (pipe, phase, card, connection, etc.)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| Knowledge base | yes | Pipefy AI Agents → KB | HIGH |
+| Skills | yes | AI Agents → Skills | HIGH |
+| MCP integration | yes | AI Agents → MCP | HIGH |
+| IDP (Intelligent Document Processing) | yes | AI Agents → IDP | HIGH |
+| Web Search | yes | AI Agents → Web Search | HIGH |
+| BYO-LLM | yes | AI Agents config | HIGH |
+| KB content-upload via API | unknown | `[OPEN: Phase 4 — Pipefy AI KB content-upload endpoint not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: GraphQL via Pipefy public API.
+- Helper: `paginate_all(query, cursor_field)` for cursor pagination across multi-page result sets.
+- Cursor field names: `[OPEN: Phase 4 — Pipefy GraphQL pagination cursor field names need verification against current 2026 schema per OPEN-01]`.
+- Rate limit: `[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`
+- Auth: Bearer token from Pipefy app installation; sandbox token distinct from production token.
+
+**Per-tenant host persistence (UAT-4.1, 2026-05-10).** **Pipefy WEB URL varies per tenant; API endpoint is canonical-only.** Default web URL: `https://app.pipefy.com/{org_id}`. Custom-subdomain web URL: `https://{subdomain}.pipefy.com/{org_id}` (e.g. `vodacom.pipefy.com/{org_id}` for Vodacom). **API endpoint is canonical `https://api.pipefy.com/graphql` for ALL tenants** — verified 2026-05-10 (Q24 resolved): DNS does not resolve `api.<subdomain>.pipefy.com` for custom-subdomain tenants; all GraphQL traffic routes through canonical. The `pipefy_web_host` + `pipefy_org_id` fields in `client_state.yaml` (DESIGN-29 — forward reference) carry the per-tenant web URL values for paste-fallback navigation; the API host is hardcoded to canonical `api.pipefy.com` (no `pipefy_api_host:` field needed — UAT-4.1 simplification post-Q24-verification).
+
+**Pipefy API auth-failure gotcha (UAT-4.1 bonus finding, 2026-05-10).** **CRITICAL** — Pipefy's GraphQL API returns the **Keycloak login HTML page (Content-Type: text/html) on auth failure**, NOT a JSON 401 error. Non-standard API behaviour — most APIs return structured JSON. Skills calling Pipefy GraphQL MUST check `Content-Type` of the response before parsing JSON; HTML response indicates auth failure (token expired / invalid / wrong format). `platform-pipefy/references/api-contract.md` must document this. Stage 8 test bot tier-1 needs an HTML-detect → `auth_failed` failure-class branch separate from the existing `auth_switch_required` (UAT-4.2 tenant-exclusivity branch).
+
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** **CRITICAL** — Pipefy auth sessions are MUTUALLY EXCLUSIVE across tenants. Cannot be authenticated to two Pipefy tenants simultaneously. Switching from `vodacom.pipefy.com` to `app.pipefy.com` (or any tenant pair) requires re-auth; concurrent operations against two tenants will fail. Operational consequence: any skill that touches multiple Pipefy tenants in one session must serialize per-tenant operations + emit `auth_switch_required` retry signal at tenant-boundary crossings. `client_state.yaml` carries `pipefy.auth_concurrency_class: exclusive` per DESIGN-29; Wrike + Ziflow concurrency class is `[OPEN: Phase 4 — Wrike + Ziflow auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`.
+
+**Sandbox access pattern:** Sandbox tenant per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `pipefy_sandbox_pipe_id:` + `pipefy_web_host:` + `pipefy_org_id:` + `pipefy.auth_concurrency_class: exclusive` per client. API host is hardcoded canonical (`api.pipefy.com`) per UAT-4.1 verification — no `pipefy_api_host:` field.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready Behaviors instructions + KB upload list; humans manually upload via Pipefy UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q01 (Pipefy AI KB content-upload endpoint) is `Status: closed` under UAT-6.1.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: pipefy`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the native-AI capability matrix against then-current Pipefy reality (kept as human-readable reference under UAT-6.1; does not drive API ingestion calls).
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
+
+### platform-wrike
+
+> **DESIGN-15:** `platform-wrike/` skill structure — 5-file `references/` shape; 2026-grounded native-AI capability matrix (Copilot + 16 MCP tools); API surface for the gap (REST; `host` from OAuth token persisted, NOT hardcoded `www.wrike.com`); sandbox access; knowledge-ingestion via attach-doc-via-MCP.
+
+**Skill folder layout (5-file references/ shape per DESIGN-15):**
+
+```text
+dydx-delivery/skills/platform-wrike/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # REST endpoints, host persistence rule, rate-limit handling
+    ├── native-ai-inventory.md    # Copilot + 16 MCP tools capability matrix
+    ├── knowledge-ingestion.md    # attach-doc-via-MCP path + AI Studio API gap (see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client space shape variations + custom field IDs
+    └── vocabulary.md             # Wrike-specific terms (space, folder, project, task, custom field)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| Copilot (chat-style assistant) | yes | Wrike Copilot | HIGH |
+| MCP tools (16 tools) | yes | Wrike MCP integration — 16 tools | HIGH |
+| Knowledge ingestion via attach-doc-via-MCP | yes | MCP attach-doc tool | MEDIUM |
+| AI Studio knowledge-ingestion API | unknown | `[OPEN: Phase 4 — Wrike AI Studio knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: REST.
+- **CRITICAL — `host` persistence rule.** The `host` field MUST be persisted from the OAuth token response and used as the API base URL for every subsequent call. Hardcoding `www.wrike.com` is the v0.3.0 bug per RESEARCH.md / PITFALLS.md (Wrike returns a tenant-specific host per OAuth handshake; the persisted `host` differs per client and is NOT always `www.wrike.com`). The `wrike_host:` field in `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries the per-client host string. **Worked examples (UAT-4.1):** US-2 region tenant → `app-us2.wrike.com`; EU region tenant (e.g. VodafoneZiggo, account `5996999`) → `app-eu.wrike.com` with entry URL pattern `<host>/workspace.htm?acc=<account_id>`. Region + account_id both vary per tenant.
+- Rate limit: `[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]`
+- Auth: OAuth token; sandbox space distinct from production space.
+
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** Wrike auth-concurrency class is `[OPEN: Phase 4 — Wrike auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`. Pipefy is `exclusive` (cannot auth to two tenants simultaneously); Wrike's behaviour needs verification at Phase 1 probe. `client_state.yaml` carries `wrike.auth_concurrency_class: exclusive | shared` per DESIGN-29.
+
+**Sandbox access pattern:** Sandbox space per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `wrike_sandbox_space_id:` AND `wrike_host:` per client. Both fields are mandatory — `wrike_sandbox_space_id:` without `wrike_host:` triggers the v0.3.0 hardcode bug.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready Copilot workflow narrative + MCP tool config; humans manually configure via Wrike UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q02 (Wrike AI Studio knowledge-ingestion API) is `Status: closed` under UAT-6.1.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: wrike`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying the Copilot + MCP tool inventory against then-current Wrike reality.
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); DESIGN-29 (`wrike_host:` field — forward reference, populated in Plan 02-09); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
+
+### platform-ziflow
+
+> **DESIGN-16:** `platform-ziflow/` skill structure — 5-file `references/` shape; 2026-grounded native-AI capability matrix (ReviewAI Checklists Public Preview; Change Verification + Brand Standards Coming Soon); API surface for the gap (REST; `wait_for_proof` helper for eventual consistency); sandbox access; knowledge-ingestion path = Checklist generation primarily + copy-paste fallback.
+
+**Skill folder layout (5-file references/ shape per DESIGN-16):**
+
+```text
+dydx-delivery/skills/platform-ziflow/
+├── SKILL.md
+└── references/
+    ├── api-contract.md           # REST endpoints, wait_for_proof helper, rate-limit handling
+    ├── native-ai-inventory.md    # ReviewAI capability matrix (Checklists / Change Verification / Brand Standards)
+    ├── knowledge-ingestion.md    # Checklist generation path + copy-paste fallback (see [OPEN] below)
+    ├── client-shape-gotchas.md   # per-client project shape variations + workflow stage names
+    └── vocabulary.md             # Ziflow-specific terms (proof, review, decision, stage, version)
+```
+
+**Native-AI capability matrix (2026-grounded per RESEARCH.md / FEATURES.md):**
+
+| Capability | Available? | Surface | Confidence |
+|------------|------------|---------|------------|
+| ReviewAI Checklists (Public Preview) | yes | ReviewAI → Checklists | HIGH |
+| Change Verification | coming soon | ReviewAI → Change Verification (announced; not yet GA) | MEDIUM |
+| Brand Standards | coming soon | ReviewAI → Brand Standards (announced; not yet GA) | MEDIUM |
+| ReviewAI knowledge-ingestion API | unknown | `[OPEN: Phase 4 — Ziflow ReviewAI knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]` | LOW |
+
+**API surface for the gap:**
+
+- Protocol: REST.
+- Helper: `wait_for_proof(proof_id, max_wait_s)` for eventual consistency — Ziflow's proof-create call returns before the proof is fully readable; subsequent reads against the new proof_id may 404 within the read-after-create window. The helper polls until the proof becomes readable or the max-wait expires.
+- Read-after-create consistency window: `[OPEN: Phase 4 — Ziflow read-after-create consistency window unverified per OPEN-01; Phase 2 owner per CHANGE-04. Conservative default in helper: 30 second poll with 2s interval.]`
+- Auth: API key in header; sandbox project distinct from production project.
+
+**Sandbox access pattern:** Sandbox project per client; production OUT OF SCOPE for v2 test bot. `client_state.yaml` (DESIGN-29 — forward reference, populated in Plan 02-09) carries `ziflow_sandbox_project_id:` per client.
+
+**`native_ai_path` flag (DESIGN-26 routing — forward reference):** `paste | none` only (DEFAULT `paste`) — `api` branch REMOVED under UAT-6.1 (2026-05-10). The tool produces paste-ready ReviewAI checklist criteria + manual-paste fallback content; humans manually configure via Ziflow UI. Native-AI ingestion APIs are OUT OF SCOPE entirely — Q03 (Ziflow ReviewAI knowledge-ingestion API) is `Status: closed` under UAT-6.1. Ziflow has no MCP — direct API only.
+
+**Multi-tenant auth concurrency (UAT-4.2, 2026-05-10).** Ziflow auth-concurrency class is `[OPEN: Phase 4 — Ziflow auth-concurrency class TBD per OPEN-Q25; Phase 1 connector probe owner]`. `client_state.yaml` carries `ziflow.auth_concurrency_class: exclusive | shared` per DESIGN-29.
+
+**Frontmatter contract:** `tier_claims_last_verified: <ISO date>`; `platform: ziflow`. The `tier_claims_last_verified` field is the v2.x build's hook for re-verifying ReviewAI feature availability (Change Verification / Brand Standards GA status) against then-current Ziflow reality.
+
+**Cross-references:** DESIGN-22 (Stage 6 cost — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b implementation prompt — forward reference, populated in Plan 02-07); DESIGN-24 (Stage 8a test harness — forward reference, populated in Plan 02-08); DESIGN-26 (Stage 10 native-AI push — forward reference, populated in Plan 02-08); AUDIT.md §AUDIT-04.1 (v0.3.0 platform skill orphan references catalogued).
+
+---
+
+## Stage 1: Kickoff capture
+
+> **DESIGN-17:** Stage 1 Kickoff capture — inputs (meeting notes / client requirements / internal feedback / Miro workflow map); dual artefact branching (discovery-ready vs draft SOW); Field Notes triage from Coda brain doc (defaults to `processed_at IS NULL`, never auto-merges per DESIGN-09); Miro paste fallback when API ingest unavailable; auto-classification into kickoff template sections with explicit "unknown" markers.
+
+**Skill:** `kickoff-capture/` (NEW per DESIGN-12 inventory).
+**Stage:** 1 (file prefix `01_kickoff_*` per DESIGN-02).
+**Complexity:** Medium.
+
+**Inputs.**
+- **Frontmatter consumed:** `client:` + `project:` + (optional) `frontmatter_version: 2`. New artefact (no `based_on_*` upstream).
+- **Upstream artefact paths:** N/A (Stage 1 is the entry point).
+- **External inputs:** meeting notes (paste), client requirements docs, internal feedback, Miro workflow map (paste — see Miro paste fallback below); Field Notes from `<Client> Brain` Coda doc (read-only via Coda MCP per AUDIT.md §AUDIT-08).
+
+**Outputs.**
+- **Carrier file:** `01_kickoff_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `client:`, `project:`, `frontmatter_version: 2`, `kickoff_branch: discovery-ready | draft-sow`, `field_notes_processed_count: <N>`, `status: draft`.
+- **Branch routing (DESIGN-17 dual-branch contract).** The single `kickoff_branch:` enum field steers downstream stages:
+  - `kickoff_branch: discovery-ready` → Stage 2 (Discovery) consumes `01_kickoff_v<N>.md`.
+  - `kickoff_branch: draft-sow` → Stage 2 SKIPS entirely; Stage 3 (SOW) consumes `01_kickoff_v<N>.md` directly.
+- **Auto-classification markers.** Where the Stage 1 skill cannot confidently assign a section in the kickoff template (e.g., a meeting note ambiguous between "users" and "triggers"), it emits an inline `[unknown — needs human classification]` marker rather than guessing or dropping. Reviewer triages markers before writing `status: approved`.
+
+**Downstream consumer.** discovery-intake (Stage 2) IF `kickoff_branch: discovery-ready`; OR generate-sow (Stage 3) IF `kickoff_branch: draft-sow` (skips Stage 2).
+
+**Status flag(s).** `status: approved` on `01_kickoff_v<N>.md` gates either downstream stage. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 1 → Stage 2 row).**
+
+> Awaiting status: approved write to 01_kickoff_v<N>.md. Branch routing on kickoff_branch: value (discovery-ready -> Stage 2; draft-sow -> SKIP Stage 2 -> Stage 3).
+
+**Key v2 decisions for this stage.**
+
+1. **Dual-branch artefact** — single Stage 1 produces either a discovery-ready kickoff (Stage 2 consumes) OR a draft SOW kickoff (Stage 2 SKIPS, Stage 3 consumes). Branch encoded in `kickoff_branch:` enum frontmatter; Stage 2 / Stage 3 skills read this field directly.
+2. **Field Notes triage filter** — Stage 1 reads the `<Client> Brain` Coda doc Field Notes table filtered on `processed_at IS NULL` (per DESIGN-09 directional boundary — Coda is read-only triage queue; Field Notes are NEVER auto-merged into the local brain). Reviewer human-classifies each surfaced row during kickoff approval; only then does the row's `processed_at` get written back.
+3. **Miro paste fallback** — Miro MCP is currently MISSING per AUDIT.md §AUDIT-08; Stage 1 falls back to a paste-the-workflow-map mode (per DESIGN-07 connector probe + graceful-degradation matrix). When Miro MCP comes online (Phase 1 of v2.x build), API ingest replaces paste fallback without contract change.
+4. **Auto-classification with `[unknown — needs human classification]` inline markers** — Stage 1 attempts auto-classification into the kickoff template's canonical sections (system / users / triggers / data / rules / integrations / exceptions / failure-points), but emits explicit `[unknown — needs human classification]` markers wherever confidence is low. Forces visible reviewer triage instead of silent guesswork.
+
+**Dependencies.** DESIGN-09 (Field Notes never auto-merged — directional boundary); DESIGN-07 (Miro probe — paste fallback when API unavailable); DESIGN-01 (canonical frontmatter scheme — `kickoff_branch:` enum, `status:` lifecycle, `frontmatter_version: 2`); DESIGN-06 (approval gate — `approved_by` + `approved_at` required for `status: approved`).
+
+**Cross-references.** DESIGN-18 (forward — Stage 2 reads `kickoff_branch:` to skip when `draft-sow`; populated next in this plan); DESIGN-19 (forward — Stage 3 reads same `kickoff_branch:` field for direct-from-kickoff path; populated next); AUDIT.md §AUDIT-08 (Miro MCP currently MISSING — Phase 1 connector probe owner); AUDIT.md §AUDIT-01.1 (Field Notes triage flow grounded in v0.3.0 brain pattern).
+
+## Stage 2: Discovery refactor
+
+> **DESIGN-18:** Stage 2 Discovery intake refactor — consume `01_kickoff_v*` artefact (skip raw-notes mode); skip entire stage when kickoff produced a draft SOW; same template structure as v0.3.0 otherwise.
+
+**Skill:** `discovery-intake/` (MODIFIED per DESIGN-12 inventory — input shape changed; raw-notes mode RETIRED).
+**Stage:** 2 (file prefix `02_discovery_*` per DESIGN-02).
+**Complexity:** Low (skip mode adds a branch; template body structurally unchanged from v0.3.0).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_kickoff: 01_kickoff_v<N>` + `client:` + `project:` + `frontmatter_version: 2`. The `based_on_kickoff:` field is now MANDATORY (v0.3.0 lenient mode tolerated absence; v2 requires it).
+- **Upstream artefact paths:** `01_kickoff_v<N>.md` (Stage 1 output, must carry `status: approved`).
+- **External inputs:** none — raw-notes mode RETIRED. Discovery now derives strictly from the approved kickoff artefact; meeting notes / paste flows belong to Stage 1.
+
+**Outputs.**
+- **Carrier file:** `02_discovery_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `based_on_kickoff: 01_kickoff_v<N>`, `client:`, `project:`, `frontmatter_version: 2`, `status: draft → client_review → approved` per DESIGN-01 canonical lifecycle.
+
+**Skip behaviour (DESIGN-18 contract).** IF `01_kickoff_v<N>.md` carries `kickoff_branch: draft-sow`, this stage SKIPS entirely — Stage 1 output flows directly to Stage 3 (generate-sow). The `discovery-intake/` skill itself reads the upstream `kickoff_branch:` value first; if `draft-sow`, the skill emits an explicit "Stage 2 SKIPPED — kickoff produced draft SOW; routing to Stage 3" hand-off and exits without writing a `02_discovery_v<N>.md` artefact. No silent skip; reviewer sees the routing decision logged.
+
+**Downstream consumer.** generate-sow (Stage 3).
+
+**Status flag(s).** `status: approved` on `02_discovery_v<N>.md` gates Stage 3. Approval-gate hook (DESIGN-06) enforces `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 2 → Stage 3 row).**
+
+> Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
+
+**Key v2 decisions for this stage.**
+
+1. **Raw-notes mode RETIRED** — v0.3.0's "paste meeting notes here" entry path is removed; meeting-note ingestion now belongs to Stage 1. Discovery becomes a pure transform of approved kickoff. Eliminates the "did discovery start from notes or kickoff?" ambiguity that v0.3.0 silently allowed.
+2. **Kickoff-as-input forces explicit `based_on_kickoff:`** — frontmatter field is mandatory (no v0.3.0 lenient absence). Approval-gate hook + frontmatter-validate hook (per DESIGN-04 plugin self-tests, D-24) refuse `02_discovery_v<N>.md` writes lacking the field.
+3. **Skip-when-draft-SOW reads `kickoff_branch:`** — single enum field on the upstream kickoff steers the skip decision. No separate "is this a draft-SOW project?" flag; reuses DESIGN-17's branch field.
+4. **Template structurally unchanged** — same v0.3.0 sections (system / users / triggers / data / rules / integrations / exceptions / failure-points). Migration path: existing v0.3.0 `02_discovery_v<N>.md` artefacts read clean against v2 readers (per DESIGN-08 frontmatter-version tolerance).
+
+**Dependencies.** DESIGN-17 (Stage 1 produces `01_kickoff_v<N>.md` with `kickoff_branch:` enum); DESIGN-01 (canonical `status:` lifecycle, `based_on_*` field-naming convention); DESIGN-06 (approval-gate enforcement); DESIGN-08 (frontmatter migration co-existence — v2 readers tolerate v0.3.0 discovery artefacts via `frontmatter_version` field).
+
+**Cross-references.** DESIGN-17 (backward — Stage 1 contract just populated above); DESIGN-19 (forward — Stage 3 SOW refactor; populated next in this plan); AUDIT.md §AUDIT-01.1 (v0.3.0 discovery-intake hand-off contract — input shape was meeting-notes-or-kickoff lenient; v2 locks to kickoff-only).
+
+---
+
+## Stage 3: SOW refactor
+
+> **DESIGN-19:** Stage 3 SOW refactor — single SOW covering platform AND integration; status lifecycle locked to canonical scheme (DESIGN-01); structurally unchanged from v0.3.0 otherwise.
+
+**Skill:** `generate-sow/` (UNCHANGED-structure / behaviour-modified per DESIGN-12 inventory — template body carries forward from v0.3.0; status-lifecycle and input-routing change).
+**Stage:** 3 (file prefix `03_sow_*` per DESIGN-02).
+**Complexity:** Medium (single-spec scope explicit; status-lifecycle alignment to DESIGN-01 canonical).
+
+**Inputs.**
+- **Frontmatter consumed (normal path):** `based_on_discovery: 02_discovery_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + (optional) `platform:` if known at SOW time.
+- **Frontmatter consumed (draft-SOW path):** `based_on_kickoff: 01_kickoff_v<N>` (when Stage 2 was skipped per DESIGN-17/18 dual-branch contract).
+- **Upstream artefact paths:** `02_discovery_v<N>.md` (normal) OR `01_kickoff_v<N>.md` (draft-SOW path) — must carry `status: approved`.
+- **External inputs:** none — SOW is a pure transform of the approved upstream artefact.
+
+**Outputs.**
+- **Carrier file:** `03_sow_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** `based_on_discovery:` OR `based_on_kickoff:` (one or the other, not both); `client:`, `project:`, `frontmatter_version: 2`, `platform:` (if known); `status: draft → client_review → approved`. The `client_review` value is RETAINED per AUDIT.md §AUDIT-01.2 + DESIGN-08 (live in `generate-sow` today; canonical lifecycle preserves it).
+
+**Single-spec scope (DESIGN-19 contract).** ONE SOW covers BOTH platform work and integration work for a project — no Stage-3 split. The Stage 4 fnspec is where platform/integration split happens (per DESIGN-20 — forward reference, populated in Plan 02-06). Stage 3 SOW remains the unified commercial-and-scope artefact the client sees and approves.
+
+**Downstream consumer.** generate-fnspec-platform (Stage 4a — forward reference, populated in Plan 02-06); generate-fnspec-integration (Stage 4b — forward reference, populated in Plan 02-06). Whether 4a, 4b, or both run depends on `platform:` and integration-scope fields populated during Stage 3 SOW review.
+
+**Status flag(s).** `status: approved` on `03_sow_v<N>.md` (canonical) gates Stage 4. `status: client_review` retained as an interim state per DESIGN-08 (v0.3.0 SOW workflow uses it; reader tolerates it; approval-gate enforces lifecycle progression `draft → client_review → approved`).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 3 → Stage 4a row).**
+
+> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.
+
+**Key v2 decisions for this stage.**
+
+1. **Canonical 4-stage lifecycle** — `status: draft → client_review → approved → archived` (per DESIGN-01); SOW always passes through `client_review` interim state in practice. v0.3.0 `generate-sow` already does this; v2 locks the lifecycle as the canonical scheme.
+2. **`client_review` retained** — explicit retention rationale: SOW is the artefact the client signs off on; commercial-review interim state is a real workflow stage, not a v0.3.0 quirk. Per AUDIT.md §AUDIT-01.2 + DESIGN-08 status-lifecycle survey result.
+3. **Single SOW covers BOTH platform AND integration** — no Stage 3 split. Stage 4 (DESIGN-20) is where the platform-fnspec / integration-fnspec split happens. Stage 3 stays unified for client commercial review.
+4. **Structurally unchanged from v0.3.0** — same SOW template body (scope summary, deliverables, assumptions, exclusions, commercial). Migration path: existing v0.3.0 `03_sow_v<N>.md` artefacts read clean against v2 readers via `frontmatter_version` tolerance (DESIGN-08).
+
+**Dependencies.** DESIGN-17 (Stage 1 produces kickoff for draft-SOW path); DESIGN-18 (Stage 2 produces discovery for normal path); DESIGN-01 (canonical `status:` lifecycle including `client_review` retention); DESIGN-08 (frontmatter migration co-existence — `client_review` retained, v2 readers tolerate v0.3.0 SOW artefacts).
+
+**Cross-references.** DESIGN-18 (backward — Stage 2 contract above); DESIGN-20 (forward — Stage 4 fnspec split downstream; populated in Plan 02-06 / Wave 6); AUDIT.md §AUDIT-01.2 (v0.3.0 generate-sow hand-off contract + `client_review` retention rationale grounded in survey).
+
+## Stage 4a: Functional spec — platform
+
+> **DESIGN-20:** Stage 4a Fnspec — platform — `generate-fnspec-platform` skill; per-requirement `delivery: native-ai | api` tagging (the routing key for downstream Stages 5 / 6 / 7b / 10); per-platform capability matrix as classifier input; cross-spec consistency check against 4b; optional for integration-only projects.
+
+**Skill:** `generate-fnspec-platform/` (NEW per DESIGN-12 inventory; replaces v0.3.0 `generate-functional-spec` for platform portions per AUDIT.md §1.3 single-spec-for-everything anti-pattern).
+**Stage:** 4a (file prefix `04a_fnspec-platform_*` per DESIGN-02).
+**Complexity:** Medium-high (per CONTEXT specifics — Stage 4 fnspec split carries the most decision weight; routing-key contract drives 4 downstream stages).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_sow: 03_sow_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + `platform: pipefy | wrike | ziflow` (REQUIRED for this skill to run; activates platform-gated identifiers per DESIGN-01).
+- **Upstream artefact path:** `03_sow_v<N>.md` (Stage 3 output, must carry `status: approved`).
+- **External inputs:** per-platform capability matrix from the platform skill's `references/native-ai-inventory.md` (per DESIGN-14 / DESIGN-15 / DESIGN-16) — used as classifier input for `delivery:` tagging.
+
+**Outputs.**
+- **Carrier file:** `04a_fnspec-platform_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Per-requirement `delivery: native-ai | api` tagging (THE DESIGN-20 contract).** Each requirement row in the fnspec carries an explicit `delivery:` field. Classifier rule: when the requirement maps cleanly to a platform native-AI capability (per the platform's `native-ai-inventory.md` matrix at HIGH or MEDIUM confidence), `delivery: native-ai`; otherwise `delivery: api`. LOW-confidence native-AI capabilities default to `delivery: api` to avoid promising direct ingestion when only copy-paste works (per `## Out of Scope` discipline).
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_sow:`; `platform: <X>`; `pipe_id` / `space_id` / `project_id` (whichever matches the platform per DESIGN-01 platform-gated identifier rules); `status: draft → client_review → approved`.
+
+**Downstream consumer.**
+- `generate-fnspec-integration` (Stage 4b — for cross-spec consistency check at start of 4b).
+- `generate-technical-spec` (Stage 5 — reads `delivery: api` rows for platform-API addendum routing per DESIGN-21 — same wave).
+- `generate-cost-estimate` (Stage 6 — uses `delivery:` for cost categorisation; forward reference, populated in Plan 02-07).
+- `generate-implementation-prompt` (Stage 7b — uses `delivery:` for implementation prompt routing; forward reference, populated in Plan 02-07).
+- `push-native-ai-knowledge` (Stage 10 — reads `delivery: native-ai` rows for ingest selection; forward reference, populated in Plan 02-08).
+
+**Status flag(s).** `status: approved` on `04a_fnspec-platform_v<N>.md` gates Stage 4b consistency check + Stage 5 platform-API addendum routing. Stage 4a is OPTIONAL for integration-only projects (project skips directly to Stage 4b).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 4a → Stage 4b row).**
+
+> Awaiting `status: approved` to `04a`; cross-spec consistency check runs at start of 4b.
+
+**Key v2 decisions for this stage.**
+
+1. **Per-requirement `delivery:` tagging** — single routing key `delivery: native-ai | api` per requirement row. Drives 4 downstream stages (5 / 6 / 7b / 10) without re-classifying. Order is fixed: `native-ai | api` (NOT reversed) — locks the canonical literal.
+2. **Per-platform capability matrix as classifier input** — Stage 4a reads the platform skill's `native-ai-inventory.md` (per DESIGN-14 / DESIGN-15 / DESIGN-16) and uses HIGH / MEDIUM confidence rows to suggest `delivery: native-ai`; LOW confidence (i.e., `[OPEN]`-flagged in the platform skill) defaults to `delivery: api` to avoid optimistic claims.
+3. **Cross-spec consistency check (runs at start of 4b)** — when 4a + 4b both exist, a check at start of 4b verifies: (a) no requirement appears in both specs with conflicting `delivery:` tags; (b) integration touchpoints in 4b reference platform requirements in 4a by ID; (c) no orphan API endpoints. The check is OWNED by Stage 4b but DECLARED in both 4a and 4b for traceability (see Stage 4b key decisions).
+4. **Optional for integration-only projects** — if the project has no platform-side work, Stage 4a does not run. SOW (Stage 3) `platform:` field absence signals this; project routes directly to Stage 4b.
+5. **Legacy single fnspec retired** — `generate-functional-spec` (v0.3.0) is RETIRED per DESIGN-12 inventory + AUDIT.md §1.3 single-spec-for-everything anti-pattern (the legacy single fnspec retired in favour of the 4a + 4b split); v0.3.0 artefacts using the old skill remain readable per DESIGN-08 lenient `frontmatter_version` mode.
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform capability matrices as classifier input — same wave precedent in Plan 02-04); DESIGN-01 (platform-gated identifier rules); DESIGN-08 (lenient mode for v0.3.0 single-fnspec artefacts).
+
+**Cross-references.** DESIGN-19 (backward — Stage 3 SOW upstream); DESIGN-20 Stage 4b below (cross-spec consistency check ownership); DESIGN-21 (Stage 5 platform-API addendum — same wave); DESIGN-22 (Stage 6 reads `delivery:` for cost categorisation — forward reference, populated in Plan 02-07); DESIGN-23 (Stage 7b reads `delivery:` for implementation prompt routing — forward reference, populated in Plan 02-07); DESIGN-26 (Stage 10 reads `delivery: native-ai` rows for ingest — forward reference, populated in Plan 02-08); AUDIT.md §1.3 (v0.3.0 `generate-functional-spec` brittleness — single-spec-for-everything anti-pattern + status-lifecycle skip — backward, populated).
+
+## Stage 4b: Functional spec — integration
+
+> **DESIGN-20:** Stage 4b Fnspec — integration — `generate-fnspec-integration` skill; per-requirement `delivery: native-ai | api` tagging continues (per DESIGN-20 same routing key); cross-spec consistency check against 4a runs at start; optional for platform-only projects (Stage 5 SKIPPED with platform-API addendum on 4a instead).
+
+**Skill:** `generate-fnspec-integration/` (NEW per DESIGN-12 inventory; the integration-side replacement for v0.3.0 `generate-functional-spec` per AUDIT.md §1.3).
+**Stage:** 4b (file prefix `04b_fnspec-integration_*` per DESIGN-02).
+**Complexity:** Medium-high (owns the cross-spec consistency check; same routing-key contract as 4a).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_sow: 03_sow_v<N>` + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` if Stage 4a exists + `client:` + `project:` + `frontmatter_version: 2`.
+- **Upstream artefact paths:** `03_sow_v<N>.md` (REQUIRED, must carry `status: approved`) + (optional) `04a_fnspec-platform_v<N>.md` (must carry `status: approved` if present).
+- **External inputs:** none — integration-side requirements derive from the SOW (and optionally from cross-referenced platform fnspec).
+
+**Outputs.**
+- **Carrier file:** `04b_fnspec-integration_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Per-requirement `delivery: native-ai | api` tagging continues** — same routing-key contract as Stage 4a per DESIGN-20.
+- **Cross-spec consistency report (when 4a exists):** `04b_consistency_check_v<N>.md` emitted FIRST, before fnspec write. Report shape: per-check pass/fail rows (ID-conflict / orphan-touchpoint / orphan-endpoint).
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_sow:`; `based_on_fnspec_platform:` (if present); `status: draft → client_review → approved`.
+
+**Cross-spec consistency check (THE Stage 4b key responsibility).** Runs FIRST, before any fnspec write. Three specific checks:
+1. **No conflicting `delivery:` tags** — no requirement ID appears in both 4a and 4b with conflicting `delivery:` values (one says `native-ai`, the other says `api`).
+2. **Integration touchpoint cross-references** — every integration touchpoint in 4b that references a platform requirement cites that requirement's ID from 4a (no dangling references).
+3. **No orphan API endpoints** — every API endpoint declared in 4b traces back to a `delivery: api` requirement (no endpoints without backing requirements).
+
+Failure of any check halts before fnspec write; emits `04b_consistency_check_v<N>.md` documenting the failure for human triage.
+
+**Downstream consumer.** `generate-technical-spec` (Stage 5 — same wave; consumes `04b` REQUIRED); `generate-cost-estimate` (Stage 6 — forward reference, populated in Plan 02-07); `generate-build-prompt` (Stage 7a — forward reference, populated in Plan 02-07).
+
+**Status flag(s).** `status: approved` on `04b_fnspec-integration_v<N>.md` gates Stage 5. Stage 4b is OPTIONAL for platform-only projects — when absent, Stage 5 SKIPS with platform-API addendum on 4a instead (per DESIGN-21 scope gate, same wave).
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 4b → Stage 5 row).**
+
+> Awaiting `status: approved` to `04b`; Stage 5 tech spec runs (or SKIPS if no `04b`, with platform-API addendum on `04a` instead per DESIGN-21).
+
+**Key v2 decisions for this stage.**
+
+1. **Cross-spec consistency check OWNED here** — Stage 4b runs the check at start when both 4a and 4b exist. Three checks (ID-conflict / orphan-touchpoint / orphan-endpoint); failure halts before fnspec write. Declared in both 4a and 4b key-decisions for two-place traceability.
+2. **Same `delivery: native-ai | api` tagging contract** — routing-key carries forward from 4a per DESIGN-20; downstream stages consume the same field whether it originates in 4a or 4b.
+3. **Optional for platform-only projects** — when Stage 4b does not run, Stage 5 SKIPS and DESIGN-21's platform-API addendum routes on 4a instead (covers API-required portions of an otherwise platform-only build).
+4. **Legacy single fnspec retired** — same as Stage 4a per DESIGN-12 inventory + AUDIT.md §1.3; v0.3.0 single-spec artefacts read clean against v2 readers via DESIGN-08 lenient `frontmatter_version` mode.
+
+**Dependencies.** DESIGN-20 Stage 4a above (cross-spec consistency check input); DESIGN-01 (frontmatter scheme + status-lifecycle).
+
+**Cross-references.** DESIGN-20 Stage 4a above (backward); DESIGN-21 (Stage 5 scope gate consumes 4b existence — same wave); DESIGN-22 (Stage 6 reads `delivery:` — forward reference, populated in Plan 02-07); DESIGN-23 Stage 7a (reads 4b for build prompt — forward reference, populated in Plan 02-07); AUDIT.md §1.3 (v0.3.0 single-spec anti-pattern — backward, populated).
+
+## Stage 5: Tech spec
+
+> **DESIGN-21:** Stage 5 Tech spec scope gate — REQUIRED only when Stage 4b exists; lightweight platform-API addendum on Stage 4a when API-required portions exist on platform-only build; covers error handling + observability + retries + idempotency for API portions; never hand-waves error paths.
+
+**Skill:** `generate-technical-spec/` (MODIFIED per DESIGN-12 inventory — scope gate logic added against Stage 4b existence; error-paths discipline tightened from v0.3.0 baseline per AUDIT.md §1.4).
+**Stage:** 5 (file prefix `05_techspec_*` per DESIGN-02).
+**Complexity:** Medium (scope-gate decision tree adds branching; error-paths discipline adds per-endpoint structure).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (REQUIRED for full path) + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` + `client:` + `project:` + `frontmatter_version: 2` + `platform:` (if known).
+- **Upstream artefact paths:** `04b_fnspec-integration_v<N>.md` (REQUIRED for full path, must carry `status: approved`) + (optional) `04a_fnspec-platform_v<N>.md` (must carry `status: approved` if present and consumed).
+- **External inputs:** none — tech spec is a pure transform of approved upstream fnspec(s).
+
+**Outputs.**
+- **Carrier file (full path):** `05_techspec_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Carrier file (skip path with addendum):** no `05_techspec_v<N>.md` written; `## Platform-API Addendum` H2 section appended INSIDE `04a_fnspec-platform_v<N>.md`; 4a frontmatter gains `has_platform_api_addendum: true`.
+- **Frontmatter set (full path):** `frontmatter_version: 2`; `based_on_fnspec_integration:`; `based_on_fnspec_platform:` (if 4a consumed); `tech_spec_scope: full | platform-api-addendum-only`; `status: draft → approved`.
+
+**Scope gate (THE DESIGN-21 contract — three branches).**
+
+1. **Default path — full tech spec runs.** Stage 4b exists with `status: approved` → full `05_techspec_v<N>.md` written; `tech_spec_scope: full`.
+2. **Skip path with platform-API addendum.** Stage 4b does NOT exist → tech spec SKIPS the standalone artefact. BUT if 4a has any requirement with `delivery: api`, a **platform-API addendum** runs INSIDE the 4a artefact as a `## Platform-API Addendum` H2 section appended to `04a_fnspec-platform_v<N>.md`; 4a frontmatter gains `has_platform_api_addendum: true`. `tech_spec_scope: platform-api-addendum-only` recorded for the addendum block. The addendum carries the same error-paths discipline as a full tech spec for the API portions only.
+3. **Skip path with no addendum.** Stage 4b does NOT exist AND 4a has no `delivery: api` requirements → tech spec SKIPS entirely; no addendum required; no `05_techspec_v<N>.md` written; no 4a frontmatter change.
+
+**Error-paths discipline (THE Stage 5 quality gate — per DESIGN-21 "never hand-waves error paths").** Every API endpoint enumerated by Stage 5 (full path or addendum) MUST carry the following four elements per endpoint — hand-waving is forbidden:
+
+1. **Failure modes** — explicit list of failure conditions (timeouts, 4xx classes, 5xx classes, schema mismatches, rate-limit responses).
+2. **Retry policy** — per-failure-mode retry decision (retry / don't retry / retry with backoff); backoff curve specified (constant / exponential / decorrelated jitter); max-retries bound.
+3. **Idempotency** — per-endpoint idempotency key strategy (where the key comes from; whether the endpoint is naturally idempotent; what guarantees the upstream API provides).
+4. **Observability** — per-endpoint logging contract (request ID propagation; error class tagging; success/failure metric emission).
+
+**Downstream consumer.** `generate-cost-estimate` (Stage 6 — forward reference, populated in Plan 02-07); `generate-build-prompt` (Stage 7a — forward reference, populated in Plan 02-07).
+
+**Status flag(s).** `status: approved` on `05_techspec_v<N>.md` (full path) gates Stage 6 — note Stage 6 ALSO requires the wait-for-commercial-inputs gate per DESIGN-22 (forward reference). For the addendum path, the parent 4a artefact's `status: approved` continues to gate downstream — addendum lives inside 4a so 4a's gate covers both.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 5 → Stage 6 row).**
+
+> Awaiting status: approved on 05_techspec_v<N>.md AND wait-for-commercial-inputs gate before generate-cost-estimate runs (per DESIGN-22).
+
+**Key v2 decisions for this stage.**
+
+1. **Scope-gate against Stage 4b existence** — full tech spec runs only when 4b exists; otherwise SKIP with addendum (when API portions exist) or SKIP entirely (when no API portions anywhere). Three explicit branches; no silent default.
+2. **Lightweight platform-API addendum on Stage 4a** — covers the platform-only-build edge case where API-required portions still need error-paths discipline; addendum lives INSIDE 4a artefact (not a separate file) to keep the artefact count clean for platform-only projects. Frontmatter `has_platform_api_addendum: true` flags 4a artefacts carrying the addendum.
+3. **Error-paths discipline — never hand-waves** — every API endpoint enumerates failure modes + retry policy + idempotency + observability. Per AUDIT.md §1.4 (v0.3.0 `generate-technical-spec` brittleness — error paths underspecified). Reviewer can grep per-endpoint for all four elements.
+
+**Dependencies.** DESIGN-20 (Stage 4a / Stage 4b existence drives the scope gate; `delivery: api` rows drive the addendum decision); DESIGN-22 (forward reference — Stage 5 hand-off cites the wait-for-commercial-inputs gate downstream, populated in Plan 02-07).
+
+**Cross-references.** DESIGN-20 Stage 4a above (consumed for addendum routing); DESIGN-20 Stage 4b above (REQUIRED upstream for full path); DESIGN-22 (Stage 6 wait-for-commercial-inputs gate — forward reference, populated in Plan 02-07); AUDIT.md §1.4 (v0.3.0 `generate-technical-spec` brittleness — error-paths discipline rationale — backward, populated).
+
+## Stage 6: Cost estimate
+
+> **DESIGN-22:** Stage 6 Cost estimate — per-assignee task breakdown (dev / non-dev / QA / lead); `estimated_hours` + `risk_adjusted_hours` columns with mandatory `rationale` field; closed risk-multiplier taxonomy (default L=<TBD-deferred> / M=<TBD-deferred> / H=<TBD-deferred> per D-22 — `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]`); schema-introspection of existing client task table cached in `00_HUB.md`; Coda writes via `table_rows_manage` with `keyColumns` for idempotency, `mutationStatus` polling, rate-limit at 4 req/10s; wait-for-commercial-inputs gate before client-facing summary.
+
+**Skill:** `generate-cost-estimate/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc cost estimation that lived implicitly in `generate-sow` commercial section per AUDIT.md §AUDIT-01.2; cost estimate is now its own stage with its own approval gate, its own carrier file, and its own Coda-mirror contract).
+**Stage:** 6 (file prefix `06_cost_*` per DESIGN-02).
+**Complexity:** **High** — heaviest single decision contract in DESIGN.md per CONTEXT specifics. Combines (a) the risk-multiplier taxonomy STRUCTURE-LOCK contract per D-22 with numerics DEFERRED, (b) the Coda integration mechanics (5 elements: schema-introspection cache, upsert with `keyColumns`, `mutationStatus` polling, rate-limit, halt-on-failure), and (c) the wait-for-commercial-inputs 2-halt-point gate. Stage 6 is also the first stage to write to a non-local mirror (Coda) per DESIGN-09 directional boundary.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` AND/OR `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (at least one MUST exist) + (optional) `based_on_techspec: 05_techspec_v<N>` (full path; absent on skip-with-addendum and skip-entirely scope-gate branches per DESIGN-21) + `client:` + `project:` + `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md` (at least one with `status: approved`); when full Stage 5 ran, `05_techspec_v<N>.md` (`status: approved`); when scope-gate took the addendum branch, `04a_fnspec-platform_v<N>.md` carries the `## Platform-API Addendum` H2 INSIDE 4a + frontmatter `has_platform_api_addendum: true` (per DESIGN-21).
+- **External inputs:** Coda MCP (per AUDIT.md §AUDIT-08 — wired and working) for schema introspection of the client's existing task table + idempotent upserts; client `<Client> Brain/00_HUB.md` for `coda_tasks_schema:` cache (re-read per Stage 6 run to detect schema drift); commercial inputs (rates, head-count availability, sandbox capacity) provided by reviewer through the wait-for-commercial-inputs gate.
+
+**Outputs.**
+- **Carrier file (local — canonical):** `06_cost_v<N>.md` in `<Client> Brain/<Project>/`. Local artefact is the canonical source of truth per DESIGN-09 directional boundary; Coda task-table rows are a one-way mirror.
+- **Intermediate carrier file:** `06_cost_inputs_v<N>.md` — the wait-for-commercial-inputs halt artefact. Lists the commercial inputs Stage 6 needs from the reviewer (rates per assignee class, head-count availability, sandbox capacity windows, any `[OPEN]`-flagged risk-multiplier numerics that need explicit reviewer override). Stage 6 halts on first run emitting this file; resumes when reviewer writes `commercial_inputs_status: provided` plus the input values into the artefact.
+- **Coda mirror (downstream — one-way):** rows in the client's existing Coda task table — one row per task on the per-assignee breakdown. Mirror direction is local → Coda only per DESIGN-09; Coda → local merge is OUT OF SCOPE.
+- **Frontmatter set:** `frontmatter_version: 2`; `based_on_fnspec_platform:` and/or `based_on_fnspec_integration:`; `based_on_techspec:` (when full path); `risk_multiplier_version:` (locks which numeric default set was used — `<TBD-deferred>` for v2 design phase; concrete values populated by Phase 4 OPEN-QUESTIONS resolution); `commercial_inputs_status: pending | provided`; `assignee_class:` (per-row on task breakdown — `dev | non-dev | QA | lead`); `status: draft → client_review → approved`.
+
+**Risk-multiplier taxonomy (THE D-22 STRUCTURE-LOCK contract — numerics DEFERRED).**
+
+Closed taxonomy: three tiers — Low (L), Medium (M), High (H). Mandatory `rationale:` field per row; reviewer cannot ship a row without naming why a specific tier was chosen. Validation owner = Stage 6 author + reviewer. Numeric defaults DEFERRED per D-22 — DESIGN.md uses placeholder syntax (`L=<TBD-deferred>`) and carries an inline `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` marker at point of use. Phase 4 OPEN-QUESTIONS owns resolution; the recommended set from research (~1.1 / ~1.3 / ~1.6) is the candidate but requires dYdX-historical validation before Stage 6 build phase locks numerics.
+
+| Tier | Multiplier | Rationale required | Validation owner | Default value |
+|------|------------|--------------------|-------------------|----------------|
+| L (Low risk) | `risk_adjusted_hours = estimated_hours × <L_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `L=<TBD-deferred>` (research-recommended ~1.1; pending dYdX-historical validation per D-22) |
+| M (Medium risk) | `risk_adjusted_hours = estimated_hours × <M_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `M=<TBD-deferred>` (research-recommended ~1.3; pending dYdX-historical validation per D-22) |
+| H (High risk) | `risk_adjusted_hours = estimated_hours × <H_multiplier>` | yes — mandatory `rationale:` field | Stage 6 author + reviewer | `H=<TBD-deferred>` (research-recommended ~1.6; pending dYdX-historical validation per D-22) `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` |
+
+**Per-assignee task breakdown (DESIGN-22 contract).**
+
+Four assignee classes, locked: `dev | non-dev | QA | lead`. Every task row in `06_cost_v<N>.md` carries an `assignee_class:` field naming exactly one of the four. The artefact opens with a per-class summary table (4 rows × 3 columns: `class | sum(estimated_hours) | sum(risk_adjusted_hours)`) for quick reviewer scan; the per-task detail table follows below. Reviewer can grep the artefact by `assignee_class:` to assemble per-class workload before commercial review.
+
+| Assignee class | Typical scope | Sum estimated_hours | Sum risk_adjusted_hours |
+|----------------|---------------|---------------------|-------------------------|
+| dev | API endpoints + integration code + automated tests | (computed) | (computed) |
+| non-dev | platform configuration (Pipefy / Wrike / Ziflow Behaviors / Copilot / ReviewAI setup), KB content authoring, native-AI ingestion runs | (computed) | (computed) |
+| QA | test-plan execution + UAT support + bug triage | (computed) | (computed) |
+| lead | discovery / SOW / fnspec authoring + reviewer + client-facing communication | (computed) | (computed) |
+
+**Coda integration mechanics (DESIGN-22 contract — exact values; never approximate).**
+
+- **Schema introspection.** First Stage 6 run per client introspects the client's existing Coda task table schema via Coda MCP `table_columns_read`. Schema cached in `<Client> Brain/00_HUB.md` `coda_tasks_schema:` block. Subsequent Stage 6 runs re-read the cache and re-introspect; on schema drift, the skill halts and emits `06_schema_drift_v<N>.md` for human triage (do NOT silently re-map columns).
+- **Upsert pattern.** Coda writes via `table_rows_manage` (Coda MCP) with `keyColumns` parameter set to the client task table's primary-key column(s). Idempotent — re-running Stage 6 against the same `06_cost_v<N>.md` produces no duplicate rows.
+- **Mutation status polling.** Each `table_rows_manage` call returns a `mutationStatus` ID. Stage 6 polls until terminal state (success or failure). Failure halts; reviewer triages from `06_cost_v<N>.md` directly (local artefact remains canonical).
+- **Rate limit.** 4 req/10 second sliding window (= 80% of Coda public ceiling 5 req/10s). Single Coda MCP client; no parallel writers from Stage 6.
+- **Wait-for-commercial-inputs gate (DESIGN-22 contract — 2 halt points).** Two distinct halt points before Stage 6 can produce its client-facing summary:
+  1. **Pre-write halt.** On first Stage 6 invocation, the skill emits `06_cost_inputs_v<N>.md` listing the commercial inputs the reviewer must provide (rates, head-count availability, sandbox capacity windows, any `[OPEN]`-flagged risk-multiplier numerics requiring reviewer override). Stage 6 halts here. Resume condition: the reviewer writes `commercial_inputs_status: provided` plus the actual input values into the artefact.
+  2. **Pre-publish halt.** After Stage 6 computes the per-task breakdown and risk-adjusted totals, the skill halts AGAIN before pushing to Coda (so the reviewer reviews the totals against the provided commercial inputs before the Coda mirror lands). Resume condition: reviewer writes `status: approved` to `06_cost_v<N>.md`. Only then does the Coda upsert + `mutationStatus` polling happen.
+
+**Downstream consumer.** generate-build-prompt (Stage 7a — same wave); generate-implementation-prompt (Stage 7b — same wave). Both read `06_cost_v<N>.md` for the costed scope before producing build / implementation prompts.
+
+**Status flag(s).** `status: approved` on `06_cost_v<N>.md` gates Stage 7a / 7b. Approval-gate hook (per DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. The pre-publish halt point is encoded as a hard gate inside the skill, not just at the approval-gate hook — Stage 6 will not run the Coda upsert until `status: approved` AND `commercial_inputs_status: provided` are both present.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 6 → Stage 7a row).**
+
+> Awaiting `status: approved` to `06`; locks costed scope before build-prompt generation.
+
+**Key v2 decisions for this stage.**
+
+1. **Closed L/M/H risk-multiplier taxonomy with mandatory `rationale:` field per row** — three tiers, no extras, rationale required for every row. Eliminates v0.3.0's implicit-cost-estimate brittleness where risk loading was author judgement without a documented multiplier.
+2. **Numeric defaults DEFERRED per D-22** — DESIGN.md uses `L=<TBD-deferred>` placeholder syntax with inline `[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]` marker. Phase 4 OPEN-QUESTIONS owns resolution; Stage 6 build phase cannot lock numerics without the resolution.
+3. **Per-assignee task breakdown — 4 classes locked** (`dev | non-dev | QA | lead`). Per-row `assignee_class:` field; per-class summary table at top of artefact; reviewer can grep by class for commercial review.
+4. **Schema-introspection of existing client task table cached in `00_HUB.md`** — Stage 6 reads Coda MCP `table_columns_read` once per client, caches in `coda_tasks_schema:` block; subsequent runs detect drift and halt. Eliminates "did I push to the wrong column?" silent failures.
+5. **Coda upsert via `table_rows_manage` with `keyColumns` + `mutationStatus` polling + 4 req/10s rate-limit** — exact mechanics locked. Idempotent; no duplicate rows on retry; rate-limit is 80% of public ceiling (5 req/10s) so Stage 6 stays well clear of throttling.
+6. **Wait-for-commercial-inputs 2-halt-point gate** — pre-write halt (commercial inputs required before compute) + pre-publish halt (reviewer reviews totals before Coda mirror). Two distinct halts; neither bypasses the other.
+
+**Dependencies.** DESIGN-04 (plugin surfaces — Coda MCP wired); DESIGN-09 (directional-boundary contract — local canonical, Coda one-way mirror, Coda upsert is the mirror direction); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform schema introspection — when 4a `delivery: api` rows exist, per-platform schema affects task breakdown).
+
+**Cross-references.** DESIGN-20 (`delivery: native-ai | api` routing key feeds task breakdown); DESIGN-21 (Stage 5 tech spec / `## Platform-API Addendum` informs API-portion estimates); DESIGN-23 Stage 7a (forward — same wave below); DESIGN-23 Stage 7b (forward — same wave below); AUDIT.md §AUDIT-08 (Coda MCP wiring confirmed working); Phase 4 OPEN-QUESTIONS register (risk-multiplier numeric defaults — pending dYdX-historical validation per D-22).
+
+## Stage 7a: Build prompt — dev
+
+> **DESIGN-23:** Stage 7a Build prompt — dev — `generate-build-prompt` skill (MODIFIED, carries forward from v0.3.0); pulls `delivery: native-ai | api` from Stage 4a per DESIGN-20 routing key; Stage 7a covers `delivery: api` requirements (dev-implementation territory) + Stage 5 tech-spec details for API endpoints.
+
+**Skill:** `generate-build-prompt/` (MODIFIED per DESIGN-12 inventory — carries forward from v0.3.0 v0.3.0 baseline; modified to filter on `delivery: api` rows only and to read `delivery_filter: api` frontmatter as its scope contract). Stage 7a is the dev-implementation-prompt path; the per-platform implementation-prompt path lives in Stage 7b below.
+**Stage:** 7a (file prefix `07a_build-prompt_*` per DESIGN-02).
+**Complexity:** Medium (the skill itself carries forward; the modification is limited to the `delivery_filter:` scope contract and the per-row consumption of `delivery: api` tagging).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_integration: 04b_fnspec-integration_v<N>` (REQUIRED — Stage 7a primary input is the integration fnspec) + `based_on_techspec: 05_techspec_v<N>` (REQUIRED for full path; absent on the skip-with-addendum branch where API endpoints live in 4a's `## Platform-API Addendum` H2 instead) + `based_on_cost: 06_cost_v<N>` (REQUIRED — locks costed scope before build prompt) + (optional) `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (consumed when 4a has any `delivery: api` rows requiring API implementation work).
+- **Upstream artefact paths:** `04b_fnspec-integration_v<N>.md` + `05_techspec_v<N>.md` (full path) OR `04a_fnspec-platform_v<N>.md` carrying `## Platform-API Addendum` (skip-with-addendum path) + `06_cost_v<N>.md` (must carry `status: approved` per Stage 6 hand-off).
+- **External inputs:** none — Stage 7a is a pure transform of the approved upstream artefacts.
+
+**Outputs.**
+- **Carrier file:** `07a_build-prompt_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** standard set (`client:`, `project:`, `frontmatter_version: 2`, `based_on_fnspec_integration:`, `based_on_techspec:`, `based_on_cost:`, optional `based_on_fnspec_platform:`) + `delivery_filter: api` (the DESIGN-23 scope-tag — locks 7a to `delivery: api` rows only); `status: draft → approved`.
+
+**What Stage 7a does NOT cover.** `delivery: native-ai` requirements (those route to Stage 7b — see below). The `delivery_filter: api` frontmatter is the explicit complement to Stage 7b's `delivery_filter: native-ai`; the two filters are disjoint.
+
+**Downstream consumer.** dev (human implementer) — Stage 7a's output is a developer-facing build prompt for API / integration work.
+
+**Status flag(s).** `status: approved` on `07a_build-prompt_v<N>.md` gates Stage 8a (provision-test-harness). Approval-gate hook (per DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 7a / 7b → Stage 8a row).**
+
+> Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing.
+
+**Key v2 decisions for this stage.**
+
+1. **Reads `delivery: api` rows only — `delivery_filter: api` frontmatter** — Stage 7a scopes itself by the DESIGN-20 routing key. No re-classification; Stage 4a / 4b's `delivery:` tagging flows straight through.
+2. **Carries forward from v0.3.0 `generate-build-prompt`** — same skill, same template body, only the `delivery_filter:` scope-tag and per-row `delivery: api` consumption are new. Migration path: existing v0.3.0 build-prompt artefacts read clean against v2 readers via `frontmatter_version` lenient mode (DESIGN-08).
+3. **7a + 7b complementary, never overlapping** — Stage 7a `delivery_filter: api` and Stage 7b `delivery_filter: native-ai` are explicit disjoint sets; reviewer can grep both filters for the same project to verify no requirement falls through cracks (and no requirement is double-counted).
+
+**Dependencies.** DESIGN-20 (`delivery: native-ai | api` routing key — Stage 7a reads `delivery: api` rows); DESIGN-21 (Stage 5 tech spec / `## Platform-API Addendum` provides API-endpoint details for the build prompt); DESIGN-22 (Stage 6 cost estimate locks costed scope before build prompt — `based_on_cost:` REQUIRED).
+
+**Cross-references.** DESIGN-19 Stage 3 (SOW upstream); DESIGN-20 Stage 4a / 4b (routing key); DESIGN-21 Stage 5 (tech spec); DESIGN-22 Stage 6 (cost — same wave above); DESIGN-23 Stage 7b (complement — same wave below); DESIGN-24 Stage 8a (forward — anchor placeholder, populated in Plan 02-08); AUDIT.md §AUDIT-01.6 (v0.3.0 generate-build-prompt baseline).
+
+## Stage 7b: Build prompt — implementation per platform
+
+> **DESIGN-23:** Stage 7b Build prompt — implementation per platform — `generate-implementation-prompt` skill (NEW); per-platform shape (Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = checklist/criteria spec); explicitly NOT a universal template (per `## Out of Scope`); reads `delivery: native-ai` rows from Stage 4a per DESIGN-20 routing key.
+
+**Skill:** `generate-implementation-prompt/` (NEW per DESIGN-12 inventory — net-new skill; no v0.3.0 ancestor). Stage 7b is the per-platform implementation-prompt path; complement to Stage 7a above. The skill dispatches on the upstream `platform:` frontmatter to one of three template paths (pipefy / wrike / ziflow); a single universal template is explicitly forbidden per `## Out of Scope`.
+**Stage:** 7b (file prefix `07b_implementation-prompt_*` per DESIGN-02).
+**Complexity:** Medium (per-platform dispatch adds branching; per-platform body shapes are concrete but bounded by the platform skill's `references/` shape from DESIGN-14/15/16).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (REQUIRED — Stage 7b reads platform fnspec) + `based_on_cost: 06_cost_v<N>` (REQUIRED — locks costed scope) + `platform: pipefy | wrike | ziflow` (REQUIRED — drives per-platform dispatch); standard `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` (must carry `status: approved`); `06_cost_v<N>.md` (must carry `status: approved`).
+- **External inputs:** per-platform `references/api-contract.md` + `references/native-ai-inventory.md` from the matching `platform-pipefy/` / `platform-wrike/` / `platform-ziflow/` skill (per DESIGN-14 / DESIGN-15 / DESIGN-16). The native-AI capability matrix in `native-ai-inventory.md` directly drives the per-platform implementation shape (which Behaviors / Copilot workflows / ReviewAI checklists are HIGH/MEDIUM confidence vs LOW with `[OPEN]` flags).
+
+**Outputs.**
+- **Carrier file:** `07b_implementation-prompt_v<N>.md` in `<Client> Brain/<Project>/`.
+- **Frontmatter set:** standard set + `delivery_filter: native-ai` (the DESIGN-23 scope-tag — locks 7b to `delivery: native-ai` rows only); `platform: <pipefy | wrike | ziflow>` (carried from upstream); `status: draft → approved`.
+
+**Per-platform shape (DESIGN-23 contract — NOT a universal template).** The skill dispatches on `platform:` frontmatter to one of three concrete template paths. Each platform's implementation prompt has its own H2 structure; consolidating these into a single template that "fits all platforms" is FORBIDDEN per `## Out of Scope`.
+
+- **Pipefy** (`platform: pipefy`): Behaviors instructions block + KB upload list. The artefact body opens with `## Behaviors instructions` H2 (per-Behavior natural-language instructions for Pipefy's AI Behaviors feature, grouped by Pipe stage) followed by `## KB documents to upload` H2 (enumerated list of KB documents the implementer manually uploads via the Pipefy UI; cites the source doc path in `<Client> Brain/<Project>/` for each). Grounded in `platform-pipefy/references/native-ai-inventory.md` HIGH-confidence Behaviors + KB rows; LOW-confidence rows ship with explicit `[OPEN]` markers per OPEN-01.
+- **Wrike** (`platform: wrike`): Copilot workflow narrative. The artefact body opens with `## Copilot workflow narrative` H2 (prose narrative describing the per-stage Copilot workflow the implementer configures via the Wrike UI; grounded in `platform-wrike/references/native-ai-inventory.md` Copilot HIGH-confidence rows + 16 MCP tools matrix) followed by `## MCP tools required` H2 (enumerated list of Wrike MCP tools the workflow consumes; the OAuth `host` persistence rule per DESIGN-15 is the CRITICAL bug-prevention callout repeated here).
+- **Ziflow** (`platform: ziflow`): checklist/criteria spec. The artefact body opens with `## ReviewAI checklists` H2 (per-checklist criteria spec for ReviewAI Checklists Public Preview; grounded in `platform-ziflow/references/native-ai-inventory.md` HIGH-confidence rows; Change Verification + Brand Standards MEDIUM-confidence rows ship with `[Coming Soon]` markers) followed by `## Manual paste fallback` H2 (the copy-paste fallback when ReviewAI knowledge-ingestion API is unavailable per OPEN-01 — read-after-create eventual consistency window also flagged here).
+- **Universal anti-pattern (per `## Out of Scope`).** A single template that "fits all platforms" is FORBIDDEN. The skill MUST dispatch on `platform:` frontmatter to one of three template paths; reviewer can grep `^## (Behaviors instructions|Copilot workflow narrative|ReviewAI checklists)` in the artefact to confirm the dispatch landed on the right path.
+
+**Downstream consumer.** non-dev (human implementer per platform) — Stage 7b's output is a non-developer-facing implementation prompt for native-AI / platform-config work. The implementer reads the per-platform shape and configures the platform via UI (Pipefy AI Behaviors / Wrike Copilot / Ziflow ReviewAI Checklists).
+
+**Status flag(s).** `status: approved` on `07b_implementation-prompt_v<N>.md` gates Stage 8a (provision-test-harness). Both 7a and 7b approval are required when both run; either's absence (when its `delivery:` filter has no matching rows) is acceptable.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 7a / 7b → Stage 8a row).**
+
+> Awaiting `status: approved` to `07a` and/or `07b`; provision-test-harness reads `delivery:` routing.
+
+**Key v2 decisions for this stage.**
+
+1. **NEW skill — no v0.3.0 ancestor** — `generate-implementation-prompt/` is net-new per DESIGN-12 inventory. v0.3.0 had only the dev-build-prompt path; the per-platform implementation-prompt path is a v2 addition addressing AUDIT.md §AUDIT-01.6 brittleness (build prompt blurred dev / platform-config implementation lines).
+2. **Per-platform shape — NOT a universal template** — three concrete shapes (Pipefy Behaviors instructions + KB upload list / Wrike Copilot workflow narrative / Ziflow ReviewAI checklists) explicitly diverge per platform. A consolidated universal template is forbidden per `## Out of Scope`. Reviewer-grep `^## (Behaviors instructions|Copilot workflow narrative|ReviewAI checklists)` confirms the dispatch.
+3. **Reads `delivery: native-ai` rows only — `delivery_filter: native-ai` frontmatter** — Stage 7b scopes itself by the DESIGN-20 routing key (complement to Stage 7a's `delivery_filter: api`). No re-classification.
+4. **Per-platform reference docs drive affordances** — each platform skill's `references/native-ai-inventory.md` drives which native-AI affordances are HIGH/MEDIUM/LOW confidence; LOW-confidence rows ship with explicit `[OPEN]` markers per OPEN-01 (Pipefy KB content-upload API; Wrike AI Studio knowledge-ingestion API; Ziflow ReviewAI knowledge-ingestion API). Reviewer triages `[OPEN]` markers before approval.
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform skills — Stage 7b consumes `references/native-ai-inventory.md` from the matching platform skill); DESIGN-20 (`delivery: native-ai | api` routing key — Stage 7b reads `delivery: native-ai` rows).
+
+**Cross-references.** DESIGN-19 Stage 3 (SOW upstream); DESIGN-20 Stage 4a (routing key + native-AI rows); DESIGN-22 Stage 6 (cost — same wave above); DESIGN-23 Stage 7a (complement — same wave above); DESIGN-24 Stage 8a (forward — anchor placeholder, populated in Plan 02-08); platform-pipefy / platform-wrike / platform-ziflow (per-platform `references/` consumed); REQUIREMENTS `## Out of Scope` (universal-template anti-pattern callout — backward, populated).
+
+## Stage 8: Test bot — overview
+
+> **DESIGN-24:** Stage 8 Test bot architecture (overview) — `provision-test-harness` skill (8a) bootstraps once + delta-updates each ship; persistent harness lives at `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` (outside this repo); tier-1 deterministic Python + tier-2 AI orchestrator with hard layer-separation contract; `harness_drift` failure class added to `spec gap | implementation gap | environment issue | unknown`; `sandbox_lock.yaml` for concurrency; sandbox allowlist extended to Coda (CRIT-5 fix); test-case lifecycle states `active | obsolete | quarantined`. Detailed tier-1/tier-2 boundary + `client_state.yaml` schema + drift-detection contract live under `## Test bot architecture` (DESIGN-28..30 — FORWARD reference, populated by Plan 02-09).
+
+**This section provides stage-level overview only.** Detailed architecture (tier-1/tier-2 boundary contract per DESIGN-28; `client_state.yaml` skeleton schema per DESIGN-29; drift-detection algorithm contract per DESIGN-30) lives under `## Test bot architecture` — populated by Plan 02-09 in Wave 9. Forward references below cite DESIGN-28/29/30 as anchor placeholders only; body verification for those H3 sections is deferred to Plan 02-09.
+
+**Skills (4 substages — per DESIGN-12 inventory + DESIGN-02 stage-numbering substages).**
+
+- **8a — `provision-test-harness/`** (NEW). Bootstraps the persistent test-bot harness for a client on first run; delta-updates the harness on every subsequent ship (no full re-bootstrap). Reads `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md` + `05_techspec_v<N>.md` (when full Stage 5 ran) + `07a_build-prompt_v<N>.md` and/or `07b_implementation-prompt_v<N>.md`; emits `08a_test-harness_v<N>.md` + writes/updates `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` (outside this repo).
+- **8b — `generate-test-plan/`** (MODIFIED — carries forward from v0.3.0 baseline per AUDIT.md §AUDIT-01.5; modification limited to test-plan path move under `<Client> Brain/test-bot/test_cases/` and consumption of `08a_test-harness_v<N>.md` as its harness contract). Emits `08b_test-plan_v<N>.md`.
+- **8c — `generate-uat-plan/`** (NEW). Generates the user-acceptance-test plan against the same upstream artefact set; emits `08c_uat-plan_v<N>.md`. Human-facing artefact (does NOT feed `execute-tests` directly); reviewer signs off in parallel with 8a/8b approval.
+- **8d — `execute-tests/`** (MODIFIED — carries forward from v0.3.0 baseline per AUDIT.md §AUDIT-01.7; modification limited to harness-path move into `<Client> Brain/test-bot/` and tier-2 AI orchestrator invocation contract per DESIGN-28 forward). Emits `08d_test-results_v<N>.md` (path moves under `<Client> Brain/test-bot/` per DESIGN-02 substage anchors).
+
+**Persistent harness location (DESIGN-24 contract).** `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}` — explicitly OUTSIDE this repo. The harness is a per-client persistent artefact maintained across change requests; it lives under the client's brain folder, NOT under `dydx-delivery/` or anywhere in the plugin source tree. `provision-test-harness` (8a) bootstraps once on first run and delta-updates each ship; the harness is reused across CRs (it accumulates per-client test-case state).
+
+**Tier separation (high-level — detailed contract under DESIGN-28 FORWARD).** Hard layer-separation contract: Python tier-1 is deterministic (state assertions, schema checks, equality, regex match, retry-count check, status-code class); AI tier-2 is the orchestrator (interprets free-form output, classifies failure causes, suggests remediation). **Tier-1 tests are HUMAN-AUTHORED; AI does NOT write tier-1.** Per `## Out of Scope` — the AI orchestrator's role is interpretation + classification + remediation suggestion, never authoring deterministic assertions. Cases that fall in the boundary (mixed-layer cases) are flagged for human design rather than silently assigned. Detailed tier-1/tier-2 boundary contract + 1 worked test-case classification example lives under `## Test bot architecture` (DESIGN-28 — FORWARD reference, populated by Plan 02-09).
+
+**Failure-class enum extension (DESIGN-24 contract).** v0.3.0 `execute-tests` failure classes: `spec gap | implementation gap | environment issue | unknown` (4 classes). v2 adds `harness_drift` as a fifth canonical failure class — surfaces when the test harness itself has drifted from the live sandbox schema (per DESIGN-30 drift-detection contract — FORWARD). Total v2 enum: `spec gap | implementation gap | environment issue | harness_drift | unknown` (5 classes).
+
+**Concurrency contract (DESIGN-24).** Single per-client `sandbox_lock.yaml` at `<Client> Brain/test-bot/sandbox_lock.yaml`. Stage 8d `execute-tests` acquires the lock before running against the client sandbox; releases on completion (success or failure). Prevents two concurrent test runs from contending for the same Pipefy sandbox pipe / Wrike sandbox space / Ziflow sandbox project. Lock file content: timestamp + acquiring agent ID + expected duration; stale-lock detection halts with explicit error rather than auto-clearing.
+
+**Multi-tenant auth-concurrency serialization (UAT-4.2, 2026-05-10).** When a test run touches multiple platform tenants of a class with `auth_concurrency_class: exclusive` (Pipefy is `exclusive`; Wrike + Ziflow TBD per OPEN-Q25), the test runner MUST serialize per-tenant operations and emit an explicit `auth_switch_required` retry signal at every tenant-boundary crossing. Tier-1 (Python deterministic) handles the serialization mechanics — reads `client_state.yaml` `<platform>.auth_concurrency_class:` per platform; if `exclusive`, groups TCs by tenant and runs them in serial groups; emits a structured retry signal to tier-2 when re-auth is needed. Tier-2 (AI orchestrator) handles the human-in-the-loop re-auth prompt when concurrent-tenant execution is required. Failure-class taxonomy gains an `auth_switch_required` sub-class under `environment issue`. CRITICAL — without serialization, concurrent-tenant Pipefy operations fail silently with auth-mismatch errors that masquerade as test failures.
+
+**Pipefy API auth-failure detection (UAT-4.1 bonus, 2026-05-10).** Tier-1 must distinguish auth failure from GraphQL error for Pipefy specifically — Pipefy returns the Keycloak login HTML page (Content-Type: text/html) on auth failure rather than JSON 401. Detection rule: if Pipefy GraphQL response carries `Content-Type: text/html`, classify as `auth_failed` and surface to tier-2 for human re-auth prompt; do NOT attempt to parse the body as JSON. Failure-class taxonomy gains an `auth_failed` sub-class under `environment issue` (sibling to `auth_switch_required` from UAT-4.2). Both `auth_failed` and `auth_switch_required` flow into the same tier-2 re-auth prompt path; the sub-class distinction is for operator diagnostics + test-result reporting.
+
+**Sandbox allowlist (DESIGN-24 — CRIT-5 fix).** v0.3.0 `dydx-delivery/skills/execute-tests/references/safety-rules.md` allowlists Pipefy / Wrike / Ziflow sandbox tenants but OMITS Coda sandbox — Stage 6 (`generate-cost-estimate/` per DESIGN-22) writes to Coda but the v0.3.0 sandbox allowlist does not cover Coda, so a strict reading of safety-rules forbids Stage 6's Coda writes against any "sandbox" framing. v2 extends the allowlist to include the Coda sandbox tenant per CRIT-5. The canonical safety-rules document (per DESIGN-03 SoT contract — `dydx-delivery/references/safety-rules.md`, promoted to plugin-level `references/`) carries the extended allowlist; v0.3.0 path `dydx-delivery/skills/execute-tests/references/safety-rules.md` is RETIRED (per DESIGN-03 collapse of 4-copy duplication catalogued at AUDIT.md §AUDIT-05).
+
+**Test-case lifecycle states (DESIGN-24 contract — 3 states).** `active | obsolete | quarantined`. Per-test-case `state:` field in `<Client> Brain/test-bot/test_cases/<case>.yaml`:
+
+- **active** — default state for newly-authored or currently-passing cases; runs in Stage 8d every ship.
+- **obsolete** — case is no longer relevant (the spec it tested has been retired or replaced); does NOT run; preserved for audit history rather than deleted.
+- **quarantined** — case is failing for reasons unrelated to the system under test (flaky external dependency, known sandbox infrastructure issue); SKIPPED in Stage 8d with explicit `quarantined` reason in `08d_test-results_v<N>.md`. Quarantine is bounded — reviewer must triage quarantined cases before each ship.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform:` and/or `based_on_fnspec_integration:` (whichever exist) + `based_on_techspec:` (when full Stage 5 ran) + `based_on_build_prompt:` and/or `based_on_implementation_prompt:` (Stage 7a / 7b carriers); `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` and/or `04b_fnspec-integration_v<N>.md`; `05_techspec_v<N>.md` (when full path); `07a_build-prompt_v<N>.md` and/or `07b_implementation-prompt_v<N>.md` — all with `status: approved`.
+- **External inputs:** per-platform sandbox tenant access (Pipefy sandbox pipe / Wrike sandbox space + `wrike_host` per DESIGN-15 / Ziflow sandbox project); Coda sandbox tenant per CRIT-5 fix; `client_state.yaml` (DESIGN-29 FORWARD) for cached schema state per platform.
+
+**Outputs.**
+- **Carrier files:** `08a_test-harness_v<N>.md` (provisioning record) + `08b_test-plan_v<N>.md` (test plan) + `08c_uat-plan_v<N>.md` (UAT plan, human-facing) + `08d_test-results_v<N>.md` (test-run results, under `<Client> Brain/test-bot/`); persistent harness state at `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}`.
+- **Frontmatter set on 8a:** standard set + `harness_version:` + `client_state_version:` + `last_known_schema_version:` per platform.
+- **Frontmatter set on 8d:** standard set + `failure_classes:` (enum: `spec gap | implementation gap | environment issue | harness_drift | unknown`) + `quarantined_count:` + `obsolete_count:`.
+
+**Downstream consumer.** Stage 9 — `update-documentation` (DESIGN-25 below) reads `08d_test-results_v<N>.md` (`based_on_test_results:` REQUIRED on Stage 9 frontmatter).
+
+**Status flag(s).** `status: approved` on 8a + 8b gates 8d (execute-tests). 8c is human-facing (UAT plan); reviewer signs off in parallel. `status: approved` on 8d gates Stage 9.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 8a/b/c → Stage 8d row).**
+
+> Awaiting status: approved on 08a_test-harness_v<N>.md AND 08b_test-plan_v<N>.md; execute-tests runs against current client_state.yaml; sandbox_lock.yaml acquired before run.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 8d → Stage 9 row).**
+
+> Awaiting status: approved on 08d_test-results_v<N>.md; doc-diff generation requires test approval.
+
+**Key v2 decisions for this stage (overview-level — detailed decisions under DESIGN-28..30 FORWARD).**
+
+1. **Persistent harness lives outside this repo** — `<Client> Brain/test-bot/{client_state.yaml, test_runner.py, test_cases/}`. Per-client; reused across CRs. NOT under `dydx-delivery/`.
+2. **Hard tier-1/tier-2 separation** — Python tier-1 = deterministic (human-authored); AI tier-2 = interpretation/classification/remediation (orchestrator). AI does NOT write tier-1 assertions per `## Out of Scope`.
+3. **`harness_drift` failure class added** — fifth canonical class extending v0.3.0's 4-class enum.
+4. **Sandbox allowlist extended to Coda (CRIT-5 fix)** — canonical safety-rules at `dydx-delivery/references/safety-rules.md` allowlists the Coda sandbox tenant; v0.3.0 omission resolved.
+5. **`sandbox_lock.yaml` for concurrency** — single per-client lock; stale-lock detection halts (no auto-clear).
+6. **Test-case lifecycle states `active | obsolete | quarantined`** — explicit lifecycle replaces v0.3.0 implicit "delete or keep" pattern.
+
+**Dependencies.** DESIGN-03 (canonical safety-rules — sandbox allowlist lives here per CRIT-5 fix); DESIGN-04 (test-bot-orchestrator agent runs Stage 8d tier-2 invocation); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform sandbox access); DESIGN-22 (Stage 6 Coda writes — sandbox allowlist extension covers same Coda tenant); DESIGN-28 / DESIGN-29 / DESIGN-30 (FORWARD — detailed architecture under `## Test bot architecture`, populated by Plan 02-09).
+
+**Cross-references.** DESIGN-04 (test-bot-orchestrator agent + sandbox_lock concurrency); DESIGN-25 (downstream — Stage 9 reads `08d_test-results_v<N>.md`); DESIGN-28 (FORWARD — anchor placeholder, tier-1/tier-2 boundary populated by Plan 02-09); DESIGN-29 (FORWARD — anchor placeholder, `client_state.yaml` schema populated by Plan 02-09); DESIGN-30 (FORWARD — anchor placeholder, drift-detection contract populated by Plan 02-09); AUDIT.md §AUDIT-01.5 (v0.3.0 `generate-test-plan` baseline); AUDIT.md §AUDIT-01.7 (v0.3.0 `execute-tests` baseline); PITFALLS CRIT-5 (sandbox allowlist Coda omission).
+
+## Stage 9: Documentation publishing
+
+> **DESIGN-25:** Stage 9 Documentation publishing — `update-documentation` skill writes `ChangeRequests/<CR>/doc-diff.md`; reviewer-approval gate before push; deterministic local→Drive folder/filename mapping; closed `doc_type` enum; naming `<client_slug>__<project_slug>__<doc_type>__v<N>` (double-underscore separator); `doc_published_at` timestamp invariant; halt condition if `00_HUB.md` `Documentation:` link missing (graceful — does not halt other stages per MOD-1).
+
+**Skill:** `update-documentation/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc documentation drops that lived implicitly in change-request workflow per AUDIT.md §AUDIT-04). Stage 9 is the publish-to-Drive path; doc-diff gate forces reviewer approval before any doc lands externally.
+**Stage:** 9 (file prefix `09_doc-diff_*` per DESIGN-02; the `doc-diff.md` artefact lives under `ChangeRequests/<CR>/` rather than the per-stage carrier path).
+**Complexity:** Medium (closed enum + deterministic naming + reviewer-approval gate; the heavy lifting is the doc-diff content, not the publishing mechanism).
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_test_results: 08d_test-results_v<N>` (REQUIRED — Stage 9 reads test-results approval as upstream gate) + all upstream `04*` / `05` / `06` / `07*` artefacts referenced (transitively — Stage 9's diff reflects every artefact whose canonical version changed in this CR); `client:`, `project:`, `frontmatter_version: 2`, `cr_id:` (the change-request identifier).
+- **Upstream artefact paths:** `08d_test-results_v<N>.md` (must carry `status: approved`); all upstream artefacts whose published versions are being updated (`02_discovery_v<N>.md` / `03_sow_v<N>.md` / `04a_fnspec-platform_v<N>.md` / `04b_fnspec-integration_v<N>.md` / `05_techspec_v<N>.md` / `07a_build-prompt_v<N>.md` / `07b_implementation-prompt_v<N>.md`).
+- **External inputs:** Drive MCP for publish; client `<Client> Brain/00_HUB.md` for the `Documentation:` Drive folder link (the per-client publish target).
+
+**Outputs.**
+- **Carrier file:** `ChangeRequests/<CR>/doc-diff.md` — the per-CR diff artefact listing every doc that will be published, per-doc before/after, and a status flag.
+- **Drive uploads (downstream — one-way):** per-doc Drive uploads. Each Drive doc carries frontmatter: `doc_type:` (closed enum below), `doc_version: <semver>`, `doc_published_at: <ISO>`, `last_diff_review_at: <ISO>`, `client:`, `project:`. `doc_published_at` is set by Stage 9 at the moment of Drive push — this is the invariant downstream Stage 10 reads (per CRIT-8 fix).
+- **Frontmatter set on `doc-diff.md`:** `cr_id:`, `client:`, `project:`, `frontmatter_version: 2`, `based_on_test_results:`, `last_diff_review_at:` (set by reviewer when approving), `status: draft → approved`, plus per-doc `doc_type:` + `doc_version:` for each doc in the diff.
+
+**Closed `doc_type` enum (DESIGN-25 contract — exactly 9 values).** Skill quality gate REJECTS any doc-diff entry whose `doc_type:` is not one of:
+
+- `discovery` — Stage 2 discovery artefact
+- `sow` — Stage 3 statement of work
+- `platform_fnspec` — Stage 4a platform functional spec
+- `integration_fnspec` — Stage 4b integration functional spec
+- `tech_spec` — Stage 5 technical spec
+- `test_plan` — Stage 8b test plan
+- `build_prompt` — Stage 7a dev build prompt
+- `results` — Stage 8d test results
+- `brain_spoke` — `<Client> Brain/<spokes>/` per-spoke published mirror (Stage 11 also writes brain_spoke fragments via Coda mirror per DESIGN-27)
+
+Adding a new doc_type requires updating this enum + the Stage 9 quality gate + the Stage 10 ingestion filter (per DESIGN-26 — Stage 10 reads `doc_type:` to decide which fragments are ingestable).
+
+**Naming convention (DESIGN-25 contract — double-underscore separator).** `<client_slug>__<project_slug>__<doc_type>__v<N>` — DOUBLE-UNDERSCORE between fields (not single). Example: `acme-inc__widget-redesign__platform_fnspec__v3`. Single-underscore separators are FORBIDDEN by the skill's quality gate (single-underscores appear inside `doc_type:` enum values like `platform_fnspec`, so a single-underscore field separator would conflate field boundaries with intra-field underscores). Slugs are kebab-case lowercase per DESIGN-01 file-path convention.
+
+**doc-diff workflow (DESIGN-25 contract — reviewer-approval gate before push).**
+
+1. Stage 9 skill runs at change-request close. Computes the diff: which docs changed since the previous CR's published versions (or which docs are new in this CR). Emits `ChangeRequests/<CR>/doc-diff.md` with per-doc before/after content + per-doc `doc_type:` + `doc_version:` (incremented per semver per change kind) + status `draft`.
+2. Skill HALTS at `status: draft`. Resume condition: reviewer reviews `doc-diff.md`, writes `status: approved` + `last_diff_review_at: <ISO>` (the moment of approval). Reviewer can edit per-doc content during review; the diff artefact captures the as-published version.
+3. On `status: approved` resume, skill pushes each doc to Drive at the `Documentation:` folder per `00_HUB.md`, applying the closed-enum naming convention. Each Drive doc carries `doc_published_at: <ISO>` (set at the moment of push) AND `last_diff_review_at:` (from the doc-diff approval) — `doc_published_at:` is always >= `last_diff_review_at:` by construction. This invariant is the gate Stage 10 (DESIGN-26) refuses to violate (CRIT-8 fix).
+
+**Halt condition (DESIGN-25 — MOD-1 graceful halt).** If `<Client> Brain/00_HUB.md` `Documentation:` link is missing (no per-client Drive folder configured), Stage 9 halts with explicit error written into `doc-diff.md`. The halt is GRACEFUL per MOD-1 — only Stage 9 halts; other stages (1–8, 10–11) continue to run for unrelated artefacts in this CR. Resume condition: reviewer adds `Documentation:` link to `00_HUB.md` AND re-runs Stage 9 against the same `cr_id:`.
+
+**Downstream consumer.** Stage 10 — `push-native-ai-knowledge` (DESIGN-26 below) reads approved Stage 9 doc fragments via `doc_type:` filter and ingests them into per-platform native-AI surfaces. Stage 10 is GATED on `doc_published_at >= last_diff_review_at` per CRIT-8 fix — Stage 10 refuses to ingest any fragment violating the invariant.
+
+**Status flag(s).** `status: approved` on `ChangeRequests/<CR>/doc-diff.md` gates Stage 10. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`; AND the skill internal contract refuses to push to Drive without `last_diff_review_at:` set.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 9 → Stage 10 row).**
+
+> Awaiting status: approved on doc-diff.md AND doc_published_at set; push-native-ai-knowledge refuses ingest if doc_published_at < last_diff_review_at (CRIT-8 fix).
+
+**Key v2 decisions for this stage.**
+
+1. **Closed `doc_type` enum (9 values)** — `discovery | sow | platform_fnspec | integration_fnspec | tech_spec | test_plan | build_prompt | results | brain_spoke`. Skill rejects any doc-diff entry whose `doc_type:` is not in the enum.
+2. **Double-underscore naming convention** — `<client_slug>__<project_slug>__<doc_type>__v<N>`. Single-underscore separators FORBIDDEN (intra-field underscores in `doc_type:` values like `platform_fnspec` would conflate field boundaries with intra-field underscores).
+3. **doc-diff written + reviewed BEFORE push** — Stage 9 emits `doc-diff.md` first, halts; reviewer approves; only then does Drive push happen. No silent overwrites.
+4. **`doc_published_at` invariant set at push** — `doc_published_at: <ISO>` set at the moment of Drive push; ALWAYS >= `last_diff_review_at:` by construction. This is the gate Stage 10 refuses to violate per CRIT-8.
+5. **MOD-1 graceful halt on missing `Documentation:` link** — Stage 9 halts with explicit error; other stages continue. Reviewer adds the link to `00_HUB.md` and re-runs Stage 9.
+
+**Dependencies.** DESIGN-04 (Drive MCP — `mcpServers` field includes Drive); DESIGN-09 (directional-boundary contract — local canonical, Drive one-way mirror, Drive → local merge OUT OF SCOPE); DESIGN-26 (downstream — Stage 10 reads `doc_type:` filter + `doc_published_at`/`last_diff_review_at` invariant per CRIT-8).
+
+**Cross-references.** DESIGN-26 (CRIT-8 paired contract — Stage 10 refuses ingest if `doc_published_at < last_diff_review_at`); AUDIT.md §AUDIT-04 (v0.3.0 ad-hoc documentation drop catalogued); PITFALLS MOD-1 (graceful halt discipline); PITFALLS CRIT-8 (publish-before-review race).
+
+## Stage 10: Native-AI upload bundle + audit log (UAT-6.1, 2026-05-10)
+
+> **DESIGN-26 (REVISED under UAT-6.1):** Stage 10 produces a paste-ready upload bundle for humans + tracks completed uploads in an audit log. NO API ingestion — the API ingestion paths (Pipefy AI KB / Wrike AI Studio / Ziflow ReviewAI knowledge-ingestion) were the SINGLE BIGGEST research blocker (Q01/Q02/Q03) and have been removed from scope under UAT-6.1. The tool produces correctly-shaped upload instructions (per-platform: Pipefy Behaviors + KB upload list; Wrike Copilot workflow narrative; Ziflow ReviewAI checklist criteria); humans manually upload via each platform's UI. The skill tracks `uploaded_at:` per fragment for re-run idempotency. Refuses to instruct human upload if `doc_published_at < last_diff_review_at` (CRIT-8 invariant carried forward via "refuse to instruct" instead of "refuse to ingest"); refuses to instruct if per-platform target ID in `00_HUB.md` mismatches `client:` frontmatter (MIN-4 invariant carried forward).
+
+**Skill:** `push-native-ai-knowledge/` (NEW per DESIGN-12 inventory — net-new skill; v0.3.0 had no native-AI ingestion path). REVISED under UAT-6.1: scope reduced from "API push + paste fallback" to "paste bundle + upload audit log." Consumes approved Stage 9 doc fragments + per-platform `native-ai-inventory.md` reference; produces upload instructions for humans + tracks completion timestamps for re-run idempotency.
+**Stage:** 10 (file prefix `10_native-ai_*` per DESIGN-02).
+**Complexity:** **Low-Medium (post UAT-6.1)** — two branching paths (`paste | none`); two refusal contracts (CRIT-8 + MIN-4) preserved as "refuse to instruct human"; per-platform target-ID validation; HALT-and-resume protocol when human upload is required.
+
+**Inputs.**
+- **Frontmatter consumed:** `based_on_fnspec_platform: 04a_fnspec-platform_v<N>` (REQUIRED — Stage 10 reads platform fnspec for the per-requirement `delivery: native-ai` rows that drive ingestion targets) + `based_on_doc_diff: ChangeRequests/<CR>/doc-diff.md` (REQUIRED — must carry `status: approved`) + `client:` (REQUIRED — Stage 10 validates against per-platform target IDs per MIN-4) + `platform: pipefy | wrike | ziflow` (REQUIRED — drives per-platform dispatch); standard `frontmatter_version: 2`, `cr_id:`.
+- **Upstream artefact paths:** `04a_fnspec-platform_v<N>.md` (`status: approved`); `ChangeRequests/<CR>/doc-diff.md` (`status: approved` AND `last_diff_review_at:` set); per-doc Drive uploads from Stage 9 (each carrying `doc_published_at: <ISO>` >= `last_diff_review_at: <ISO>` per DESIGN-25 invariant).
+- **External inputs:** per-platform `<platform-skill>/references/native-ai-inventory.md` (per DESIGN-14/15/16) for the capability matrix that drives `native_ai_path:` branching; client `<Client> Brain/00_HUB.md` `Pipefy AI:` / `Wrike AI:` / `Ziflow AI:` blocks for the per-platform target ID (the per-client AI tenant identifier).
+
+**Outputs.**
+- **Carrier file (local — canonical):** `10_native-ai-push_v<N>.md` in `<Client> Brain/<Project>/` — the per-CR ingestion record listing every fragment ingested + its target ID + status.
+- **Per-ingested-doc records:** Each ingested doc fragment carries `doc_version: <semver>` (carried forward from Stage 9 `doc_version:`) + `ingested_at: <ISO>` (set by Stage 10 at the moment of ingestion) + `target_id: <platform-specific>` (the per-platform AI target identifier from `00_HUB.md`).
+- **Frontmatter set on `10_native-ai-push_v<N>.md`:** standard set + `native_ai_path: api | paste | none` (the branch taken per fragment) + `target_id:` (the per-platform AI target ID validated against `client:` per MIN-4) + per-fragment `doc_version:` + `ingested_at:`; `status: draft → approved`.
+
+**Branching on `native_ai_path` (DESIGN-26 contract — REVISED enum under UAT-6.1).** Skill reads per-platform `native-ai-inventory.md` capability matrix (kept as human-readable reference under UAT-6.1) and per-fragment `delivery: native-ai` row to decide branch:
+
+- **`native_ai_path: paste`** — Human-upload path. DEFAULT. Skill emits the doc fragment formatted for the per-platform paste shape (Pipefy = Behaviors instructions + KB upload list; Wrike = Copilot workflow narrative; Ziflow = ReviewAI checklist criteria + manual-paste fallback content). HALTS with explicit instructions naming the target platform UI, the target document, and the action sequence the human follows. Resumes when human writes `paste_confirmed: <ISO>` + `uploaded_at: <ISO>` into `10_native-ai-push_v<N>.md`.
+- **`native_ai_path: none`** — Skip — no native-AI surface exists for this fragment (e.g., a `delivery: api` row with no `delivery: native-ai` complement; or a fragment whose `doc_type:` is not in the per-platform upload-target set). Skill records "no upload target" in `10_native-ai-push_v<N>.md` and continues to next fragment.
+
+**`api` branch REMOVED under UAT-6.1.** Q01 (Pipefy AI KB content-upload endpoint), Q02 (Wrike AI Studio knowledge-ingestion API), Q03 (Ziflow ReviewAI knowledge-ingestion API) were the SINGLE BIGGEST research blocker — withdrawn under UAT-6.1. NO API ingestion path. Tool produces docs; humans upload manually. Re-evaluation of API ingestion is a post-v2.6 milestone gated on first-real-client-engagement-practice-run completion.
+
+**CRIT-8 refusal contract (UAT-6.1 — refuse to instruct).** Stage 10 REFUSES to emit upload instructions for any doc fragment whose source Drive doc carries `doc_published_at < last_diff_review_at`. This is a hard halt, not a warning. The invariant is set by Stage 9 (DESIGN-25) at push time — `doc_published_at >= last_diff_review_at` must always hold by construction. If Stage 10 reads a fragment violating the invariant (e.g., a manually-edited Drive doc that bypassed Stage 9), the skill halts with an explicit error in `10_native-ai-push_v<N>.md` naming the violating fragment + the violating timestamps. Reviewer must triage — either re-run Stage 9 to re-publish the fragment cleanly, or surface a CR amendment. Under UAT-6.1, the principle changes from "refuse to ingest via API" to "refuse to instruct human upload" but the invariant + halt mechanics are identical.
+
+**MIN-4 refusal contract (UAT-6.1 — refuse to instruct).** Stage 10 reads the per-platform target ID from `<Client> Brain/00_HUB.md` (Pipefy AI: / Wrike AI: / Ziflow AI: blocks). REFUSES to emit upload instructions if the resolved `target_id:` does not match the artefact's `client:` frontmatter — i.e., if the per-platform AI target configured in `00_HUB.md` belongs to a different client than the artefact under upload. This prevents cross-client contamination. Hard halt; reviewer must triage `00_HUB.md` configuration.
+
+**Default + only path: paste bundle + upload audit (DESIGN-26 REVISED under UAT-6.1).** `native_ai_path: paste` is the default AND only active branch. The skill emits a structured upload bundle per fragment (target platform UI / target document / per-platform paste shape) and tracks `uploaded_at:` per fragment. Re-runs read the audit log and skip already-uploaded fragments (idempotency). The `api` branch is REMOVED entirely — optimistic-API anti-pattern remains FORBIDDEN; under UAT-6.1, no API ingestion exists at all to be optimistic about.
+
+**Downstream consumer.** Stage 11 — `sign-off-and-archive` (DESIGN-27 below) reads `10_native-ai-push_v<N>.md` (`status: approved` required) along with all upstream approved artefacts before archiving the CR.
+
+**Status flag(s).** `status: approved` on `10_native-ai-push_v<N>.md` gates Stage 11. Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. CRIT-8 refusal + MIN-4 refusal halt the skill BEFORE writing `status: approved` — both refusals are skill-internal hard halts, not approval-gate violations.
+
+**Hand-off message (verbatim from DESIGN-13 matrix Stage 10 → Stage 11 row).**
+
+> Awaiting status: approved on per-platform native-AI ingestion records; sign-off-and-archive runs only after all push-native-ai-knowledge runs succeed (or native_ai_path: none).
+
+**Key v2 decisions for this stage (REVISED under UAT-6.1).**
+
+1. **`native_ai_path: paste | none` only** — `api` branch REMOVED. Two explicit branches; per-fragment branch is recorded in the upload audit log for traceability.
+2. **CRIT-8 refusal — `doc_published_at < last_diff_review_at` halts upload-instructions emission** — paired contract with DESIGN-25's invariant; Stage 10 will not instruct human upload for fragments that violate the publish-after-review ordering.
+3. **MIN-4 refusal — per-platform target ID must match `client:` frontmatter** — prevents cross-client contamination via mis-configured `00_HUB.md` AI targets.
+4. **Paste is the only path under UAT-6.1** — native-AI ingestion APIs are OUT OF SCOPE entirely. Tool produces docs; humans upload manually. No optimistic-API claims because no API path exists.
+5. **Per-doc audit traceability — `doc_version:` + `uploaded_at:` + `paste_confirmed:` + `target_id:`** — every fragment in the upload bundle carries these fields so a downstream audit can reconstruct what version of which doc was uploaded to which target at what time. `uploaded_at:` enables re-run idempotency (already-uploaded fragments skipped).
+
+**Dependencies.** DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform `native-ai-inventory.md` capability matrices); DESIGN-25 (Stage 9 `doc_published_at:` + `last_diff_review_at:` fields — CRIT-8 paired contract); platform-pipefy / platform-wrike / platform-ziflow (per-platform target ID + ingestion shape).
+
+**Cross-references.** DESIGN-25 (CRIT-8 paired contract — `doc_published_at >= last_diff_review_at` invariant set in Stage 9, refused-on-violation in Stage 10); DESIGN-27 (downstream — Stage 11 reads `10_native-ai-push_v<N>.md` approval before archive); PITFALLS CRIT-8 (publish-before-review race); PITFALLS MIN-4 (cross-client AI tenant contamination); AUDIT.md §AUDIT-04 (v0.3.0 native-AI ingestion absence catalogued).
+
+## Stage 11: Sign-off, brain update, archive
+
+> **DESIGN-27:** Stage 11 Sign-off, brain update, archive — `sign-off-and-archive` skill updates local `<Client> Brain/<spokes>/`; one-way push to Coda mirror with brain-mirror Coda doc template (Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes); `tone_lint` pass before publish (MOD-9 prevention); CR move to `Archive/`; `00_Index.md` version bump; Field Notes table preserved (input-only, never overwritten); pre-archive sanity check (no orphan refs, no missing artefacts).
+
+**Skill:** `sign-off-and-archive/` (NEW per DESIGN-12 inventory — replaces v0.3.0 ad-hoc CR closeout that lacked a canonical brain-update + archive step). Stage 11 is the terminal stage in the pipeline; closes out the CR by updating local brain spokes, mirroring to Coda, archiving the CR folder, and bumping the per-project index.
+**Stage:** 11 (file prefix `11_signoff_*` per DESIGN-02).
+**Complexity:** Medium (multiple distinct sub-actions — local spoke update, Coda mirror push with template, CR move, index bump, pre-archive sanity check; each is bounded but the orchestration must be idempotent).
+
+**Inputs.**
+- **Frontmatter consumed:** all upstream artefacts in this CR — every approved artefact from Stages 1–10 must carry `status: approved` before Stage 11 can run; `cr_id:` (the change-request identifier); `client:`, `project:`, `frontmatter_version: 2`.
+- **Upstream artefact paths:** the entire CR's artefact set — `02_discovery_v<N>.md` / `03_sow_v<N>.md` / `04a_fnspec-platform_v<N>.md` / `04b_fnspec-integration_v<N>.md` / `05_techspec_v<N>.md` / `06_cost_v<N>.md` / `07a_build-prompt_v<N>.md` / `07b_implementation-prompt_v<N>.md` / `08a_test-harness_v<N>.md` / `08b_test-plan_v<N>.md` / `08c_uat-plan_v<N>.md` / `08d_test-results_v<N>.md` / `ChangeRequests/<CR>/doc-diff.md` / `10_native-ai-push_v<N>.md` — every applicable artefact for this CR with `status: approved`.
+- **External inputs:** Coda MCP for one-way mirror push; brain-mirror Coda doc template per Phase 4 OPEN-05 (the canonical brain-mirror Coda doc template — landed by Phase 8 of the 9-phase build per CHANGE-04, drafted in v2 design as the 7-section template below).
+
+**Outputs.**
+- **Local brain update:** Updates `<Client> Brain/<spokes>/` — per-spoke markdown files (one per canonical brain spoke: workflows, platforms, integrations, operating-model, change-history). Local canonical state per DESIGN-09 directional boundary.
+- **Coda mirror update (downstream — one-way):** Per the brain-mirror Coda doc template (7 sections — see below); push direction is local → Coda only per DESIGN-09. Field Notes section is INPUT-ONLY in Coda — Stage 11 NEVER overwrites the Field Notes table (per DESIGN-09 + DESIGN-27 contract).
+- **CR archive:** Source CR folder `<Client> Brain/<Project>/ChangeRequests/<CR>/` moved to `<Client> Brain/<Project>/Archive/<CR>/`. Idempotent — re-running Stage 11 on an already-archived CR is a no-op.
+- **`00_Index.md` version bump:** Appends a new entry per archived CR (`cr_id:` + `archived_at: <ISO>` + summary line) to `<Client> Brain/<Project>/00_Index.md`. The index is the per-project version-history record.
+- **Carrier file:** `11_signoff_v<N>.md` in `<Client> Brain/<Project>/` (becomes the `<Project>/Archive/<CR>/11_signoff_v<N>.md` after the CR move). Frontmatter: standard set + `archived_at: <ISO>` + `tone_lint_status: passed | failed` + `pre_archive_sanity_status: passed | failed`.
+
+**Brain-mirror Coda doc template (DESIGN-27 contract — 7 canonical sections).** The brain-mirror Coda doc per client carries exactly seven H2 sections, in this canonical order:
+
+1. **Overview** — high-level client + project framing; one-liner per active project.
+2. **Workflows** — per-workflow narrative (Stage 2 discovery + Stage 4a/4b fnspec mirrored content); one row per workflow.
+3. **Platforms** — per-platform configuration state (Pipefy / Wrike / Ziflow per-client tenant IDs + sandbox vs production split + `native_ai_path:` defaults).
+4. **Integrations** — per-integration state (custom integrations, MCP wirings, OAuth tokens by tenant — secrets redacted).
+5. **Operating Model** — operating cadence, escalation paths, on-call coverage, communication channels.
+6. **Change History** — append-only log of archived CRs; one row per CR with `cr_id:`, `archived_at:`, summary; mirrors `00_Index.md`.
+7. **Field Notes** — INPUT-ONLY table for human notes; Stage 11 NEVER overwrites this section (per DESIGN-09 directional boundary — Field Notes is the read-only triage queue from Coda → local during Stage 1; Stage 11 explicitly preserves it).
+
+Push direction is ONE-WAY (local → Coda). Coda → local merge is OUT OF SCOPE per DESIGN-09. The brain-mirror Coda doc template is the design contract drafted here; full Coda template implementation lives in Phase 8 of the 9-phase build per CHANGE-04 (Phase 4 OPEN-05 standard Coda templates work).
+
+**`tone_lint` pass (DESIGN-27 contract — MOD-9 prevention).** Before pushing the brain-mirror Coda doc, Stage 11 runs `tone_lint` against every spoke (per DESIGN-10 forbidden-phrasings list — "we recommend", "as an AI", "I would suggest", "perhaps consider", "might want to", and the rest of the 10-item list). Failure halts; reviewer triages and re-runs. The `tone_lint_status: passed | failed` field on `11_signoff_v<N>.md` records the run outcome. MOD-9 (forbidden-phrasings leaking into client-visible Coda mirror) is the historic pitfall this contract addresses.
+
+**CR move to `Archive/` (DESIGN-27 contract).** After spoke update + Coda mirror push + tone_lint pass, the source CR folder is moved (`mv`) from `<Client> Brain/<Project>/ChangeRequests/<CR>/` to `<Client> Brain/<Project>/Archive/<CR>/`. Move is atomic (single filesystem operation); re-running Stage 11 against an already-archived CR detects the move target and is a no-op.
+
+**`00_Index.md` version bump (DESIGN-27 contract).** Append new entry to `<Client> Brain/<Project>/00_Index.md`:
+
+```markdown
+## CR <cr_id> — archived <archived_at>
+**Summary:** <one-liner from doc-diff.md>
+**Artefacts:** [list of approved artefacts]
+**Brain spokes touched:** [list of spokes updated]
+```
+
+Append-only; never re-orders or rewrites prior entries.
+
+**Pre-archive sanity check (DESIGN-27 contract).** Before any of the above sub-actions run, Stage 11 runs a pre-archive sanity check:
+- No orphan references in any approved artefact (every `based_on_*:` resolves to an existing file with `status: approved`).
+- No missing artefacts referenced in `doc-diff.md` (every doc listed in Stage 9's diff has actually been pushed to Drive per `doc_published_at:`).
+- No tone_lint failures in any spoke (covered by tone_lint pass above; pre-archive sanity is the gate that runs tone_lint).
+- No outstanding `[OPEN]` markers in this CR's artefacts (any `OPEN: Phase 4` marker introduced during this CR must have been resolved or explicitly deferred-with-justification).
+
+Failure halts; reviewer triages. The `pre_archive_sanity_status: passed | failed` field on `11_signoff_v<N>.md` records the outcome.
+
+**Field Notes preserved input-only (DESIGN-27 contract).** Coda Field Notes table is the input-only triage queue per DESIGN-09 — Stage 1 (`kickoff-capture`) reads `processed_at IS NULL` rows and triages them. Stage 11 NEVER overwrites the Field Notes table; the brain-mirror push explicitly excludes the Field Notes section from the write set. This preserves the directional-boundary contract — Field Notes flow Coda → local, not the reverse. Field Notes table is NEVER overwritten.
+
+**Downstream consumer.** None within v2 pipeline (Stage 11 is terminal). Stage 11's outputs (updated brain spokes + Coda mirror + archived CR + bumped index) feed back into the next CR's Stage 1 — `kickoff-capture` reads `<Client> Brain/00_HUB.md` + brain spokes + Field Notes table when starting the next CR.
+
+**Status flag(s).** `status: approved` on `11_signoff_v<N>.md` (effectively the CR completion flag). Approval-gate hook (DESIGN-06) refuses `status: approved` writes lacking `approved_by` + `approved_at`. The pre-archive sanity check + tone_lint pass are skill-internal hard halts BEFORE the approval-gate hook runs — both must pass before the skill emits `status: approved`-eligible output.
+
+**Hand-off message (pipeline-end — terminal).**
+
+> Pipeline complete for CR <cr_id>. Brain updated; Coda mirror published; CR archived. Next CR's Stage 1 reads from updated <Client> Brain/.
+
+**Key v2 decisions for this stage.**
+
+1. **Brain-mirror Coda doc template — 7 canonical sections in canonical order** — Overview / Workflows / Platforms / Integrations / Operating Model / Change History / Field Notes. Section count + ordering is the contract; Phase 8 build implements the template.
+2. **One-way Coda mirror per DESIGN-09 directional boundary** — local canonical, Coda mirror; Coda → local merge OUT OF SCOPE. Field Notes is the only Coda → local channel (Stage 1, not Stage 11).
+3. **`tone_lint` pass before publish (MOD-9 prevention)** — per DESIGN-10 forbidden-phrasings list; failure halts.
+4. **CR move to `Archive/<CR>/` + `00_Index.md` version bump** — atomic move; append-only index; idempotent re-runs.
+5. **Pre-archive sanity check** — orphan refs + missing artefacts + tone_lint + outstanding `[OPEN]` markers all checked before any sub-action runs.
+6. **Field Notes preserved input-only** — Stage 11 NEVER overwrites the Field Notes table; preserves directional-boundary contract per DESIGN-09.
+
+**Dependencies.** DESIGN-09 (directional-boundary contract — local canonical, Coda one-way mirror, Field Notes input-only); DESIGN-10 (persona contract — `tone_lint` pass per forbidden-phrasings list); DESIGN-26 (upstream — Stage 10 approved before Stage 11 runs); Phase 4 OPEN-05 (standard Coda templates — brain-mirror Coda doc template lives in this register; v2 design provides the 7-section contract; Phase 8 build implements).
+
+**Cross-references.** DESIGN-09 (directional boundary); DESIGN-10 (persona contract — `tone_lint` source list); DESIGN-25 (paired upstream — `doc-diff.md` content feeds Change History summary line); PITFALLS MOD-9 (forbidden-phrasings leak into client-visible Coda mirror); Phase 4 OPEN-05 (standard Coda templates register); Phase 4 OPEN-04 (related — `00_HUB.md` schema register).
+
+---
+
+## Test bot architecture
+
+The test bot architecture comprises three architectural commitments locked here as decision contracts: DESIGN-28 (tier-1 / tier-2 boundary); DESIGN-29 (`client_state.yaml` skeleton); DESIGN-30 (drift-detection contract). Per CONTEXT D-30, these contracts ship interface-level + skeleton-schema fidelity — algorithmic detail is implemented in v2.1+ Phase 5 Stage 8 build per CHANGE-01 9-phase plan. Stage 8 overview (above) declared the stage-level architecture; this section provides the per-DESIGN architectural detail.
+
+### DESIGN-28: tier-1 / tier-2 boundary
+
+> **DESIGN-28:** Python ↔ AI orchestrator boundary — Python tier-1 asserts state, schema, presence/absence, equality, regex, retry-count, status-code class; AI tier-2 interprets free-form output, classifies failure causes, suggests remediation. Test plans mark each TC with the layer it belongs to. Mixed-layer cases flagged for human design.
+
+**Tier boundary table.**
+
+| Tier | Role | Owner | Asserts | Authoring | Examples |
+|------|------|-------|---------|-----------|----------|
+| Tier-1 | deterministic | Python (`test_runner.py`) | state, schema, presence/absence, equality, regex, retry-count, status-code class | HUMAN-AUTHORED — per `## Out of Scope` "Generating Python tier-1 tests from natural language alone" anti-feature; AI does NOT author tier-1 assertions | `assert response.status_code == 200`; `assert "client_id" in response.json()`; `assert re.match(r"^pipe-[0-9]+$", value)` |
+| Tier-2 | AI orchestrator | `test-bot-orchestrator` agent (DESIGN-04) | free-form output interpretation, failure cause classification, remediation suggestion | AI-GENERATED via agent invocation in Stage 8d (`execute-tests`) | "Classify this failure: <stderr>" → returns `failure_class:` per DESIGN-24 enum (`spec gap | implementation gap | environment issue | harness_drift | unknown`) |
+
+**Mixed-layer cases.** When a single test case (TC) needs BOTH tier-1 AND tier-2 assertions, the test plan marks it `layer: mixed` AND flags it for human design. The mixed case is split into two TC entries (one tier-1, one tier-2) OR explicitly kept as `mixed` with both layers cited per-step. Silent assignment of a mixed case to a single tier is FORBIDDEN — reviewer must consciously choose split-vs-mixed before the case enters the harness.
+
+**1 worked TC classification example.**
+
+```
+Example TC: "Pipefy card creation returns valid pipe_id and AI Agent picks up new card."
+
+Layer split:
+- Tier-1 (Python `test_runner.py`):
+  - assert response.status_code == 201
+  - assert "id" in response.json()["card"]
+  - assert re.match(r"^[0-9]+$", str(response.json()["card"]["id"]))
+- Tier-2 (AI orchestrator via `test-bot-orchestrator` agent):
+  - Wait 30s for AI Agent picker.
+  - Invoke agent: "Read Pipefy AI Agent log entries since <timestamp>. Did the agent acknowledge card <id>? If not, classify failure: ingest_lag | agent_skip | log_silence | unknown."
+  - Tier-2 returns failure_class: per DESIGN-24 enum OR success.
+```
+
+This TC is `layer: mixed` — tier-1 verifies the create-card API response shape; tier-2 verifies the downstream AI Agent pickup behaviour (which is non-deterministic and free-form by nature). The reviewer signs off on the split before the TC enters `<Client> Brain/test-bot/test_cases/`.
+
+**Implementing decisions.** D-20 (test-bot architecture commitment); D-32 (transcribe-not-interpret discipline — tier-1 examples are concrete `assert` statements, not paraphrased intent); D-35 (echo blockquote per DESIGN-NN).
+
+**Cross-references.** DESIGN-04 (test-bot-orchestrator agent — `dydx-delivery/agents/test-bot-orchestrator.md` is the canonical location for the tier-2 invocation contract; v2.1+ build phase populates the agent file body); DESIGN-24 (Stage 8 overview + `failure_class:` enum extension including `harness_drift`); DESIGN-29 (`client_state.yaml` per-test-case `layer:` field records this classification); REQUIREMENTS `## Out of Scope` (the canonical anti-feature list — "Generating Python tier-1 tests from natural language alone").
+
+### DESIGN-29: client_state.yaml skeleton
+
+> **DESIGN-29:** `client_state.yaml` schema — sandbox tenant IDs gated by platform; fixtures; integration toggles; `wrike_host`; `last_known_schema` per platform; `last_passed_at` per test case; `targets_artefact` per test case for obsolescence detection.
+
+**Skeleton YAML.** Per CONTEXT D-30 — top-level keys locked here; full per-test fixtures are NOT scoped to this DESIGN slice. Stage 8a (`provision-test-harness/`) bootstraps this file on first run and delta-updates per ship.
+
+```yaml
+# <Client> Brain/test-bot/client_state.yaml
+# Skeleton — DESIGN-29 contract (Phase 2). Stage 8a bootstraps + delta-updates per ship.
+client: <client_slug>
+client_state_version: <semver>
+last_provisioned_at: <ISO>
+
+sandbox:
+  pipefy:
+    pipe_id: <sandbox-pipe-id>
+    web_host: <web-host-per-tenant>            # e.g. app.pipefy.com OR vodacom.pipefy.com (varies per tenant — UAT-4.1)
+    org_id: <pipefy-organisation-id>
+    # api_host hardcoded canonical https://api.pipefy.com/graphql per UAT-4.1 (Q24 verified — DNS doesn't resolve api.<subdomain>.pipefy.com)
+    api_token_ref: env:PIPEFY_SANDBOX_TOKEN
+    auth_concurrency_class: exclusive          # UAT-4.2 — Pipefy auth sessions mutually exclusive across tenants
+  wrike:
+    space_id: <sandbox-space-id>
+    host: <wrike-host-from-OAuth-token-response>  # PERSISTED per DESIGN-15 (e.g. app-us2.wrike.com / app-eu.wrike.com)
+    account_id: <wrike-account-id>             # entry URL pattern: <host>/workspace.htm?acc=<account_id>
+    api_token_ref: env:WRIKE_SANDBOX_TOKEN
+    auth_concurrency_class: <exclusive|shared> # UAT-4.2 — TBD per OPEN-Q25; Phase 1 connector probe owner
+  ziflow:
+    project_id: <sandbox-project-id>
+    api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+    auth_concurrency_class: <exclusive|shared> # UAT-4.2 — TBD per OPEN-Q25; Phase 1 connector probe owner
+  coda:
+    doc_id: <sandbox-coda-doc>   # CRIT-5 fix per DESIGN-24 — sandbox allowlist extended to Coda
+    api_token_ref: env:CODA_SANDBOX_TOKEN
+
+fixtures:
+  shared:
+    test_user_email: test@<client_slug>.example
+  pipefy:
+    test_card_template: <template-id>
+  wrike:
+    test_task_template: <template-id>
+  ziflow:
+    test_proof_template: <template-id>
+
+integration_toggles:
+  pipefy_to_wrike: true | false
+  pipefy_to_ziflow: true | false
+  wrike_to_ziflow: true | false
+  any_to_coda: true
+
+last_known_schema:
+  pipefy:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/pipefy_<ISO>.json
+  wrike:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/wrike_<ISO>.json
+  ziflow:
+    fetched_at: <ISO>
+    schema_hash: <sha256>
+    schema_snapshot_path: ./schema_cache/ziflow_<ISO>.json
+
+test_cases:
+  TC-001:
+    targets_artefact: <Client> Brain/<Project>/04a_fnspec-platform_v2.md
+    last_passed_at: <ISO>
+    layer: tier-1 | tier-2 | mixed
+    state: active | obsolete | quarantined
+  TC-002:
+    targets_artefact: <Client> Brain/<Project>/04b_fnspec-integration_v2.md
+    last_passed_at: <ISO>
+    layer: tier-2
+    state: active
+```
+
+**3 worked per-platform examples.**
+
+- **Pipefy example** — client `vodacom`, sandbox tenant on custom subdomain `vodacom.pipefy.com`, sandbox pipe `pipe-12345`, org_id `org-vodacom-456`, schema fetched `2026-04-15T10:00:00Z`. UAT-4.1 verified 2026-05-10: web URL varies per tenant (`vodacom.pipefy.com` for Vodacom; `app.pipefy.com` for default tenants); API endpoint is canonical-only (`api.pipefy.com/graphql`) — `api.<subdomain>.pipefy.com` does NOT exist. UAT-4.2: `auth_concurrency_class: exclusive` — switching to another Pipefy tenant requires re-auth.
+  ```yaml
+  sandbox:
+    pipefy:
+      pipe_id: pipe-12345
+      web_host: vodacom.pipefy.com             # web URL pattern: <web_host>/<org_id> — varies per tenant (UAT-4.1)
+      org_id: org-vodacom-456
+      # API host hardcoded canonical: https://api.pipefy.com/graphql (UAT-4.1 Q24 verified)
+      api_token_ref: env:PIPEFY_VODACOM_SANDBOX_TOKEN
+      auth_concurrency_class: exclusive        # UAT-4.2 — Pipefy mutually exclusive across tenants
+  last_known_schema:
+    pipefy:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:a1b2c3...
+      schema_snapshot_path: ./schema_cache/pipefy_2026-04-15.json
+  test_cases:
+    TC-001:
+      targets_artefact: vodacom Brain/widget-redesign/04a_fnspec-platform_v2.md
+      last_passed_at: 2026-04-15T10:30:00Z
+      layer: tier-1
+      state: active
+  ```
+
+- **Wrike example** — client `vodafoneziggo` (EU-region tenant), sandbox space ID `space-67890`, OAuth-discovered host `https://app-eu.wrike.com/api/v4` PERSISTED per DESIGN-15 (CRITICAL — never hardcode `www.wrike.com`); account_id `5996999` per entry URL `<host>/workspace.htm?acc=5996999`. UAT-4.2 auth-concurrency class TBD per OPEN-Q25.
+  ```yaml
+  sandbox:
+    wrike:
+      space_id: space-67890
+      host: https://app-eu.wrike.com/api/v4   # PERSISTED from OAuth token response (EU region)
+      account_id: 5996999                       # entry URL: <host>/workspace.htm?acc=5996999
+      api_token_ref: env:WRIKE_VFZ_SANDBOX_TOKEN
+      auth_concurrency_class: <TBD-OPEN-Q25>   # Phase 1 probe verifies
+  last_known_schema:
+    wrike:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:d4e5f6...
+      schema_snapshot_path: ./schema_cache/wrike_2026-04-15.json
+  test_cases:
+    TC-101:
+      targets_artefact: acme-inc Brain/widget-redesign/04b_fnspec-integration_v2.md
+      last_passed_at: 2026-04-15T10:35:00Z
+      layer: tier-2
+      state: active
+  ```
+
+- **Ziflow example** — client `acme-inc`, sandbox project ID `project-abcde`, read-after-create eventual consistency window flagged per DESIGN-16. UAT-4.2 auth-concurrency class TBD per OPEN-Q25.
+  ```yaml
+  sandbox:
+    ziflow:
+      project_id: project-abcde
+      api_token_ref: env:ZIFLOW_SANDBOX_TOKEN
+      auth_concurrency_class: <TBD-OPEN-Q25>   # Phase 1 probe verifies
+  last_known_schema:
+    ziflow:
+      fetched_at: 2026-04-15T10:00:00Z
+      schema_hash: sha256:g7h8i9...
+      schema_snapshot_path: ./schema_cache/ziflow_2026-04-15.json
+  test_cases:
+    TC-201:
+      targets_artefact: acme-inc Brain/widget-redesign/04a_fnspec-platform_v2.md
+      last_passed_at: 2026-04-15T10:40:00Z
+      layer: mixed
+      state: quarantined   # flaky read-after-create within 30s consistency window
+  ```
+
+**Field-by-field rationale.**
+
+- `client:` — per-client lock — one `client_state.yaml` per client; reused across CRs (DESIGN-24 persistent harness contract).
+- `client_state_version:` — semver; bumps on schema-breaking changes to this file (Stage 8a delta-update contract).
+- `last_provisioned_at:` — last time Stage 8a touched the file (audit trail).
+- `sandbox:` — per-platform tenant IDs; `coda:` sub-block per CRIT-5 fix (DESIGN-24 sandbox allowlist extension); `wrike.host:` PERSISTED per DESIGN-15 (OAuth-discovered host MUST NOT default to hardcoded `www.wrike.com`).
+- `fixtures:` — reusable test fixtures (templates / shared user emails); per-platform sub-blocks.
+- `integration_toggles:` — boolean flags per cross-platform integration; gates which TCs are eligible to run for this client.
+- `last_known_schema:` — per-platform schema snapshot (hash + path) — input to DESIGN-30 drift-detection contract.
+- `test_cases:` — per-TC state — `targets_artefact:` for obsolescence detection (when artefact retired, TC becomes `obsolete`); `last_passed_at:` for staleness signal; `layer:` per DESIGN-28 enum; `state:` per DESIGN-24 lifecycle enum.
+
+**Cross-references.** DESIGN-15 (Wrike `host` OAuth persistence rule — `wrike.host:` field source-of-truth); DESIGN-24 (Stage 8 overview — `sandbox_lock.yaml` paired concurrency artefact at sibling path; lifecycle states `active | obsolete | quarantined`; CRIT-5 sandbox allowlist extension to Coda); DESIGN-30 (drift-detection contract — `last_known_schema.<platform>.schema_hash` is the input the contract diffs against); DESIGN-14 / DESIGN-15 / DESIGN-16 (per-platform sandbox access patterns).
+
+### DESIGN-30: drift-detection contract
+
+> **DESIGN-30:** Drift detection — pre-flight fetches current sandbox schema and diffs against `client_state.yaml.last_known_schema`; mismatch halts + emits `schema_drift_report.md` instead of executing; drift requires explicit human action (acknowledge or revert).
+
+**Inputs.**
+
+- Current sandbox schema (fetched fresh at pre-flight by Stage 8d `execute-tests`).
+- Cached `last_known_schema.<platform>.schema_hash` from `<Client> Brain/test-bot/client_state.yaml` (DESIGN-29).
+
+**Outputs.**
+
+- **Match** — `current_schema_hash == last_known_schema.<platform>.schema_hash` → proceed to test execution.
+- **Mismatch** — `current_schema_hash != last_known_schema.<platform>.schema_hash` → HALT + emit `<Client> Brain/test-bot/schema_drift_report.md`; no tests run.
+
+**Halt condition.** Mismatch halts the entire Stage 8d run for the affected platform. No tests execute, no sandbox writes occur, no `last_passed_at:` updates land in `client_state.yaml`. The halt is hard — there is no override flag, no `--force`, no auto-acknowledge. Stage 8d emits the report and exits non-zero; the `failure_class:` recorded for any cancelled TCs is `harness_drift` (per DESIGN-24 5th canonical class).
+
+**`schema_drift_report.md` shape.**
+
+- **Frontmatter:** `client: <client_slug>` + `platform: pipefy | wrike | ziflow | coda` + `previous_schema_hash: <sha256>` + `current_schema_hash: <sha256>` + `detected_at: <ISO>`.
+- **Body:** per-column diff (added columns / removed columns / type-changed columns / renamed columns) + recommended human action (which of the two paths below applies).
+
+**Human-action requirement.** Drift requires explicit human action — acknowledge or revert — before Stage 8d may run again for this platform / client.
+
+1. **Acknowledge.** Human runs Stage 8a (`provision-test-harness/`) to refresh `last_known_schema.<platform>` against the current sandbox schema; reviews per-TC impact; marks affected TCs as `quarantined` (per DESIGN-24 lifecycle) until tier-1 assertions are updated against the new schema. Stage 8a writes the new `schema_hash` + `fetched_at` + `schema_snapshot_path:` and the new `client_state_version:`.
+
+2. **Revert.** Human reverts the sandbox to match `last_known_schema` (e.g., un-applies a sandbox migration that introduced the drift); reruns Stage 8d. No `client_state.yaml` change required; the existing `schema_hash` is canonical and the sandbox is brought back into alignment.
+
+**Algorithmic detail (Stage 8 build phase territory).** Per CONTEXT D-30, this contract specifies inputs / outputs / halt condition / report shape / human-action requirement WITHOUT numbered pseudocode. The actual algorithm — schema-fetch transport, hash-canonicalisation rules, per-column diff format, frontmatter validation, idempotent re-runs — is implemented in v2.1+ Phase 5 Stage 8 build per CHANGE-01 9-phase plan. Phase 2's contract is interface-level only.
+
+**Cross-references.** DESIGN-24 (Stage 8 overview — `harness_drift` failure class is the failure_class assigned when this contract fires); DESIGN-29 (`last_known_schema:` data shape — the canonical input this contract diffs against; `client_state_version:` field bumps on acknowledge path); platform-pipefy / platform-wrike / platform-ziflow (per-platform schema-fetch surface; the actual schema-introspection API per platform).
+
+---
+
+## Deferred to Phase 4 OPEN-QUESTIONS
+
+This list enumerates every inline OPEN-Phase-4 marker in DESIGN.md, in document order, as the canonical handoff to Phase 4 OPEN-QUESTIONS.md. Each item names the source section + recommended owning phase per CHANGE-04 (or `owner: TBD` if not yet decided — never silently omitted per cross-AI review #10). Phase 4 register builds against this list mechanically.
+
+- **`[OPEN: Phase 4 — Pipefy AI KB content-upload endpoint not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-pipefy → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Pipefy GraphQL pagination cursor field names need verification against current 2026 schema per OPEN-01]`** — source: §Platform skills → §platform-pipefy → API surface for the gap — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Pipefy 2026 rate-limit currency unverified; Phase 1/Phase 2 owner per CHANGE-04. Documented historic ceiling: ~5 req/sec per token.]`** — source: §Platform skills → §platform-pipefy → API surface for the gap — owner: Phase 1/Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — Wrike AI Studio knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-wrike → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Wrike 2026 rate-limit currency unverified per OPEN-01; Phase 1/Phase 2 owner per CHANGE-04. Documented historic: ~100 req/min per user.]`** — source: §Platform skills → §platform-wrike → API surface for the gap — owner: Phase 1/Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — Ziflow ReviewAI knowledge-ingestion API not externally verified per OPEN-01 — Phase 7 owner per CHANGE-04]`** — source: §Platform skills → §platform-ziflow → Native-AI capability matrix — owner: Phase 7 per CHANGE-04
+- **`[OPEN: Phase 4 — Ziflow read-after-create consistency window unverified per OPEN-01; Phase 2 owner per CHANGE-04. Conservative default in helper: 30 second poll with 2s interval.]`** — source: §Platform skills → §platform-ziflow → API surface for the gap — owner: Phase 2 per CHANGE-04
+- **`[OPEN: Phase 4 — risk-multiplier defaults pending dYdX-historical validation per D-22]`** — source: §Stage 6: Cost estimate → Risk-multiplier taxonomy — owner: Phase 4 per CHANGE-04 (decide before Stage 6 build per CHANGE-01 ordering)
+
+Verification (run by Phase 4 / final reviewer): the reconciliation algorithm in Plan 02-10 verifies (a) inline-marker text count outside this section matches list-bullet count; (b) `diff` of normalised marker texts is empty; (c) every bullet carries `owner:` (Phase or TBD). Mismatch on any condition halts Phase 4 register build.
+
+---
+
+## Appendix A: Glossary
+
+Canonical v2 vocabulary. Each entry cites the locking DESIGN-NN section. Frontmatter fields are listed first, then status-lifecycle terms, then stage-prefix conventions, then platform terms, then test-bot terms, then plugin surfaces, then doc + sign-off terms.
+
+**Frontmatter fields**
+
+**frontmatter_version** — Mandatory integer on every v2 artefact; absent value triggers v0.3.0 lenient mode per DESIGN-01 / DESIGN-08. Locked at `frontmatter_version: 2` per DESIGN-01.
+**based_on_kickoff** — Frontmatter field on `02_discovery_*` and `03_sow_*` artefacts pointing at the upstream `01_kickoff_v<N>.md` carrier; mandatory under DESIGN-18 / DESIGN-19.
+**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts (discovery-ready branch) pointing at the upstream `02_discovery_v<N>.md`; per DESIGN-19.
+**based_on_sow** — Frontmatter field on `04a_*` / `04b_*` fnspec artefacts pointing at the upstream `03_sow_v<N>.md`; per DESIGN-20.
+**based_on_fnspec_platform / based_on_fnspec_integration** — Frontmatter fields on `06_cost_*` and downstream artefacts pointing at the upstream `04a_*` / `04b_*` carriers; at least one mandatory per DESIGN-22.
+**based_on_techspec** — Frontmatter field on `06_cost_*` and `07a_*` artefacts pointing at the upstream `05_techspec_v<N>.md`; per DESIGN-21 / DESIGN-22 / DESIGN-23.
+**status** — Lifecycle state of an artefact; canonical 4-value enum `draft → client_review → approved → archived` per DESIGN-01. `client_review` is retained per AUDIT.md §AUDIT-01.2 live-survey result locked under DESIGN-08.
+**client** — Frontmatter scalar naming the client; participates in `<Client> Brain/` directory naming per DESIGN-09.
+**project** — Frontmatter scalar naming the project / CR within a client's brain per DESIGN-09.
+**platform** — Closed-enum frontmatter field naming the platform an artefact belongs to (`pipefy | wrike | ziflow`); gates platform-specific identifier presence per DESIGN-01.
+**pipe_id** — Pipefy-only frontmatter identifier; presence on a non-Pipefy artefact is a `validate-frontmatter` hook failure per DESIGN-01 / DESIGN-04.
+**space_id** — Wrike-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-15.
+**project_id** — Ziflow-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-16.
+**delivery** — Per-requirement routing key on `04a_fnspec-platform_v<N>.md` rows; closed enum `native-ai | api`; drives Stage 5 scope-gate, Stage 7b implementation-prompt path, and Stage 10 native-AI ingestion per DESIGN-20 / DESIGN-21 / DESIGN-26.
+**kickoff_branch** — Routing key on `01_kickoff_v<N>.md` selecting the downstream path: `discovery-ready` (feed Stage 2 first) or `draft-sow` (skip Stage 2; feed Stage 3 directly); per DESIGN-17 / DESIGN-19.
+**commercial_inputs_status** — Halt-gate field on `06_cost_inputs_v<N>.md`; values `pending | provided` per DESIGN-22 wait-for-commercial-inputs gate.
+**risk_multiplier_version** — Frontmatter field on `06_cost_v<N>.md` locking which numeric default set was used; values are `<TBD-deferred>` until Phase 4 OPEN-QUESTIONS resolves per D-22 / DESIGN-22.
+**tech_spec_scope** — Closed-enum field on `05_techspec_v<N>.md` capturing the scope-gate decision; values `full | addendum-only | skip-entirely` per DESIGN-21.
+**delivery_filter** — Reading-side filter used by Stage 5 / Stage 7b / Stage 10 to select rows from `04a_*` by `delivery:` value per DESIGN-21 / DESIGN-23 / DESIGN-26.
+**doc_type** — Closed-enum field on Stage 9 documentation artefacts; 9-value enum locked per DESIGN-25 (operating-runbook | platform-shape | integration-shape | brain-spoke | brain-index | onboarding | safety-rules | hand-off | release-notes).
+**doc_version** — Frontmatter integer on Stage 9 documentation artefacts; bumped per `bump-artefact-version.py` hook per DESIGN-04.
+**doc_published_at** — ISO-timestamp field on `<CR>/doc-diff.md` recording when a doc was actually pushed to Drive; pre-archive sanity check requires every diff-listed doc has this field per DESIGN-25 / DESIGN-27.
+**last_diff_review_at** — Field on Stage 9 docs recording when the last diff was reviewer-approved per DESIGN-25.
+**ingested_at** — ISO-timestamp field on Stage 10 native-AI artefacts recording when content was last pushed to a platform's native-AI surface per DESIGN-26.
+**target_id** — Stage 10 / `push-native-ai-knowledge` field naming the platform-side ingestion target (Pipefy KB id / Wrike AI Studio reference / Ziflow ReviewAI Checklist id) per DESIGN-26.
+**native_ai_path** — Closed-enum routing key on `04a_*` rows; values `api | paste | internal_skill` per DESIGN-26 + per-platform DESIGN-14 / DESIGN-15 / DESIGN-16.
+**tier_claims_last_verified** — ISO-date field on platform-skill `references/native-ai-inventory.md` artefacts; the v2.x build's hook for re-verifying native-AI capability matrices per DESIGN-14 / DESIGN-15 / DESIGN-16.
+**targets_artefact** — Field on test-case artefacts in `<Client> Brain/test-bot/test_cases/` naming the upstream artefact a TC verifies; obsolescence detection compares against approved upstream artefacts per DESIGN-29.
+**last_passed_at** — ISO-timestamp field on test-case artefacts recording the most recent successful run per DESIGN-29.
+**failure_class** — Closed-enum field on `08d_test-results_v<N>.md` per-TC failure rows; canonical 5-value enum `ingest_lag | agent_skip | log_silence | unknown | harness_drift` per DESIGN-24 / DESIGN-30.
+**cr_id** — Change-Request identifier; appears in `<Client> Brain/00_Index.md` Change History entries and in `Archive/<CR>/` directory naming per DESIGN-27.
+**approved_by / approved_at** — Mandatory frontmatter fields on `status: approved` writes; `validate-frontmatter` hook refuses approval-write lacking either per DESIGN-06.
+**client_state_version** — Top-level integer in `<Client> Brain/test-bot/client_state.yaml`; bumped on Stage 8a schema-refresh acknowledge path per DESIGN-29 / DESIGN-30.
+
+**Status lifecycle**
+
+**draft** — Initial status of a newly written artefact; pre-reviewer per DESIGN-01.
+**client_review** — Status indicating an artefact is in client / reviewer hands; retained per DESIGN-08 live-survey result.
+**approved** — Status indicating reviewer approval; mandatory `approved_by` + `approved_at` per DESIGN-06.
+**archived** — Terminal status applied to artefacts moved into `Archive/<CR>/` by Stage 11 per DESIGN-27.
+
+**Stage-prefix conventions**
+
+**Stage prefix** — Filename prefix encoding stage number per DESIGN-02 (`01_kickoff_*` through `11_signoff_*`).
+**Substage** — Letter suffix on stage prefix indicating sub-step within a stage; canonical substages are `4a / 4b` (fnspec split per DESIGN-20), `7a / 7b` (build-prompt dual per DESIGN-23), and `8a / 8b / 8c / 8d` (test-bot four-substage per DESIGN-24).
+
+**Platform terms**
+
+**Pipe / Phase / Card / Behaviors** — Pipefy domain vocabulary (a Pipe is a workflow; Phases are columns; Cards are work items; Behaviors are workflow-rule automations) per DESIGN-14.
+**Space / Folder / Task / Custom Field** — Wrike domain vocabulary (Space contains Folders; Folders contain Tasks; Custom Fields are tenant-extensible) per DESIGN-15.
+**Project / Proof / ReviewAI / Checklist** — Ziflow domain vocabulary (a Project contains Proofs; ReviewAI is the AI suite; Checklists are the Public-Preview ReviewAI feature) per DESIGN-16.
+
+**Test-bot terms**
+
+**tier-1** — Python deterministic test layer; HUMAN-AUTHORED `test_runner.py` per DESIGN-28.
+**tier-2** — AI orchestrator test layer; AI-GENERATED via `test-bot-orchestrator` agent per DESIGN-04 / DESIGN-28.
+**harness_drift** — Failure-class enum value emitted by Stage 8d when drift detection halts; per DESIGN-24 / DESIGN-30.
+**sandbox_lock.yaml** — Sandbox concurrency-lock artefact in `<Client> Brain/test-bot/`; Stage 8a writes; Stage 8d reads; per DESIGN-24.
+**schema_drift_report.md** — Drift-detection halt artefact; frontmatter (`previous_schema_hash` / `current_schema_hash` / `detected_at`) + body (per-column diff + recommended human action) per DESIGN-30.
+**acknowledge** — Drift-resolution path 1: human runs Stage 8a to refresh `last_known_schema.<platform>`; quarantines affected TCs; bumps `client_state_version:` per DESIGN-30.
+**revert** — Drift-resolution path 2: human reverts the sandbox to match `last_known_schema`; reruns Stage 8d; no `client_state.yaml` change required per DESIGN-30.
+**quarantined** — TC lifecycle state indicating the TC is suspended pending tier-1 update; per DESIGN-24.
+**obsolete** — TC lifecycle state indicating the TC's `targets_artefact:` no longer resolves; per DESIGN-24.
+
+**Plugin surfaces**
+
+**commands/** — Plugin slash-command directory; ships 1 parameterised `refine.md` plus 4 GSD-prefixed shortcuts per DESIGN-04 / DESIGN-05.
+**agents/** — Plugin agent directory; ships 1 `test-bot-orchestrator.md` per DESIGN-04.
+**hooks/** — Plugin hooks directory; ships 2 hooks (`validate-frontmatter.py`, `bump-artefact-version.py`) per DESIGN-04. Auto-progression hooks are an explicit non-goal.
+**tests/** — Plugin self-test directory at `dydx-delivery/tests/`; pytest smoke tests per DESIGN-04 / D-24.
+**references/** — Plugin reference directory at `dydx-delivery/references/`; canonical `safety-rules.md` (DESIGN-03) and `stage-numbering.md` (DESIGN-02) live here.
+**mcpServers** — Field in `dydx-delivery/.claude-plugin/plugin.json` listing the 5 wired MCPs per DESIGN-04.
+
+**Doc + sign-off terms**
+
+**doc-diff** — Stage 9 artefact (`<CR>/doc-diff.md`) listing every doc updated this CR; gates Stage 11 per DESIGN-25 / DESIGN-27.
+**brain-mirror** — Stage 11 one-way Coda push of canonical `<Client> Brain/` content into the brain-mirror Coda doc per DESIGN-27 / DESIGN-09.
+**spoke** — Top-level subdirectory of `<Client> Brain/` (e.g. Overview, Workflows, Platforms, Integrations, Operating Model, Change History); brain-mirror Coda template has 7 canonical spoke-shaped sections per DESIGN-27.
+**00_Index.md** — Append-only index file at `<Client> Brain/00_Index.md` carrying the Change History entries per DESIGN-27.
+**Field Notes** — Coda input-only triage queue read by Stage 1 (`kickoff-capture`); never overwritten by Stage 11 per DESIGN-09 / DESIGN-27.
+**tone_lint** — Pre-publish check enforcing the DESIGN-10 forbidden-phrasings list against any client-visible artefact; MOD-9 prevention per DESIGN-27.
+
+---
+
+## Appendix B: DESIGN-* → DESIGN.md section traceability
+
+This appendix maps every REQUIREMENTS DESIGN-* ID to its DESIGN.md home section + locking CONTEXT decision IDs. Reviewer can verify 1:1 coverage against REQUIREMENTS.md §"Design (DESIGN.md)" DESIGN-01..30.
+
+| DESIGN-NN | Section anchor | Locking decision IDs |
+|-----------|----------------|----------------------|
+| DESIGN-01 | §Cross-cutting decisions → §DESIGN-01 — Canonical frontmatter scheme | D-25 (status-lifecycle survey result) |
+| DESIGN-02 | §Cross-cutting decisions → §DESIGN-02 — Canonical stage-numbering scheme | — |
+| DESIGN-03 | §Cross-cutting decisions → §DESIGN-03 — Single source of truth for hard rules | — |
+| DESIGN-04 | §Cross-cutting decisions → §DESIGN-04 — Plugin surfaces | D-24 (plugin self-tests) |
+| DESIGN-05 | §Cross-cutting decisions → §DESIGN-05 — `/refine-<skill>` resolution | D-23 (`/dydx-refine-*` namespace) |
+| DESIGN-06 | §Cross-cutting decisions → §DESIGN-06 — Approval-gate enforcement | — |
+| DESIGN-07 | §Cross-cutting decisions → §DESIGN-07 — Connector probe + degradation | — |
+| DESIGN-08 | §Cross-cutting decisions → §DESIGN-08 — Frontmatter migration co-existence; §Live status-lifecycle survey | D-25 (survey result locks `client_review` retention) |
+| DESIGN-09 | §Cross-cutting decisions → §DESIGN-09 — Directional boundary | — |
+| DESIGN-10 | §Cross-cutting decisions → §DESIGN-10 — Persona contract; §Appendix C: Persona contract worked examples | D-29 (worked examples in Appendix C) |
+| DESIGN-11 | §Skill layout | FOUND-01 |
+| DESIGN-12 | §v2 skill inventory | (cross-AI review MEDIUM #4 — anchor renamed from `## 13-skill inventory` to `## v2 skill inventory`) |
+| DESIGN-13 | §Stage-by-stage hand-off contract | D-26 (matrix-then-prose authoring shape) |
+| DESIGN-14 | §Platform skills → §platform-pipefy | — |
+| DESIGN-15 | §Platform skills → §platform-wrike | — |
+| DESIGN-16 | §Platform skills → §platform-ziflow | — |
+| DESIGN-17 | §Stage 1: Kickoff capture | — |
+| DESIGN-18 | §Stage 2: Discovery refactor | — |
+| DESIGN-19 | §Stage 3: SOW refactor | — |
+| DESIGN-20 | §Stage 4a: Functional spec — platform; §Stage 4b: Functional spec — integration | D-20 (per-skill matrix-then-prose) |
+| DESIGN-21 | §Stage 5: Tech spec | — |
+| DESIGN-22 | §Stage 6: Cost estimate | D-22 (structure-only — numerics deferred to Phase 4 OPEN-QUESTIONS) |
+| DESIGN-23 | §Stage 7a: Build prompt — dev; §Stage 7b: Build prompt — implementation per platform | D-20 (per-skill matrix-then-prose) |
+| DESIGN-24 | §Stage 8: Test bot — overview | — |
+| DESIGN-25 | §Stage 9: Documentation publishing | — |
+| DESIGN-26 | §Stage 10: Native-AI enablement | — |
+| DESIGN-27 | §Stage 11: Sign-off, brain update, archive | — |
+| DESIGN-28 | §Test bot architecture → §DESIGN-28: tier-1 / tier-2 boundary | — |
+| DESIGN-29 | §Test bot architecture → §DESIGN-29: client_state.yaml skeleton | D-30 (interface-only / skeleton-schema fidelity) |
+| DESIGN-30 | §Test bot architecture → §DESIGN-30: drift-detection contract | D-30 (interface-only — no numbered pseudocode) |
+
+---
+
+## Appendix C: Persona contract worked examples
+
+Three worked before/after examples drawn from real audit findings. Each shows a v0.3.0-style passage rewritten in v2 senior-implementer voice; the **Why the rewrite works** line names which DESIGN-10 voice principle the rewrite satisfies and which forbidden phrasing it eliminates.
+
+### Example 1 — Truncated changelog/README sentence
+
+**Source:** `AUDIT.md §AUDIT-07.1` — `dydx-delivery/README.md:126` truncated changelog entry for `0.3.0` reads: *"The bot-run terminal stage (`execute-tests`) now c"* and the file terminates mid-sentence.
+
+**Before (v0.3.0-style):**
+> We recommend that the README be updated — perhaps consider completing the truncated sentence at line 126; it might want to read something more complete.
+
+**After (v2 senior-implementer voice):**
+> Update `dydx-delivery/README.md:126` — replace the truncated sentence ending mid-clause with the completed claim: *"The bot-run terminal stage (`execute-tests`) now consumes the approved test plan and emits a results artefact under `<Client>/testing/<feature>/results-YYYY-MM-DD_v{N}.md`."*
+
+**Why the rewrite works:** Eliminates "we recommend", "perhaps consider", "might want to" (3 forbidden phrasings). Satisfies principle 1 (no AI hedging — the rewrite is a claim) + principle 2 (specific over abstract — exact `file:line` cited) + principle 4 (imperative over advisory — "Update" not "we recommend").
+
+---
+
+### Example 2 — "Test sheet" residual wording
+
+**Source:** `AUDIT.md §AUDIT-07.2` — `README.md:9` still says "discovery → SOW → functional spec → technical spec → **test sheet** → execution"; `dydx-delivery/README.md:126` records the 0.3.0 rename `generate-test-sheet` → `generate-test-plan` but the root README never followed.
+
+**Before (v0.3.0-style):**
+> Note that the document references a "test sheet" which may need attention. It's worth noting that the rename happened in 0.3.0 — please be aware that you might want to update this in order to reflect the current vocabulary.
+
+**After (v2 senior-implementer voice):**
+> Replace `test sheet` (`README.md:9`) with `test plan` — `test sheet` is v0.1.0 vocabulary; the 0.3.0 rename to `generate-test-plan` is recorded at `dydx-delivery/README.md:126` but never propagated to the root README.
+
+**Why the rewrite works:** Eliminates "Note that", "may need attention", "It's worth noting", "please be aware", "might want to", "in order to" (6 forbidden phrasings or apology-prefaces). Satisfies principle 2 (specific over abstract — both source and rename-record cited with `file:line`) + principle 3 (no apology-prefaces) + principle 4 (imperative — "Replace" not "may need attention").
+
+---
+
+### Example 3 — Generic AI-style hedging in skill prose
+
+**Source:** `AUDIT.md §AUDIT-01.1` — `dydx-delivery/skills/discovery-intake/SKILL.md:98-107` writes `status: draft` but the skill body documents no follow-up status word; `discovery-intake/SKILL.md:27-28` references workspace `hub.md` twice when no `hub.md` exists. Representative pattern of the hedged hand-off message brittleness category catalogued at `AUDIT.md §AUDIT-01`.
+
+**Before (v0.3.0-style):**
+> As an AI, I would suggest that you make sure to check the `hub.md` file for client context. Feel free to skip this if it's not available — perhaps consider using the discovery template directly.
+
+**After (v2 senior-implementer voice):**
+> Read `<Client> Brain/00_HUB.md` for client context; the v0.3.0 reference to `hub.md` (`dydx-delivery/skills/discovery-intake/SKILL.md:27-28`) is an orphan — `hub.md` does not exist in the repo (per `AUDIT.md §AUDIT-01.1`). On `00_HUB.md` absence, halt and surface the missing-hub error — do not fall through to a templated discovery.
+
+**Why the rewrite works:** Eliminates "As an AI", "I would suggest", "make sure to", "Feel free to", "perhaps consider" (5 forbidden phrasings). Satisfies principle 1 (no AI hedging — the speaker is the implementor, not an AI) + principle 2 (specific over abstract — `file:line` for the orphan reference + AUDIT.md cite) + principle 5 (end with hand-off, not summary — closing sentence names the next action: halt + surface error).
+
+---
+
+*Design produced 2026-05-09; supersedes ad-hoc v0.3.0 architecture. Phase 3 CHANGELIST.md sequences the v2.x build against this design; Phase 4 OPEN-QUESTIONS.md catalogues every inline [OPEN] marker.*

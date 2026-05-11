@@ -9,13 +9,13 @@ Produce a structured, executable test plan from an approved technical spec. The 
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/03_technical-spec_v*.md` (required)
-- The functional spec (`02_functional-spec_v*.md`) for acceptance criteria reference
+- The latest `<Client>/build-specs/<platform>/05_techspec_v*.md` (required)
+- The functional spec (`04a_fnspec-platform_v*.md`) for acceptance criteria reference
 - A `<feature>` name (used in the output path) — ask the user if not obvious
 
 ## Output
 
-`<Client>/testing/<feature>/test-plan_vN.md`
+`<Client>/testing/<feature>/08b_test-plan_vN.md`
 
 Format: a markdown header with sandbox metadata + a table where each row is one executable test case.
 
@@ -23,13 +23,13 @@ Format: a markdown header with sandbox metadata + a table where each row is one 
 
 ### Step 1 — Locate upstream artefacts
 
-Find the highest-version `03_technical-spec_v*.md`. Pull the related `02_functional-spec_v*.md` for acceptance criteria.
+Find the highest-version `05_techspec_v*.md`. Pull the related `04a_fnspec-platform_v*.md` for acceptance criteria.
 
 **If technical spec not found**, run start-at-any-point triage:
 
 > I don't see a technical spec for `<Client>` at `<expected path>`. How do you want to proceed?
 >
-> **(a) Paste an existing technical spec** — I'll save it as `03_technical-spec_v1.md`
+> **(a) Paste an existing technical spec** — I'll save it as `05_techspec_v1.md`
 > **(b) Walk through the platform implementation inline** — I'll capture enough to derive test cases, stub the technical spec, then proceed
 > **(c) Cancel**
 
@@ -42,7 +42,7 @@ Ask the user (if unclear):
 
 ### Step 3 — Check for existing test plan
 
-Look for `test-plan_v*.md` in `<Client>/testing/<feature>/`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
+Look for `08b_test-plan_v*.md` in `<Client>/testing/<feature>/`. If found, ask whether to revise (`_v{N+1}`), extend, or start fresh.
 
 ### Step 4 — Derive test cases
 
@@ -87,7 +87,7 @@ Before finalising:
 
 ### Step 7 — Write and hand off
 
-Write to `<Client>/testing/<feature>/test-plan_v{N}.md` with frontmatter:
+Write to `<Client>/testing/<feature>/08b_test-plan_v{N}.md` with frontmatter:
 
 ```yaml
 ---
@@ -96,7 +96,7 @@ feature: <feature>
 platform: <pipefy | wrike | other>
 version: 1
 status: draft
-based_on_technical_spec: 03_technical-spec_v{N}.md
+based_on_technical_spec: 05_techspec_v{N}.md
 generated_at: <ISO date>
 sandbox:
   pipe_id: <id>
@@ -114,7 +114,7 @@ End with this exact handoff message:
 > 2. Verify every test references real sandbox IDs, real user IDs, real fixture data
 > 3. Flag any test row that needs a destructive action (these will be refused by `execute-tests`)
 > 4. Confirm the sandbox tenant identifiers in the frontmatter
-> 5. If you make edits, save as `test-plan_v{N+1}.md`
+> 5. If you make edits, save as `08b_test-plan_v{N+1}.md`
 > 6. Update `status:` to `approved` when ready
 >
 > When approved, run **`generate-build-prompt`** to produce the executable build instruction set. (The build prompt references this test plan so the executor self-checks against it during the build.)

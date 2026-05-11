@@ -1,0 +1,10 @@
+Step 4 invocation: discovery-intake against 01_kickoff_v2.md (kickoff_branch: draft-sow)
+Skill: discovery-intake (Stage 2)
+Input: .planning/phases/07-stage-1-kickoff-discovery-sow-upstream-wiring/fixtures/output/01_kickoff_v2.md
+Read kickoff_branch from frontmatter: draft-sow
+Routing decision per SKILL.md Step 1: SKIP.
+
+stdout / handoff log (verbatim per D-74 and discovery-intake SKILL.md Step 1):
+Stage 2 SKIPPED — kickoff branch = draft-sow
+
+No 02_discovery_v<N>.md artefact written. Audit trail lives in git (kickoff approval commit) + this handoff log per D-74.
