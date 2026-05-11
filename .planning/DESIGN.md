@@ -23,7 +23,7 @@ This table summarises every major design contract for skip-to-contract navigatio
 | `## Platform skills` | 3 platform skills (`platform-pipefy/`, `platform-wrike/`, `platform-ziflow/`) — 5-file `references/` shape; 2026-grounded native-AI capability matrix; per-platform API surface + sandbox + knowledge-ingestion | DESIGN-14, DESIGN-15, DESIGN-16 |
 | `## Stage 1: Kickoff capture` | NEW dual-branch artefact (`01_kickoff_v<N>.md`) feeding either Stage 2 discovery OR Stage 3 SOW depending on `kickoff_branch:` | DESIGN-17 |
 | `## Stage 2: Discovery refactor` | MODIFIED to consume `01_kickoff_v*` (was free-form) — `based_on_kickoff:` mandatory; output is `02_discovery_v<N>.md` | DESIGN-18 |
-| `## Stage 3: SOW refactor` | UNCHANGED-structure; behaviour-modified to fork by `kickoff_branch` (kickoff-direct vs discovery-via) and emit `03_sow_v<N>.md` with `based_on_kickoff:` AND/OR `based_on_discovery:` | DESIGN-19 |
+| `## Stage 3: SOW refactor` | UNCHANGED-structure; behaviour-modified to fork by `kickoff_branch` (discovery-ready vs draft-sow) and emit `03_sow_v<N>.md` with `based_on_kickoff:` AND/OR `based_on_discovery:` | DESIGN-19 |
 | `## Stage 4a: Functional spec — platform` | NEW skill `generate-fnspec-platform/` replacing RETIRED single fnspec; per-requirement `delivery: native-ai \| api` routing key | DESIGN-20 |
 | `## Stage 4b: Functional spec — integration` | NEW skill `generate-fnspec-integration/`; consumes `03_sow_v*` + (optional) `04a_*`; cross-spec consistency check vs 4a | DESIGN-20 |
 | `## Stage 5: Tech spec` | MODIFIED `generate-technical-spec/` with scope-gate (full / addendum-only / skip-entirely) + error-paths discipline | DESIGN-21 |
@@ -1467,7 +1467,7 @@ Canonical v2 vocabulary. Each entry cites the locking DESIGN-NN section. Frontma
 
 **frontmatter_version** — Mandatory integer on every v2 artefact; absent value triggers v0.3.0 lenient mode per DESIGN-01 / DESIGN-08. Locked at `frontmatter_version: 2` per DESIGN-01.
 **based_on_kickoff** — Frontmatter field on `02_discovery_*` and `03_sow_*` artefacts pointing at the upstream `01_kickoff_v<N>.md` carrier; mandatory under DESIGN-18 / DESIGN-19.
-**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts (discovery-via branch) pointing at the upstream `02_discovery_v<N>.md`; per DESIGN-19.
+**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts (discovery-ready branch) pointing at the upstream `02_discovery_v<N>.md`; per DESIGN-19.
 **based_on_sow** — Frontmatter field on `04a_*` / `04b_*` fnspec artefacts pointing at the upstream `03_sow_v<N>.md`; per DESIGN-20.
 **based_on_fnspec_platform / based_on_fnspec_integration** — Frontmatter fields on `06_cost_*` and downstream artefacts pointing at the upstream `04a_*` / `04b_*` carriers; at least one mandatory per DESIGN-22.
 **based_on_techspec** — Frontmatter field on `06_cost_*` and `07a_*` artefacts pointing at the upstream `05_techspec_v<N>.md`; per DESIGN-21 / DESIGN-22 / DESIGN-23.
@@ -1479,7 +1479,7 @@ Canonical v2 vocabulary. Each entry cites the locking DESIGN-NN section. Frontma
 **space_id** — Wrike-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-15.
 **project_id** — Ziflow-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-16.
 **delivery** — Per-requirement routing key on `04a_fnspec-platform_v<N>.md` rows; closed enum `native-ai | api`; drives Stage 5 scope-gate, Stage 7b implementation-prompt path, and Stage 10 native-AI ingestion per DESIGN-20 / DESIGN-21 / DESIGN-26.
-**kickoff_branch** — Routing key on `01_kickoff_v<N>.md` selecting the downstream path: `kickoff-direct` (skip Stage 2; feed Stage 3 directly) or `discovery-via` (feed Stage 2 first); per DESIGN-17 / DESIGN-19.
+**kickoff_branch** — Routing key on `01_kickoff_v<N>.md` selecting the downstream path: `discovery-ready` (feed Stage 2 first) or `draft-sow` (skip Stage 2; feed Stage 3 directly); per DESIGN-17 / DESIGN-19.
 **commercial_inputs_status** — Halt-gate field on `06_cost_inputs_v<N>.md`; values `pending | provided` per DESIGN-22 wait-for-commercial-inputs gate.
 **risk_multiplier_version** — Frontmatter field on `06_cost_v<N>.md` locking which numeric default set was used; values are `<TBD-deferred>` until Phase 4 OPEN-QUESTIONS resolves per D-22 / DESIGN-22.
 **tech_spec_scope** — Closed-enum field on `05_techspec_v<N>.md` capturing the scope-gate decision; values `full | addendum-only | skip-entirely` per DESIGN-21.
