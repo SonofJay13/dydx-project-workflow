@@ -23,26 +23,26 @@
 
 `kickoff-capture/` skill is NEW (no v0.3.0 ancestor). Stage 1 sits between signed SOW (client engagement spin-up trigger) and Stage 2 Discovery. Locked contract: DESIGN-17.
 
-- [ ] **STG1-01**: `kickoff-capture/` skill exists at `dydx-delivery/skills/kickoff-capture/` with `SKILL.md` (+ standard `references/` shape where applicable), points at canonical references (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`) per FOUND-01..04, and produces `01_kickoff_v<N>.md` artefact per DESIGN-02 file-prefix scheme.
-- [ ] **STG1-02**: Kickoff artefact carries a single `kickoff_branch:` enum field on frontmatter — `discovery-ready` routes to Stage 2 (`discovery-intake`); `draft-sow` SKIPS Stage 2 and routes to Stage 3 (`generate-sow`). Both downstream stages read this same field; no separate routing flags. (DESIGN-17 + DESIGN-18 + DESIGN-19)
-- [ ] **STG1-03**: Field Notes triage filter defaults to `processed_at IS NULL` per DESIGN-09 directional boundary. Field Notes Coda table is read-only input queue; kickoff never auto-merges entries into the brain (kickoff quotes the note + asks human keep/drop/edit-and-keep). (MOD-8 prevention)
-- [ ] **STG1-04**: Auto-classification of captured inputs into kickoff template sections (system / users / triggers / data / rules / integrations / exceptions / failure points) emits explicit `[unknown — needs human classification]` inline markers where confidence is low. No silent guesswork; forces visible reviewer triage. (DESIGN-17)
-- [ ] **STG1-05**: Capture paths supported — (a) meeting-notes paste (freeform); (b) Miro paste fallback per DESIGN-07 + AUDIT-08 (image paste; no "render whole board" assumption); (c) Field Notes Coda table read. No raw-notes-direct-to-discovery shortcut — all inputs flow through kickoff first (consolidates v0.3.0's two entry paths into one).
+- [x] **STG1-01**: `kickoff-capture/` skill exists at `dydx-delivery/skills/kickoff-capture/` with `SKILL.md` (+ standard `references/` shape where applicable), points at canonical references (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`) per FOUND-01..04, and produces `01_kickoff_v<N>.md` artefact per DESIGN-02 file-prefix scheme.
+- [x] **STG1-02**: Kickoff artefact carries a single `kickoff_branch:` enum field on frontmatter — `discovery-ready` routes to Stage 2 (`discovery-intake`); `draft-sow` SKIPS Stage 2 and routes to Stage 3 (`generate-sow`). Both downstream stages read this same field; no separate routing flags. (DESIGN-17 + DESIGN-18 + DESIGN-19)
+- [x] **STG1-03**: Field Notes triage filter defaults to `processed_at IS NULL` per DESIGN-09 directional boundary. Field Notes Coda table is read-only input queue; kickoff never auto-merges entries into the brain (kickoff quotes the note + asks human keep/drop/edit-and-keep). (MOD-8 prevention)
+- [x] **STG1-04**: Auto-classification of captured inputs into kickoff template sections (system / users / triggers / data / rules / integrations / exceptions / failure points) emits explicit `[unknown — needs human classification]` inline markers where confidence is low. No silent guesswork; forces visible reviewer triage. (DESIGN-17)
+- [x] **STG1-05**: Capture paths supported — (a) meeting-notes paste (freeform); (b) Miro paste fallback per DESIGN-07 + AUDIT-08 (image paste; no "render whole board" assumption); (c) Field Notes Coda table read. No raw-notes-direct-to-discovery shortcut — all inputs flow through kickoff first (consolidates v0.3.0's two entry paths into one).
 
 ### Stage 2 Discovery (STG2)
 
 `discovery-intake/` MODIFIED to consume kickoff. v0.3.0 raw-notes entry path is RETIRED. Locked contract: DESIGN-18.
 
-- [ ] **STG2-01**: `discovery-intake/` MODIFIED to consume `01_kickoff_v<N>.md` as sole upstream artefact. `based_on_kickoff:` frontmatter field is MANDATORY on every `02_discovery_v<N>.md` artefact (no v0.3.0 lenient absence). Raw-notes entry path RETIRED — discovery becomes pure transform of approved kickoff.
-- [ ] **STG2-02**: When `kickoff_branch: draft-sow`, `discovery-intake/` emits `Stage 2 SKIPPED — kickoff branch = draft-sow` hand-off message and exits without writing a `02_discovery_v<N>.md` artefact. Skip behaviour is explicit (not silent); downstream Stage 3 reads kickoff directly via `based_on_kickoff:` when discovery is skipped.
-- [ ] **STG2-03**: Same discovery template structure as v0.3.0 (system / users / triggers / data / rules / integrations / exceptions / failure points). Only the upstream input contract and skip behaviour change; body unchanged.
+- [x] **STG2-01**: `discovery-intake/` MODIFIED to consume `01_kickoff_v<N>.md` as sole upstream artefact. `based_on_kickoff:` frontmatter field is MANDATORY on every `02_discovery_v<N>.md` artefact (no v0.3.0 lenient absence). Raw-notes entry path RETIRED — discovery becomes pure transform of approved kickoff.
+- [x] **STG2-02**: When `kickoff_branch: draft-sow`, `discovery-intake/` emits `Stage 2 SKIPPED — kickoff branch = draft-sow` hand-off message and exits without writing a `02_discovery_v<N>.md` artefact. Skip behaviour is explicit (not silent); downstream Stage 3 reads kickoff directly via `based_on_kickoff:` when discovery is skipped.
+- [x] **STG2-03**: Same discovery template structure as v0.3.0 (system / users / triggers / data / rules / integrations / exceptions / failure points). Only the upstream input contract and skip behaviour change; body unchanged.
 
 ### Stage 3 SOW (STG3)
 
 `generate-sow/` MODIFIED — status lifecycle lock + single-SOW scope. Locked contract: DESIGN-19.
 
-- [ ] **STG3-01**: `generate-sow/` status lifecycle locked to canonical `draft → client_review → approved → archived` per DESIGN-08. `client_review` retained explicitly per AUDIT-01.2 + DESIGN-08 "Live status-lifecycle survey" — interim commercial-review state is a real workflow stage, not a v0.3.0 quirk. (`generate-sow` is the sole skill carrying `client_review` in v0.3.0.)
-- [ ] **STG3-02**: Single SOW covers both platform AND integration scope (no Stage 3 split). The platform/integration split happens at Stage 4 (Fnspec split per DESIGN-20). Stage 3 stays unified for client commercial review.
+- [x] **STG3-01**: `generate-sow/` status lifecycle locked to canonical `draft → client_review → approved → archived` per DESIGN-08. `client_review` retained explicitly per AUDIT-01.2 + DESIGN-08 "Live status-lifecycle survey" — interim commercial-review state is a real workflow stage, not a v0.3.0 quirk. (`generate-sow` is the sole skill carrying `client_review` in v0.3.0.)
+- [x] **STG3-02**: Single SOW covers both platform AND integration scope (no Stage 3 split). The platform/integration split happens at Stage 4 (Fnspec split per DESIGN-20). Stage 3 stays unified for client commercial review.
 
 ### Stage 4 Fnspec Split (STG4)
 
@@ -117,16 +117,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STG1-01 | Phase 7 | Pending |
-| STG1-02 | Phase 7 | Pending |
-| STG1-03 | Phase 7 | Pending |
-| STG1-04 | Phase 7 | Pending |
-| STG1-05 | Phase 7 | Pending |
-| STG2-01 | Phase 7 | Pending |
-| STG2-02 | Phase 7 | Pending |
-| STG2-03 | Phase 7 | Pending |
-| STG3-01 | Phase 7 | Pending |
-| STG3-02 | Phase 7 | Pending |
+| STG1-01 | Phase 7 | Satisfied |
+| STG1-02 | Phase 7 | Satisfied |
+| STG1-03 | Phase 7 | Satisfied |
+| STG1-04 | Phase 7 | Satisfied |
+| STG1-05 | Phase 7 | Satisfied |
+| STG2-01 | Phase 7 | Satisfied |
+| STG2-02 | Phase 7 | Satisfied |
+| STG2-03 | Phase 7 | Satisfied |
+| STG3-01 | Phase 7 | Satisfied |
+| STG3-02 | Phase 7 | Satisfied |
 | STG4-01 | Phase 8 | Pending |
 | STG4-02 | Phase 8 | Pending |
 | STG4-03 | Phase 8 | Pending |
