@@ -131,17 +131,9 @@ End with this exact handoff message to the user:
 
 > Awaiting status: approved write to 02_discovery_v<N>.md before generate-sow runs.
 
-## Start-at-any-point handling
-
-This is the entry skill — it doesn't depend on upstream artefacts. But if the user calls a *later* skill (e.g. `generate-sow`) without running discovery, that skill will offer to either: (a) paste an existing discovery doc, (b) run a quick inline capture, or (c) cancel.
-
-This skill itself accepts shortcut inputs:
-
-- "I already have a brief — here it is" → parse the brief into the template structure, ask only for missing dimensions
-- "Just structure these notes" → take pasted notes, infer what you can, ask for the rest
-
 ## What this skill does not do
 
+- **Does NOT accept raw notes.** The raw-notes entry path is RETIRED in v2.2 — discovery is a pure transform of an approved `01_kickoff_v<N>.md` artefact per STG2-01 + DESIGN-18. Pasted meeting notes / Miro / Field Notes content flows through `kickoff-capture` first (see `dydx-delivery/skills/kickoff-capture/SKILL.md`).
 - Does not draft scope, spec, or technical detail — that's downstream
 - Does not commit the user to a platform choice if it's genuinely unclear; asks instead
 - Does not invent answers to "Unknown" items — flags them explicitly
