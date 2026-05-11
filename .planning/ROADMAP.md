@@ -54,7 +54,7 @@ Phase numbering CONTINUES from v2.0. Two phases bundled per CHANGELIST CHANGE-01
 Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-numbers`). Two phases bundled per CHANGELIST.md CHANGE-01 Phase 3 (v2.2). Phase 7 lands BEFORE Phase 8 (intra-milestone ordering — Stage 4a/4b in Phase 8 reads approved discovery + approved SOW produced by Phase 7's MODIFIED upstream stages).
 
 - [x] **Phase 7: Stage 1 Kickoff + Discovery/SOW upstream wiring** — Stage 1 `kickoff-capture/` NEW + Stage 2 `discovery-intake/` MODIFIED + Stage 3 `generate-sow/` MODIFIED — STG1-01..05 / STG2-01..03 / STG3-01..02 (10 reqs) — **SHIPPED 2026-05-11**
-- [ ] **Phase 8: Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)** — Stage 4a `generate-fnspec-platform/` NEW + Stage 4b `generate-fnspec-integration/` NEW + cross-spec consistency check + `delivery:` routing key + Stage 5 scope-gate forward-compat + TD-2 reconciliation — STG4-01..06 / ROUTE-01..05 (11 reqs)
+- [x] **Phase 8: Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)** — Stage 4a `generate-fnspec-platform/` NEW + Stage 4b `generate-fnspec-integration/` NEW + cross-spec consistency check + `delivery:` routing key + Stage 5 scope-gate forward-compat + TD-2 reconciliation — STG4-01..06 / ROUTE-01..05 (11 reqs) — **SHIPPED 2026-05-11**
 
 ## Phase Details
 
@@ -104,7 +104,7 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
 | 5. Foundations + Connector Verification | v2.1 | 5/5 | Complete ✓ SHIPPED | 2026-05-10 |
 | 6. Internalise Platform Skills | v2.1 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
 | 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
-| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 2/3 | Waves 1 + 2 complete (08-01 + 08-02 SHIPPED 2026-05-11); 08-03 pending | — |
+| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 3/3 | Complete ✓ SHIPPED 2026-05-11 — all 3 waves shipped (08-01 + 08-02 + 08-03); 11 reqs satisfied; phase8-structure-check.sh --all PASS | — |
 
 ---
 
