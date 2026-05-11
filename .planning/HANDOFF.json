@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-11T11:08:55.918Z",
+  "context": "phase",
+  "handoff_path": ".planning/phases/08-stage-4-fnspec-split-route/.continue-here.md",
+  "phase": {
+    "number": 8,
+    "name": "Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)",
+    "slug": "stage-4-fnspec-split-route",
+    "dir": ".planning/phases/08-stage-4-fnspec-split-route",
+    "requirements": ["STG4-01", "STG4-02", "STG4-03", "STG4-04", "STG4-05", "STG4-06", "ROUTE-01", "ROUTE-02", "ROUTE-03", "ROUTE-04", "ROUTE-05"]
+  },
+  "current_workflow": "/gsd-plan-phase 8",
+  "current_step": "Step 12 — Revision Loop iteration 1 of 3 (after planner revision, before plan-checker re-verification)",
+  "status": "blocked",
+  "blocker_summary": "Anthropic API rate limit hit at 2026-05-11T11:00Z (~Africa/Johannesburg 14:00) on the final reply of the planner revision agent. The file edits to 08-03-PLAN.md DID complete (verified post-cutoff — all 3 plan-checker issues addressed). Resume action is to re-spawn gsd-plan-checker to verify the revised 08-03-PLAN.md.",
+  "completed_work": [
+    {"step": "discuss-phase", "result": "08-CONTEXT.md + 08-DISCUSSION-LOG.md written; 9 decisions D-78..D-86 locked"},
+    {"step": "research", "result": "08-RESEARCH.md written (676 lines); 11-row D-78 enum touch-list enumerated; R-01..R-05 risks surfaced"},
+    {"step": "validation", "result": "08-VALIDATION.md written (Nyquist Dimension 8 sensor model + per-req assertion-ID map P1-P8 / I1-I8 / E1-E6 / S1-S6 / X1-X4)"},
+    {"step": "plan", "result": "3 plans authored: 08-01-PLAN.md (626 lines, 5 tasks), 08-02-PLAN.md (627 lines, 5 tasks), 08-03-PLAN.md (initial 831 lines, 8 tasks); planner self-audit claims full coverage"},
+    {"step": "plan-checker iter-1", "result": "1 BLOCKER + 2 WARNINGS found in 08-03-PLAN.md (R-01 glossary line-47 fix missing; .planning/ROADMAP.md missing from files_modified; E2 grep too soft). 08-01 + 08-02 PASS all dimensions."},
+    {"step": "planner revision iter-1", "result": "08-03-PLAN.md revised (now 87KB, 831+ lines); all 3 issues addressed in-file even though agent hit rate limit on final reply. Verified post-cutoff: line 21 adds .planning/ROADMAP.md to files_modified; lines 159-163 + 462-472 detail BOTH line-47 + line-66 glossary fixes; lines 167, 247, 350 lock E2 grep to literal 'is the routing key'."}
+  ],
+  "remaining_work": [
+    {"task": "Re-spawn gsd-plan-checker on 08-03-PLAN.md (iter-2)", "blocking": false, "estimated_minutes": 5},
+    {"task": "If PASS: proceed to Step 13 Requirements Coverage Gate + Step 13a Decision Coverage Gate", "blocking": false, "estimated_minutes": 5},
+    {"task": "Step 13b: Record planning completion in STATE.md", "blocking": false, "estimated_minutes": 2},
+    {"task": "Step 13c: Annotate ROADMAP with wave dependencies", "blocking": false, "estimated_minutes": 2},
+    {"task": "Step 13d: Commit plans (commit_docs=true)", "blocking": false, "estimated_minutes": 2},
+    {"task": "Step 14-15: Present final status + auto-advance check", "blocking": false, "estimated_minutes": 1}
+  ],
+  "blockers": [],
+  "human_actions_pending": [
+    {"action": "Wait for Anthropic API rate-limit reset (resets ~14:10 Africa/Johannesburg = 12:10 UTC 2026-05-11)", "context": "Rate limit caused planner revision agent to abort on final reply; file edits completed but next agent spawn (gsd-plan-checker iter-2) cannot run until reset", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "D-78: TD-2 = ADD ziflow to stage-skill platform: enum", "rationale": "Future-proofs proof-review-led engagements", "phase": "8"},
+    {"decision": "D-79: ROUTE-03 addendum body authored inline by Stage 4a in v2.2", "rationale": "ROADMAP success criterion 4(b) explicitly requires the H2 body, not just frontmatter", "phase": "8"},
+    {"decision": "D-80: 3 atomic plans sequential (D-69/D-63 precedent)", "rationale": "Reviewer grades a whole skill at a time; 4b depends on 4a output", "phase": "8"},
+    {"decision": "D-81: Per-skill auto-classify-rubric.md (D-73 precedent)", "rationale": "Rubric editable without re-reading SKILL.md; no other consumer in v2.2", "phase": "8"},
+    {"decision": "D-82: Per-row markup `delivery: native-ai [HIGH, src: platform-pipefy]`", "rationale": "Greppable provenance; [reviewer-override:] re-run preservation", "phase": "8"},
+    {"decision": "D-83: 3 files per skill in references/ (D-71 precedent)", "rationale": "Mirrors kickoff-capture shape; symmetric between 4a + 4b", "phase": "8"},
+    {"decision": "D-84: Consistency check = SKILL.md prose contract + references/consistency-rules.md", "rationale": "D-77 distinction: PHASE-GATE=script, RUNTIME-SKILL=prose", "phase": "8"},
+    {"decision": "D-85: Either-spec-skip = verbatim skip-string to stdout, no artefact (D-74 precedent)", "rationale": "Mirrors discovery-intake skip-emit pattern", "phase": "8"},
+    {"decision": "D-86: ROUTE-05 smoke = phase8-structure-check.sh --section smoke + fixture stubs", "rationale": "Mirrors phase7-structure-check.sh + 07-04-SUMMARY pattern", "phase": "8"}
+  ],
+  "uncommitted_files": [
+    ".planning/phases/08-stage-4-fnspec-split-route/08-CONTEXT.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-DISCUSSION-LOG.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-RESEARCH.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-VALIDATION.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-01-PLAN.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-02-PLAN.md",
+    ".planning/phases/08-stage-4-fnspec-split-route/08-03-PLAN.md",
+    ".claude/settings.local.json"
+  ],
+  "next_action": "Re-spawn gsd-plan-checker (iter-2 of 3) on .planning/phases/08-stage-4-fnspec-split-route/08-03-PLAN.md ONLY. 08-01 + 08-02 already passed iter-1 — do NOT re-verify them. Issue checklist for iter-2: (1) Line 47 glossary fix in 08-03 task T3(b1); (2) .planning/ROADMAP.md in 08-03 files_modified array; (3) E2 grep locked to literal 'is the routing key' (not soft 'routing'). If iter-2 PASSES, run Step 13 Requirements Coverage Gate, Step 13a Decision Coverage Gate, Step 13b record completion, Step 13c annotate ROADMAP, Step 13d commit (commit_docs=true), Step 14-15 present + auto-advance.",
+  "context_notes": "Phase 8 plan-phase flow is at the verification-iteration stage. Plans look strong — planner's coverage matrix is honest, plan-checker found real defects (not nits), planner revised cleanly. Expect iter-2 to PASS. No design changes needed; only verifying that the revision lands cleanly. If iter-2 surfaces NEW issues (not the original 3), assess severity: if HIGH, revise again (iter-3 budget remains); if LOW/MED, accept-with-flag and proceed to Step 13.",
+  "branch": "main",
+  "branch_state_warning": "Working on `main` branch (225 commits ahead of origin/main, unpushed). Session-start gitStatus showed `dydx-delivery-v2` but that branch is stale; the merge commit 6f568f4 brought v2 into main. All work continues on `main`."
+}
