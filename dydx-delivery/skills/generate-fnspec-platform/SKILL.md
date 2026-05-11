@@ -122,7 +122,7 @@ Approval is a hard gate per DESIGN-06; do not auto-progress to Stage 4b or Stage
 - **D-79 — Platform-API Addendum carrier (ROUTE-03).** When no 4b is in scope AND this 4a has any `delivery: api` rows, this skill authors the FULL `## Platform-API Addendum` H2 body inline + emits `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only`. v2.3 Stage 5 reads these frontmatter fields and consumes the addendum body verbatim.
 - **D-82 — Per-row routing markup.** Every business-rule / field-req / acceptance-criteria row carries `delivery: native-ai | api [<confidence>, src: <platform>]` in canonical enum order. `[reviewer-override:]` token is the re-run preservation trigger.
 - **D-84 — Consistency check ownership.** Stage 4b OWNS the three cross-spec consistency checks; this 4a does NOT run them. 4a's contract is to emit clean, classified rows that 4b can verify.
-- **D-85 — Either-spec-skip mechanics.** Stage 4a runs normally regardless of 4b topology; there is no "skip 4a" path. 4b detects either-spec-skip via SOW H2s + presence/absence of this 4a output.
+- **D-85 — Either-spec-skip mechanics.** Stage 4a runs normally regardless of 4b topology; there is no "skip 4a" path. 4b detects either-spec-skip via SOW H2s + presence/absence of this 4a output. See `dydx-delivery/skills/generate-fnspec-integration/references/either-spec-skip-paths.md` for the three-topology rules (4a-only / 4b-only / both) and the verbatim D-85 skip-emit string (STG4-06).
 
 ## What this skill does not do
 
