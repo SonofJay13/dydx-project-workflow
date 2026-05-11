@@ -85,7 +85,13 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
   4. All three Stage 5 scope-gate branches resolve cleanly from 4a/4b frontmatter alone (no downstream Stage 5 skill needed in v2.2): (a) full path — 4b exists with `delivery: api` rows; (b) skip-with-addendum — no 4b but 4a carries `## Platform-API Addendum` H2 + `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only`; (c) skip-entirely — no 4b AND no `delivery: api` rows anywhere → no addendum, no frontmatter change. Either-spec-skip (4a-only or 4b-only) is independently selectable per project.
   5. TD-2 carryover RESOLVED with a single documented outcome — either (a) `ziflow` added to the stage-skill `platform:` enum across all consuming stage skills + `platform-ziflow/SKILL.md:14` aligned, OR (b) Ziflow documented as integration-only (never primary platform routing key) and `platform-ziflow/SKILL.md:14` updated to drop the routing-key claim. Outcome recorded in DESIGN-20 sub-decision or `dydx-delivery/references/glossary.md` routing-key entry.
   6. Forward-compat smoke check passes — `delivery:` field survives at the canonical position on every requirement row through a `based_on_*` chain read into a synthetic Stage 5 / Stage 6 / Stage 7b / Stage 10 consumer stub; no field stripping, no position drift, no enum reorder.
-**Plans**: TBD
+**Plans**:
+- [x] 08-01-PLAN.md — NEW `generate-fnspec-platform` (Stage 4a): Wave 1; STG4-01, STG4-04, STG4-05, ROUTE-03
+- [x] 08-02-PLAN.md — NEW `generate-fnspec-integration` (Stage 4b): Wave 2 (depends on 08-01); STG4-02, STG4-04, ROUTE-01, ROUTE-02, ROUTE-03
+- [x] 08-03-PLAN.md — Cross-cutting closeout (RETIRE `generate-functional-spec/` + ROUTE-04 D-78 enum rollout + ROUTE-05 smoke): Wave 3 (depends on 08-01 + 08-02); autonomous: false; STG4-03, STG4-06, ROUTE-04, ROUTE-05
+
+**Wave dependencies**: W1 → W2 → W3 (strictly sequential per D-80; 4b reads 4a output; closeout reads both)
+**Cross-cutting constraints**: ROUTE-04 D-78 enum rollout touches 11 skill files + glossary; ROUTE-05 smoke via `phase8-structure-check.sh --section smoke`; TD-2 resolved inline in 08-03 (D-78 = ADD ziflow to stage-skill `platform:` enum)
 
 ## Progress
 
@@ -97,8 +103,8 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
 | 4. Open questions register | v2.0 | 5/5 | Complete ✓ APPROVED | 2026-05-10 |
 | 5. Foundations + Connector Verification | v2.1 | 5/5 | Complete ✓ SHIPPED | 2026-05-10 |
 | 6. Internalise Platform Skills | v2.1 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
-| 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 0/4 | Plans authored — ready for `/gsd-execute-phase 7` | — |
-| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 0/TBD | Not started — awaiting Phase 7 completion | — |
+| 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
+| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 0/3 | Plans authored — ready for `/gsd-execute-phase 8` | — |
 
 ---
 
