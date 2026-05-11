@@ -9,7 +9,15 @@ Produce a clean, defensible Scope of Work from an approved discovery artefact. T
 
 ## Inputs
 
-- The latest `<Client>/build-specs/<platform>/02_discovery_v*.md` (required)
+Generate-sow has a **dual upstream input contract** per DESIGN-19 lines 635-636 + 643. Exactly one of the two upstream paths must be present — never both:
+
+- **Discovery-ready path** (Stage 2 ran): the latest `status: approved` `<Client>/build-specs/<platform>/02_discovery_v<N>.md`. The new SOW frontmatter carries `based_on_discovery: 02_discovery_v<N>.md`.
+- **Draft-sow path** (Stage 2 skipped per STG2-02): the latest `status: approved` `<Client>/build-specs/<platform>/01_kickoff_v<N>.md` carrying `kickoff_branch: draft-sow`. The new SOW frontmatter carries `based_on_kickoff: 01_kickoff_v<N>.md`.
+
+One or the other, NOT both per DESIGN-19 line 643.
+
+The SOW artefact covers BOTH platform AND integration scope as a single artefact (per STG3-02 + D-75). Splitting by platform vs integration happens at Stage 4 (Fnspec) per DESIGN-20 — not here.
+
 - Any commercial framing the user provides inline (rates, time-and-materials vs fixed, milestone preferences)
 
 ## Output
@@ -20,17 +28,17 @@ Produce a clean, defensible Scope of Work from an approved discovery artefact. T
 
 ### Step 1 — Locate upstream artefact
 
-Find the highest-version `02_discovery_v*.md` in `<Client>/build-specs/<platform>/`.
+Apply the dual-input triage per DESIGN-19 lines 635-636 + 643:
 
-**If not found**, run the start-at-any-point triage:
+1. Read the latest `status: approved` `01_kickoff_v<N>.md` for this `<Client>` + `<platform>`.
+2. Read `kickoff_branch:` from the kickoff frontmatter:
+   - If `kickoff_branch: discovery-ready` → look for the latest `status: approved` `02_discovery_v<N>.md` in the same folder. The new SOW frontmatter will carry `based_on_discovery: 02_discovery_v<N>.md`.
+   - If `kickoff_branch: draft-sow` → use the kickoff directly (Stage 2 was skipped per STG2-02). The new SOW frontmatter will carry `based_on_kickoff: 01_kickoff_v<N>.md`.
+3. If neither approved upstream is found, emit an explicit error directing the reviewer to run the upstream stage first:
 
-> I don't see a discovery artefact for `<Client>` at `<expected path>`. How do you want to proceed?
->
-> **(a) Paste an existing brief or discovery doc** — I'll save it as `02_discovery_v1.md` and continue
-> **(b) Walk through a quick inline discovery** — I'll capture the essentials in chat and stub the discovery file
-> **(c) Cancel** — exit without writing
+> Cannot draft SOW for `<Client>` — no approved `01_kickoff_v*.md` (and on the discovery-ready branch, no approved `02_discovery_v*.md`) found at `<expected path>`. Run **`kickoff-capture`** first (and **`discovery-intake`** if `kickoff_branch: discovery-ready`), then re-run **`generate-sow`**.
 
-Wait for the user to choose. If (a) or (b), create the discovery stub before drafting the SOW so the audit trail stays intact.
+Do NOT inline-stub upstream artefacts from this skill — that breaks the kickoff → discovery → SOW audit chain established in Phase 7.
 
 ### Step 2 — Check for existing SOW
 
@@ -40,19 +48,22 @@ Look for `03_sow_v*.md`. If found, ask:
 
 ### Step 3 — Draft the SOW
 
-Use the template at `references/sow-template.md`. The SOW is anchored on the discovery artefact — every claim in scope, exclusions, and assumptions must be traceable back to a discovery answer or marked as a new assumption.
+Use the template at `references/sow-template.md`. The SOW is anchored on the upstream artefact (discovery on the discovery-ready path; kickoff on the draft-sow path) — every claim in scope, exclusions, and assumptions must be traceable back to an upstream answer or marked as a new assumption.
+
+Deliverables now split into two top-level H2 sections per STG3-02 + D-75: `## Platform Scope` (consumed by Stage 4a `generate-fnspec-platform`) and `## Integration Scope` (consumed by Stage 4b `generate-fnspec-integration`). The template carries the load-bearing dual-scope split; populate each section from the upstream artefact.
 
 **Order of work:**
 
-1. **Business outcome** — copy from discovery, sharpen if needed
-2. **In-scope deliverables** — list every concrete output the engagement will produce. Be specific. "Pipefy automation" is not a deliverable; "Brief intake form with conditional routing to Studio Lead or Director queue" is.
-3. **Out-of-scope** — every adjacent thing the client might assume is included but isn't. Generous list. This is where misunderstanding lives.
-4. **Approach and phases** — how the work is broken down. Reference the dydx-delivery pipeline stages (functional spec → technical spec → build → test → handover).
-5. **Assumptions** — anything taken as true to make scoping possible. Each one is a risk if wrong.
-6. **Risks and dependencies** — what could derail the timeline or quality, and what the client owes us before we can start.
-7. **Acceptance** — how the client confirms each deliverable is done.
-8. **Commercial framing** — rates, structure (fixed / T&M / milestone), payment cadence. Use what the user provides; mark as `**TBC**` if not given.
-9. **Timeline** — high-level milestones with rough durations. Mark precision (e.g. `±2 days`).
+1. **Business outcome** — copy from upstream (kickoff or discovery), sharpen if needed
+2. **In-scope deliverables — `## Platform Scope`** — list every concrete platform configuration output the engagement will produce (Pipefy / Wrike / Ziflow configuration). Be specific. "Pipefy automation" is not a deliverable; "Brief intake form with conditional routing to Studio Lead or Director queue" is.
+3. **In-scope deliverables — `## Integration Scope`** — list every inbound/outbound integration output (custom APIs, webhooks, ETL, external-system handoffs). If the engagement has no integration work, note "no integration scope" — Stage 4b will then skip cleanly.
+4. **Out-of-scope** — every adjacent thing the client might assume is included but isn't. Generous list. This is where misunderstanding lives.
+5. **Approach and phases** — how the work is broken down. Reference the dydx-delivery pipeline stages (Stage 4a/4b functional spec → technical spec → build → test → handover).
+6. **Assumptions** — anything taken as true to make scoping possible. Each one is a risk if wrong.
+7. **Risks and dependencies** — what could derail the timeline or quality, and what the client owes us before we can start.
+8. **Acceptance** — how the client confirms each deliverable is done.
+9. **Commercial framing** — rates, structure (fixed / T&M / milestone), payment cadence. Use what the user provides; mark as `**TBC**` if not given.
+10. **Timeline** — high-level milestones with rough durations. Mark precision (e.g. `±2 days`).
 
 ### Step 4 — Apply senior-level challenge
 
@@ -67,19 +78,24 @@ Write a short **Architectural notes** section with anything the SOW implies but 
 
 ### Step 5 — Write and hand off
 
-Write to `<Client>/build-specs/<platform>/03_sow_v{N}.md` with frontmatter:
+Write to `<Client>/build-specs/<platform>/03_sow_v{N}.md` with frontmatter per DESIGN-19 line 643. Reviewer picks ONE of `based_on_discovery:` or `based_on_kickoff:` — never both:
 
 ```yaml
 ---
 client: <Client>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 integrations: [<...>]
+frontmatter_version: 2
 version: 1
 status: draft
-based_on_discovery: 02_discovery_v{N}.md
+# One or the other — never both per DESIGN-19 line 643:
+based_on_discovery: 02_discovery_v{N}.md   # discovery-ready path (Stage 2 ran)
+# based_on_kickoff: 01_kickoff_v{N}.md     # draft-sow path (Stage 2 skipped)
 generated_at: <ISO date>
 ---
 ```
+
+Status lifecycle (canonical per STG3-01 + DESIGN-08 + AUDIT-01.2): `draft → client_review → approved → archived`. generate-sow is the sole skill retaining `client_review` — the interim commercial-review state is a real workflow stage, not a v0.3.0 quirk.
 
 End with this exact handoff message:
 
@@ -90,15 +106,16 @@ End with this exact handoff message:
 > 2. Confirm exclusions are tight enough to prevent scope creep
 > 3. Validate the timeline with the implementation partner
 > 4. If you make edits, save as `03_sow_v{N+1}.md`
-> 5. Update `status:` to `client_review` when sent, `approved` when signed
+> 5. Update `status:` to `client_review` when sent, `approved` when signed, `archived` at Stage 11 sign-off
 >
-> When approved, run **`generate-functional-spec`** to convert scope into requirements.
+> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.
 
 ## What this skill does not do
 
 - Does not produce binding pricing — uses what the user provides or marks `**TBC**`
 - Does not commit to a timeline without a real estimate from the implementation partner
 - Does not invent acceptance criteria — anchors them in the deliverables list
+- Does NOT split scope by platform vs integration at the artefact level — that split happens at Stage 4 (Fnspec). The single SOW artefact carries both as `## Platform Scope` + `## Integration Scope` H2 sections (per DESIGN-19 + STG3-02 + D-75).
 
 ## Quality bar
 
