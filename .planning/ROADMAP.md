@@ -68,10 +68,11 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
   3. When `kickoff_branch: draft-sow` ships, `discovery-intake` emits the verbatim hand-off `Stage 2 SKIPPED — kickoff branch = draft-sow` and writes no `02_discovery_v<N>.md` artefact; `generate-sow` then reads the kickoff directly via `based_on_kickoff:`.
   4. `generate-sow` writes `03_sow_v<N>.md` carrying the canonical 4-state lifecycle `draft → client_review → approved → archived` (sole skill retaining `client_review` per DESIGN-08 survey + AUDIT-01.2); single SOW covers BOTH platform AND integration scope (no Stage 3 split — that lives in Stage 4 per DESIGN-20).
   5. Phase 7 structure-check exits 0 — kickoff skill directory + `references/` shape present; canonical-reference pointers at `safety-rules.md` / `stage-numbering.md` / `frontmatter-scheme.md` / `glossary.md` resolve; `based_on_kickoff:` field appears on every test `02_*` artefact; SOW status-lifecycle enum matches the 4-state canonical exactly.
-**Plans**: 3 plans
+**Plans**: 4 plans (07-03 synthesis split to 07-04 per cross-AI review C2 fix)
 - [ ] 07-01-PLAN.md — NEW kickoff-capture skill (SKILL.md + 3 references/ files) + phase7-structure-check.sh with --section dispatch
 - [ ] 07-02-PLAN.md — MODIFIED discovery-intake (consume kickoff, RETIRE raw-notes, verbatim skip-message on draft-sow)
-- [ ] 07-03-PLAN.md — MODIFIED generate-sow (4-state lifecycle + dual-scope H2 split) + synthesis (R-02 glossary fix, R-05 cleanup, 3 fixtures, e2e smoke, REQUIREMENTS trace flips, --all gate)
+- [ ] 07-03-PLAN.md — MODIFIED generate-sow (4-state lifecycle + dual-scope H2 split) — surgical edits only; synthesis split to 07-04
+- [ ] 07-04-PLAN.md — Phase 7 synthesis (R-02 glossary fix, 3 fixtures, manual e2e smoke, --all phase gate, REQUIREMENTS trace flips) — depends on 07-02 + 07-03
 
 ### Phase 8: Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)
 **Goal**: A reviewer can produce a Stage 4a platform fnspec AND a Stage 4b integration fnspec from approved discovery+SOW, see every requirement row carry the `delivery: native-ai | api` routing key, watch the consistency check halt on synthetic conflicts, and confirm the routing key survives forward into a v0.3.0-style smoke read — and the v2.1 TD-2 stage-skill enum vs platform-ziflow routing-claim is resolved with a single documented outcome.
@@ -96,7 +97,7 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
 | 4. Open questions register | v2.0 | 5/5 | Complete ✓ APPROVED | 2026-05-10 |
 | 5. Foundations + Connector Verification | v2.1 | 5/5 | Complete ✓ SHIPPED | 2026-05-10 |
 | 6. Internalise Platform Skills | v2.1 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
-| 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 0/3 | Plans authored — ready for `/gsd-execute-phase 7` | — |
+| 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 0/4 | Plans authored — ready for `/gsd-execute-phase 7` | — |
 | 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 0/TBD | Not started — awaiting Phase 7 completion | — |
 
 ---
