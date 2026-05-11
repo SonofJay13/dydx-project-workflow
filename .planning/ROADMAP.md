@@ -104,7 +104,7 @@ Phase numbering CONTINUES from v2.1 (v2.1 ended at Phase 6; no `--reset-phase-nu
 | 5. Foundations + Connector Verification | v2.1 | 5/5 | Complete ✓ SHIPPED | 2026-05-10 |
 | 6. Internalise Platform Skills | v2.1 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
 | 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | v2.2 | 4/4 | Complete ✓ SHIPPED | 2026-05-11 |
-| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 1/3 | Wave 1 complete (08-01 SHIPPED 2026-05-11); 08-02 + 08-03 pending | — |
+| 8. Stage 4 Fnspec Split + ROUTE | v2.2 | 2/3 | Waves 1 + 2 complete (08-01 + 08-02 SHIPPED 2026-05-11); 08-03 pending | — |
 
 ---
 
