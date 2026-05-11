@@ -44,7 +44,7 @@
 **approved_at** — ISO-8601 timestamp recording sign-off time; mandatory on `status: approved` writes per DESIGN-06. Hook refuses write if missing.
 **approved_by** — Human author name recording sign-off identity; mandatory on `status: approved` writes per DESIGN-06. Hook refuses literal `Claude` / `AI` / `system` values.
 **based_on_cost** — Frontmatter field on `07a_*` / `07b_*` artefacts pointing at the upstream `06_cost_v<N>.md` per DESIGN-22 / DESIGN-23.
-**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts (discovery-via branch) pointing at the upstream `02_discovery_v<N>.md` per DESIGN-19.
+**based_on_discovery** — Frontmatter field on `03_sow_*` artefacts pointing at the upstream `02_discovery_v<N>.md` per DESIGN-19.
 **based_on_fnspec_integration** — Frontmatter field on `06_cost_*` / `05_techspec_*` / `07a_*` artefacts pointing at the upstream `04b_fnspec-integration_v<N>.md` per DESIGN-20 / DESIGN-22.
 **based_on_fnspec_platform** — Frontmatter field on `06_cost_*` / `07b_*` artefacts pointing at the upstream `04a_fnspec-platform_v<N>.md` per DESIGN-20 / DESIGN-22.
 **based_on_kickoff** — Frontmatter field on `02_discovery_*` and `03_sow_*` artefacts pointing at the upstream `01_kickoff_v<N>.md` carrier per DESIGN-18 / DESIGN-19.
@@ -63,13 +63,18 @@
 **frontmatter_version** — Mandatory integer on every v2 artefact; absent value triggers v0.3.0 lenient mode per DESIGN-01 / DESIGN-08. Locked at `frontmatter_version: 2`.
 **generated_at** — ISO date on an artefact recording when it was first written.
 **ingested_at** — ISO-timestamp on Stage 10 native-AI artefacts recording when content was last pushed to a platform's native-AI surface per DESIGN-26.
-**kickoff_branch** — Routing key on `01_kickoff_v<N>.md` selecting the downstream path: `kickoff-direct` (skip Stage 2; feed Stage 3 directly) or `discovery-via` (feed Stage 2 first) per DESIGN-17 / DESIGN-19.
+**kickoff_branch** — Enum on `01_kickoff_v<N>.md` frontmatter. `discovery-ready` (Stage 2 runs against this kickoff) | `draft-sow` (Stage 2 SKIPPED; Stage 3 reads kickoff directly via `based_on_kickoff:`). Lock: Phase 7 STG1-02 / DESIGN-17.
 **last_diff_review_at** — Field on Stage 9 docs recording when the last diff was reviewer-approved per DESIGN-25.
 **last_passed_at** — ISO-timestamp on test-case artefacts recording the most recent successful run per DESIGN-29.
 **native_ai_path** — Closed-enum routing key on `04a_*` rows; values `api | paste | internal_skill` per DESIGN-26 + per-platform DESIGN-14 / DESIGN-15 / DESIGN-16. v2.1 first-build value: `paste | none` only (api deferred).
 **pipe_id** — Pipefy-only frontmatter identifier; presence on a non-Pipefy artefact is a `validate-frontmatter` hook failure per DESIGN-01.
 **platform** — Closed-enum frontmatter field (`pipefy | wrike | ziflow | other`); gates platform-specific identifier presence per DESIGN-01.
 **project** — Frontmatter scalar naming the project / CR within a client per DESIGN-09.
+**routing-key (`platform:`)** — `pipefy | wrike | ziflow | other`. The `platform:` frontmatter value drives stage-skill routing across Stages 2 / 3 / 4a / 4b / 5 / 6 / 7b / 10. One-line per platform:
+  - **pipefy** — Pipefy GraphQL platform; primary workflow-tool platform tier 1.
+  - **wrike** — Wrike work-management platform; primary workflow-tool platform tier 1.
+  - **ziflow** — Ziflow proof-review platform; primary proof-review platform tier 1 (D-78 path (a) — added Phase 8 / 2026-05-11).
+  - **other** — Fallback for client-supplied platforms not in the v2.x platform-skill catalogue.
 **project_id** — Ziflow-only frontmatter identifier; analogous to `pipe_id` per DESIGN-01 / DESIGN-16.
 **risk_multiplier_version** — Frontmatter field on `06_cost_v<N>.md` locking which numeric default set was used per DESIGN-22 / D-22.
 **sandbox** — Top-level frontmatter block naming the sandbox tenant + IDs. The runner pins all API calls inside this block per safety-rules.md Rule 1.

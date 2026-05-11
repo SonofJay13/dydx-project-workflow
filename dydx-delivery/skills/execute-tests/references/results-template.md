@@ -1,7 +1,7 @@
 ---
 client: <CLIENT_NAME>
 feature: <feature-slug>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 version: 1
 based_on_test_plan: 08b_test-plan_v<N>.md
 run_started_at: <ISO datetime>

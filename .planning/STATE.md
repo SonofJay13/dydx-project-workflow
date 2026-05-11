@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Stage 1 Kickoff + Stage 4 Fnspec Split
-status: Phase 7 complete — ready for Phase 8
-stopped_at: Phase 7 verified (ACHIEVED, 10/10 reqs Satisfied)
-last_updated: "2026-05-11T12:00:00.000Z"
-last_activity: 2026-05-11 — Phase 7 executed (4 plans, 17 commits) + verified ACHIEVED; 15/15 structure-check assertions PASS
+status: Phase 8 shipped — PR #1 open (verify-work + secure-phase PASS)
+stopped_at: Phase 8 PR #1 opened against main (https://github.com/SonofJay13/dydx-project-workflow/pull/1) — branch gsd/phase-08-stage-4-fnspec-split-route, +2775 -498 across 37 files; verify-work 7/7 PASS; secure-phase SECURED (15 threats, 0 open)
+last_updated: "2026-05-11T19:45:00.000Z"
+last_activity: 2026-05-11 — Phase 8 shipped via PR #1; v2.2 milestone ready for /gsd-complete-milestone after merge
 progress:
   total_phases: 2
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 2
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # STATE
@@ -21,15 +21,15 @@ See: `.planning/PROJECT.md` (updated 2026-05-11)
 
 **Core value:** Plugin behaves as a senior implementation partner end-to-end — every stage produces an artefact polished enough to send to a client or hand to a developer without rework, and every change request leaves the client's brain, documentation, and native-AI knowledge bases coherent and up to date.
 
-**Current focus:** v2.2 milestone — Phase 7 SHIPPED 2026-05-11 (kickoff-to-SOW pipeline e2e on both branches). Phase 8 (Stage 4 Fnspec Split + ROUTE incl. TD-2 inline) is next.
+**Current focus:** v2.2 milestone — Phase 7 + Phase 8 both SHIPPED 2026-05-11. v2.2 ready for verify-work.
 
 ## Current Position
 
-Phase: 7 — Stage 1 Kickoff + Discovery/SOW upstream wiring — **COMPLETE**
-Plan: 4/4 complete (07-01, 07-02, 07-03, 07-04)
-Status: Verified ACHIEVED — 10/10 requirements Satisfied; 15/15 structure-check assertions PASS; manual e2e smoke evidence captured
-Last activity: 2026-05-11 — Phase 7 executed + verified (07-VERIFICATION.md written; no gaps)
-Next step: `/gsd-discuss-phase 8`
+Phase: 8 — Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline) — **SHIPPED 2026-05-11**
+Plan: 3/3 executed (08-01 + 08-02 + 08-03 all SHIPPED)
+Status: Phase 8 complete — phase8-structure-check.sh --all PASS (all P/I/E/S/X assertions green, exit 0); 11 REQUIREMENTS.md trace rows flipped to Satisfied (STG4-01..06 + ROUTE-01..05); ROADMAP.md Phase 8 row → Complete ✓ SHIPPED. v2.2 ready for verify-work (Phase 7 + Phase 8 both complete = 7/7 plans).
+Last activity: 2026-05-11 — Phase 8 plan 08-03 executed (cross-cutting closeout: phase8-structure-check.sh with 5 section runners + 4 cross-cutting X assertions; D-78 4-enum rollout across 11 files; R-01 glossary lines 47+66; STG4-03 retirement of generate-functional-spec/; 3 fixture-output artefacts; T-gate --all PASS exit 0; T-smoke 5-step walkthrough captured against T5 fixtures).
+Next step: v2.2 verify-work — gate-check Phase 7 + Phase 8 artefacts against acceptance criteria; close milestone.
 
 ## Deferred Items
 
@@ -53,7 +53,7 @@ Items acknowledged and deferred at v2.1 milestone close on 2026-05-11:
 | Phase | Plans | Notes |
 |-------|-------|-------|
 | 7. Stage 1 Kickoff + Discovery/SOW upstream wiring | 4 ✓ | Shipped 2026-05-11 — 3 waves (1+2+1), parallel Wave 2 (07-02 ‖ 07-03) on disjoint skill files |
-| 8. Stage 4 Fnspec Split + ROUTE | TBD | 11 reqs across 2 NEW skills + 1 RETIRED + cross-cutting ROUTE + TD-2 inline |
+| 8. Stage 4 Fnspec Split + ROUTE | 3 ✓ | W1: 08-01 generate-fnspec-platform ✓ SHIPPED 2026-05-11 (~25 min, 4 files, P1-P8 PASS); W2: 08-02 generate-fnspec-integration ✓ SHIPPED 2026-05-11 (~20 min, 4 files, I1-I8 PASS, 0 deviations); W3: 08-03 cross-cutting closeout ✓ SHIPPED 2026-05-11 (5 pre-checkpoint task commits + 3 post-checkpoint commits; --all PASS exit 0; 11 reqs flipped) |
 
 ## Accumulated Context
 
@@ -81,14 +81,15 @@ None at v2.2 roadmap lock. Phase 7 and Phase 8 are NOT research-blocked per CHAN
 
 ## Session Continuity
 
-Last session: 2026-05-11T12:00:00.000Z
-Stopped at: Phase 7 verified ACHIEVED
+Last session: 2026-05-11T18:00:00Z — Phase 8 Wave 3 (08-03) executed; SHIPPED
+Stopped at: 08-03-SUMMARY.md committed; Phase 8 SHIPPED; v2.2 ready for verify-work (7/7 plans across Phase 7 + Phase 8)
 
-Previously: Phase 7 executed 2026-05-11 in 3 waves — Wave 1 (07-01 kickoff-capture skill), Wave 2 parallel (07-02 discovery-intake wired + 07-03 generate-sow wired), Wave 3 (07-04 synthesis + R-02 glossary fix + 3 fixtures + manual e2e smoke + REQUIREMENTS trace flip). 17 commits on dydx-delivery-v2. Verifier ACHIEVED, 0 gaps.
+Previously: Phase 8 plan-phase ran 2026-05-11: discuss (D-78..D-86 locked), research (08-RESEARCH.md, 676 lines, R-01..R-05), validation (08-VALIDATION.md, Nyquist Dim-8), 3 plans authored (08-01 W1, 08-02 W2, 08-03 W3). Plan-checker iter-1 found 1 BLOCKER + 2 WARNINGS in 08-03; planner revised; plan-checker iter-2 PASS. 08-01 executed (5 tasks, 1 Rule 1 auto-fix, P1-P8 PASS). 08-02 executed (5 tasks, 0 deviations, I1-I8 PASS).
 
-Resume file: .planning/phases/07-stage-1-kickoff-discovery-sow-upstream-wiring/07-VERIFICATION.md
+Today (2026-05-11 afternoon → evening): 08-03 executed in two halves around a human-verify checkpoint. Pre-checkpoint: T1-T5 atomically (phase8-structure-check.sh 5-runner harness + locked E2 literal grep; D-78 4-enum rollout 11 edits across 10 files; R-01 glossary lines 47+66 + routing-key entry + DESIGN-20 sub-decision; STG4-03 retirement + STG4-06 4a cross-ref + README split; 3 fixture-output artefacts for ROUTE-05). Reviewer approved via "approved". Post-checkpoint: T-smoke 5-step walkthrough captured against T5 fixtures (no live skill invocation — documentation-mode smoke per fixture stubs); T-gate `phase8-structure-check.sh --all` PASS exit 0 (all P/I/E/S/X assertions green); T-flips landed (REQUIREMENTS.md 11 rows Pending → Satisfied; ROADMAP.md Phase 8 → Complete ✓ SHIPPED; STATE.md updated).
+
+Resume file: .planning/phases/08-stage-4-fnspec-split-route/08-03-SUMMARY.md
 
 ## Operator Next Steps
 
-- Run `/gsd-discuss-phase 8` for Stage 4 Fnspec Split + ROUTE (incl. TD-2 inline)
-- Optional: run `/gsd-verify-work 7` for conversational UAT confirmation before discussing Phase 8
+- Run v2.2 verify-work — gate-check Phase 7 + Phase 8 artefacts against acceptance criteria; ROUTE-05 forward-compat ready for v2.3 Stage 5 consumption.

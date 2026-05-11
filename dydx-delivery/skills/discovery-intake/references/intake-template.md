@@ -1,6 +1,6 @@
 ---
 client: <CLIENT_NAME>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 integrations: []
 version: 1
 status: draft
@@ -42,7 +42,7 @@ captured_at: <YYYY-MM-DD>
 
 ## 3. Systems
 
-**Primary platform:** <pipefy | wrike | other>
+**Primary platform:** <pipefy | wrike | ziflow | other>
 
 **Supporting systems:**
 

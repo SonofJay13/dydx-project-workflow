@@ -751,6 +751,8 @@ Failure of any check halts before fnspec write; emits `04b_consistency_check_v<N
 
 **Cross-references.** DESIGN-20 Stage 4a above (backward); DESIGN-21 (Stage 5 scope gate consumes 4b existence — same wave); DESIGN-22 (Stage 6 reads `delivery:` — forward reference, populated in Plan 02-07); DESIGN-23 Stage 7a (reads 4b for build prompt — forward reference, populated in Plan 02-07); AUDIT.md §1.3 (v0.3.0 single-spec anti-pattern — backward, populated).
 
+**Sub-decision (Phase 8 / 2026-05-11) — D-78 TD-2 resolution.** The stage-skill `platform:` enum is finalised as `pipefy | wrike | ziflow | other` (path (a) per CONTEXT.md D-78). Ziflow is wired through as a routing-key value across all stage-skill consumers per the 11-file ROUTE-04 rollout in 08-03-PLAN.md. `platform-ziflow/SKILL.md:14` retains its routing-key claim. Path (b) — documenting Ziflow as integration-only — was rejected because it would preclude Ziflow-primary engagements without a structural reason. See `dydx-delivery/references/glossary.md` routing-key entry for the canonical 4-enum definition.
+
 ## Stage 5: Tech spec
 
 > **DESIGN-21:** Stage 5 Tech spec scope gate — REQUIRED only when Stage 4b exists; lightweight platform-API addendum on Stage 4a when API-required portions exist on platform-only build; covers error handling + observability + retries + idempotency for API portions; never hand-waves error paths.

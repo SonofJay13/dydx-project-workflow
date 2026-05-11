@@ -13,8 +13,10 @@ Stage-gated client delivery pipeline for dYdX Digital. Turns a discovery convers
 │         ↓                              │    │   from build prompt) │    │  tests      │
 │  generate-sow                          │    │                      │    │             │
 │         ↓                              │    │  • Reads spec        │    │             │
-│  generate-functional-spec              │    │  • Runs build steps  │    │             │
+│  generate-fnspec-platform (4a)         │    │  • Runs build steps  │    │             │
 │         ↓                              │    │  • Self-tests        │    │             │
+│  generate-fnspec-integration (4b)      │    │                      │    │             │
+│         ↓                              │    │                      │    │             │
 │  generate-technical-spec               │    │  • Writes report     │    │             │
 │         ↓                              │    │                      │    │             │
 │  generate-test-plan                    │    └──────────┬───────────┘    └─────────────┘
@@ -34,7 +36,8 @@ Stage-gated client delivery pipeline for dYdX Digital. Turns a discovery convers
 |---|---|---|
 | `discovery-intake` | Captures business outcome, users, systems, triggers, data, rules, integrations, exceptions, failure points. Sets `platform:` frontmatter. | Cowork |
 | `generate-sow` | Produces scope, deliverables, exclusions, assumptions, risks, dependencies, commercial framing. | Cowork |
-| `generate-functional-spec` | Produces user journeys, business rules, field-level requirements, edge cases, acceptance criteria. Platform-agnostic. | Cowork |
+| `generate-fnspec-platform` (Stage 4a) | Produces platform-shaped functional spec: business rules, field-level requirements, acceptance criteria. Per-row `delivery: native-ai \| api` routing tag (D-78 / D-82). Authors `## Platform-API Addendum` H2 when no 4b is in scope per D-79. | Cowork |
+| `generate-fnspec-integration` (Stage 4b) | Produces integration-shaped functional spec: integration touchpoints, API endpoints, acceptance criteria. Runs three cross-spec consistency checks against 4a FIRST per D-84; halt-on-failure emits `04b_consistency_check_v<N>.md`. Skip-path emits verbatim `Stage 4b SKIPPED — no integration work in scope` per D-85. | Cowork |
 | `generate-technical-spec` | Loads the right platform skill (pipefy or wrike) by frontmatter. Produces pipes/blueprints, automation logic, field mappings, integration contracts, error handling. | Cowork |
 | `generate-test-plan` | Produces a structured markdown test plan: scenario, setup, action, expected, assertion type. Maps every row to an acceptance criterion. | Cowork |
 | `generate-build-prompt` | Produces a Claude-Code-ready build prompt — context, inputs to read, build sequence, constraints, self-test loop, done criteria. | Cowork (generates), Claude Code (executes) |
@@ -59,7 +62,7 @@ Artefacts land in the standard client folder shape (see workspace `hub.md`):
 ```
 <Client>/
 ├── build-specs/
-│   └── <platform>/                       # pipefy | wrike
+│   └── <platform>/                       # pipefy | wrike | ziflow
 │       ├── 00_discovery_v1.md
 │       ├── 01_sow_v1.md
 │       ├── 02_functional-spec_v1.md

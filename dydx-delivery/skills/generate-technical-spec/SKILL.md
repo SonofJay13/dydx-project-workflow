@@ -98,7 +98,7 @@ Write to `<Client>/build-specs/<platform>/05_techspec_v{N}.md` with frontmatter:
 ```yaml
 ---
 client: <Client>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 integrations: [<...>]
 version: 1
 status: draft
