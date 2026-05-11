@@ -24,7 +24,7 @@
 │         ↓                              │    │  Run build sequence  │    │  (against the  │
 │  generate-sow                          │    │  Run smoke tests     │    │   sandbox)     │
 │         ↓                              │    │  Write build report  │    │                │
-│  generate-functional-spec              │    │  Open PR / summary   │    │                │
+│  generate-fnspec (4a + 4b)             │    │  Open PR / summary   │    │                │
 │         ↓                              │    │                      │    │                │
 │  generate-technical-spec               │    └──────────┬───────────┘    └────────────────┘
 │         ↓                              │               │

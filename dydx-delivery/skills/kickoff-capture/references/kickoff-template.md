@@ -10,6 +10,7 @@
 ---
 client: <CLIENT_NAME>
 project: <PROJECT_NAME>
+platform: <pipefy | wrike | ziflow | other>
 frontmatter_version: 2
 kickoff_branch: discovery-ready
 field_notes_processed_count: <N>

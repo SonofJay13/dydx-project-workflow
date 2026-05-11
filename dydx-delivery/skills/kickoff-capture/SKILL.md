@@ -11,7 +11,7 @@ Capture the operational reality of a new engagement or change request at the ver
 
 > **Stage numbering:** This skill writes `01_kickoff_v<N>.md` per the canonical file-prefix scheme. See `dydx-delivery/references/stage-numbering.md` for the canonical Stage 1 placement + old→new mapping table.
 
-> **Frontmatter scheme:** This skill emits `kickoff_branch:` (enum: `discovery-ready | draft-sow`) + `based_on_*` fields per the canonical underscore-snake-case convention. See `dydx-delivery/references/frontmatter-scheme.md` for the canonical scheme + lenient-mode contract.
+> **Frontmatter scheme:** This skill emits `kickoff_branch:` (enum: `discovery-ready | draft-sow`), `platform:` (4-enum: `pipefy | wrike | ziflow | other` per ROUTE-04 D-78), and `based_on_*` fields per the canonical underscore-snake-case convention. Downstream Stage 2 (`discovery-intake`) and Stage 3 (`generate-sow`) read `platform:` from this artefact directly. See `dydx-delivery/references/frontmatter-scheme.md` for the canonical scheme + lenient-mode contract.
 
 > **Glossary:** `kickoff_branch:` (enum: `discovery-ready | draft-sow`) and `[unknown — needs human classification]` are canonical terms defined in `dydx-delivery/references/glossary.md`.
 
@@ -27,7 +27,7 @@ No raw-notes-direct-to-discovery shortcut exists; kickoff is the sole upstream f
 
 ## Output
 
-`<Client> Brain/<Project>/01_kickoff_v<N>.md` per DESIGN-02 file-prefix scheme + DESIGN-17 line 561. The artefact carries the frontmatter block documented in `references/kickoff-template.md` (including the chosen concrete `kickoff_branch:` enum value) and the 8 H2 category sections from STG1-04.
+`<Client> Brain/<Project>/01_kickoff_v<N>.md` per DESIGN-02 file-prefix scheme + DESIGN-17 line 561. The artefact carries the frontmatter block documented in `references/kickoff-template.md` (including the chosen concrete `kickoff_branch:` enum value and `platform:` 4-enum value per ROUTE-04 D-78) and the 8 H2 category sections from STG1-04.
 
 If `<Client>` or `<Project>` is unclear from context, ask the reviewer once before drafting.
 

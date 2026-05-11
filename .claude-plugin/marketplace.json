@@ -12,10 +12,10 @@
     {
       "name": "dydx-delivery",
       "source": "./dydx-delivery",
-      "description": "Stage-gated client delivery pipeline. Seven skills: discovery-intake, generate-sow, generate-functional-spec, generate-technical-spec, generate-test-plan, generate-build-prompt (for Claude Code), execute-tests (bot runs the test plan against the sandbox). Every stage produces a versioned, human-reviewed artefact.",
+      "description": "Stage-gated client delivery pipeline. Twelve skills: kickoff-capture, discovery-intake, generate-sow, generate-fnspec-platform (4a), generate-fnspec-integration (4b), generate-technical-spec, generate-test-plan, generate-build-prompt (for Claude Code), execute-tests, plus three platform reference skills (platform-pipefy / platform-wrike / platform-ziflow). Every stage produces a versioned, human-reviewed artefact.",
       "version": "2.0.0",
       "category": "delivery",
-      "tags": ["sow", "spec", "test-plan", "build-prompt", "claude-code", "automated-testing", "pipefy", "wrike", "solutions-architecture"],
+      "tags": ["kickoff", "sow", "fnspec", "test-plan", "build-prompt", "claude-code", "automated-testing", "pipefy", "wrike", "ziflow", "solutions-architecture"],
       "homepage": "https://github.com/SonofJay13/dydx-project-workflow"
     }
   ]
