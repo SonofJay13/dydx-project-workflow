@@ -1,7 +1,7 @@
 ---
 client: <CLIENT_NAME>
 feature: <feature-slug>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 version: 1
 status: draft
 based_on_technical_spec: 05_techspec_v<N>.md

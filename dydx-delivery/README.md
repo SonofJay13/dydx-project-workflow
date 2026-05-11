@@ -59,7 +59,7 @@ Artefacts land in the standard client folder shape (see workspace `hub.md`):
 ```
 <Client>/
 ├── build-specs/
-│   └── <platform>/                       # pipefy | wrike
+│   └── <platform>/                       # pipefy | wrike | ziflow
 │       ├── 00_discovery_v1.md
 │       ├── 01_sow_v1.md
 │       ├── 02_functional-spec_v1.md

@@ -111,7 +111,7 @@ Frontmatter is mandatory:
 ```yaml
 ---
 client: <Client>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 integrations: [<ziflow>, <workato>, ...]
 version: <N>
 status: draft
