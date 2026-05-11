@@ -113,7 +113,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: GUARDRAIL
 - Resolution path: /gsd-research-phase 2
 - Proposed default: conservative — 30 second poll with 2s interval (per CHANGELIST.md Appendix E bullet verbatim recommendation).
-- Status: proposed
+- **Decision (2026-05-11 Phase 6 PLAT-06 inline closure):** Resolution: Webhook-primary per vendor guidance (`help.ziflow.com/hc/en-us/articles/30725068740244-Webhooks`); `wait_for_proof` fallback defaults confirmed at `max_wait_s=30` / `interval_s=2`. Cited at `dydx-delivery/skills/platform-ziflow/references/api-contract.md` § wait_for_proof.
+- Status: decided
 
 **OPEN-Q06.1** — Pipefy 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
 
@@ -136,7 +137,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 2
 - Proposed default: helpers throttle at 4 req/sec (80% of historic ceiling — locked by DESIGN-22 carried throttle pattern at `.planning/DESIGN.md:795`) pending Q06.1 confirmation. Cross-references Q06.1.
-- Status: proposed
+- **Decision (2026-05-11 Phase 6 PLAT-06 inline closure):** Resolution: Helpers throttle at 13 req/sec per token (80% of 16.67 req/sec ceiling per Phase 5 Q06.1 at `dydx-delivery/references/connector-matrix.md:72`). Cited at `dydx-delivery/skills/platform-pipefy/references/api-contract.md` § Rate limit + throttle.
+- Status: decided
 
 **OPEN-Q07.1** — Wrike 2026 rate-limit publication (cross-AI C6 split: Phase 1 publication research)
 
@@ -159,7 +161,8 @@ This section catalogues every research-flagged "couldn't verify" item surfaced f
 - Severity: INFORMATIONAL
 - Resolution path: /gsd-research-phase 2
 - Proposed default: helpers throttle at 80% of confirmed published ceiling per DESIGN-22 carried throttle pattern (`.planning/DESIGN.md:795`); pending Q07.1 confirmation. Cross-references Q07.1.
-- Status: proposed
+- **Decision (2026-05-11 Phase 6 PLAT-06 inline closure):** Resolution: Helpers throttle at 320 req/min per user (80% of 400 ceiling per Phase 5 Q07.1 at `dydx-delivery/references/connector-matrix.md:73`). Cited at `dydx-delivery/skills/platform-wrike/references/api-contract.md` § Rate limit + throttle.
+- Status: decided
 
 **OPEN-Q08** — Miro export-whole-board endpoint availability
 
