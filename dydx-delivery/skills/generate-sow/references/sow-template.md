@@ -1,10 +1,13 @@
 ---
 client: <CLIENT_NAME>
-platform: <pipefy | wrike | other>
+platform: <pipefy | wrike | ziflow | other>
 integrations: []
+frontmatter_version: 2
 version: 1
-status: draft
-based_on_discovery: 02_discovery_v<N>.md
+status: draft   # canonical lifecycle: draft → client_review → approved → archived (STG3-01 + DESIGN-08)
+# One or the other — never both per DESIGN-19 line 643:
+based_on_discovery: 02_discovery_v<N>.md   # discovery-ready path (Stage 2 ran)
+# based_on_kickoff: 01_kickoff_v<N>.md     # draft-sow path (Stage 2 skipped)
 generated_at: <YYYY-MM-DD>
 ---
 
@@ -23,12 +26,23 @@ generated_at: <YYYY-MM-DD>
 
 ---
 
-## 2. In-scope deliverables
+## Platform Scope
 
-| # | Deliverable | Description | Acceptance criteria |
+What ships as platform configuration on Pipefy / Wrike / Ziflow (the primary delivery platform for this engagement). Stage 4a (`generate-fnspec-platform`) consumes this section.
+
+| # | Deliverable | Platform | Notes |
 |---|---|---|---|
-| D1 | <Brief intake form> | <Conditional fields, routing logic, validation rules> | <User can submit a brief; routes correctly in 100% of test scenarios> |
-| D2 | <Approval workflow> | <Two-stage approval with delegation> | <Approvals fire to correct approver; delegates honour absences> |
+| P1 | <e.g. Brief intake form with conditional routing> | <pipefy \| wrike \| ziflow> | <Acceptance criteria, routing logic, validation rules> |
+
+---
+
+## Integration Scope
+
+What ships as inbound/outbound integration work (custom APIs, webhooks, ETL, external system handoffs). Stage 4b (`generate-fnspec-integration`) consumes this section. If the engagement has no integration work, leave the table empty and note "no integration scope" — Stage 4b will then skip cleanly.
+
+| # | Deliverable | Integration target | Notes |
+|---|---|---|---|
+| I1 | <e.g. Ziflow review webhook → Pipefy card status> | <Ziflow API v2> | <Auth, payload shape, retry policy, acceptance criteria> |
 
 ---
 
@@ -148,8 +162,12 @@ Final engagement acceptance is on completion of all deliverables plus successful
 
 When this SOW is approved:
 
-1. Update frontmatter `status:` to `approved`
+1. Update frontmatter `status:` to `approved` (canonical lifecycle: `draft → client_review → approved → archived`)
 2. Save the signed PDF (or signature confirmation) alongside this file
-3. Run `generate-functional-spec` to convert in-scope deliverables into detailed requirements
+3. Route per DESIGN-19 line 653:
+
+> Awaiting status: approved on 03_sow_v<N>.md; routing to Stage 4a (platform fnspec) and/or Stage 4b (integration fnspec) per project scope.
+
+`## Platform Scope` feeds Stage 4a (`generate-fnspec-platform`); `## Integration Scope` feeds Stage 4b (`generate-fnspec-integration`). If `## Integration Scope` is empty / "no integration scope", Stage 4b skips cleanly.
 
 **Next stage reads:** the highest-version `03_sow_v*.md` in this folder.
