@@ -117,33 +117,34 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STG1-01 | TBD | Pending |
-| STG1-02 | TBD | Pending |
-| STG1-03 | TBD | Pending |
-| STG1-04 | TBD | Pending |
-| STG1-05 | TBD | Pending |
-| STG2-01 | TBD | Pending |
-| STG2-02 | TBD | Pending |
-| STG2-03 | TBD | Pending |
-| STG3-01 | TBD | Pending |
-| STG3-02 | TBD | Pending |
-| STG4-01 | TBD | Pending |
-| STG4-02 | TBD | Pending |
-| STG4-03 | TBD | Pending |
-| STG4-04 | TBD | Pending |
-| STG4-05 | TBD | Pending |
-| STG4-06 | TBD | Pending |
-| ROUTE-01 | TBD | Pending |
-| ROUTE-02 | TBD | Pending |
-| ROUTE-03 | TBD | Pending |
-| ROUTE-04 | TBD | Pending |
-| ROUTE-05 | TBD | Pending |
+| STG1-01 | Phase 7 | Pending |
+| STG1-02 | Phase 7 | Pending |
+| STG1-03 | Phase 7 | Pending |
+| STG1-04 | Phase 7 | Pending |
+| STG1-05 | Phase 7 | Pending |
+| STG2-01 | Phase 7 | Pending |
+| STG2-02 | Phase 7 | Pending |
+| STG2-03 | Phase 7 | Pending |
+| STG3-01 | Phase 7 | Pending |
+| STG3-02 | Phase 7 | Pending |
+| STG4-01 | Phase 8 | Pending |
+| STG4-02 | Phase 8 | Pending |
+| STG4-03 | Phase 8 | Pending |
+| STG4-04 | Phase 8 | Pending |
+| STG4-05 | Phase 8 | Pending |
+| STG4-06 | Phase 8 | Pending |
+| ROUTE-01 | Phase 8 | Pending |
+| ROUTE-02 | Phase 8 | Pending |
+| ROUTE-03 | Phase 8 | Pending |
+| ROUTE-04 | Phase 8 | Pending |
+| ROUTE-05 | Phase 8 | Pending |
 
 **Coverage:**
 - v2.2 requirements: 21 total (5 STG1 + 3 STG2 + 2 STG3 + 6 STG4 + 5 ROUTE)
-- Mapped to phases: 0 (populated by roadmapper)
-- Unmapped: 21 ⚠️ (resolved when roadmapper runs)
+- Mapped to phases: 21 (Phase 7: 10 reqs / Phase 8: 11 reqs)
+- Unmapped: 0 ✓ (resolved 2026-05-11 at v2.2 roadmap lock)
 
 ---
 *Requirements defined: 2026-05-11 for v2.2 milestone start*
 *Source-of-truth contracts: `.planning/DESIGN.md` DESIGN-17/18/19/20/21; sequencing: `.planning/CHANGELIST.md` Phase 3 (v2.2)*
+*Phase mapping locked: 2026-05-11 — Phase 7 (STG1+STG2+STG3) + Phase 8 (STG4+ROUTE)*
