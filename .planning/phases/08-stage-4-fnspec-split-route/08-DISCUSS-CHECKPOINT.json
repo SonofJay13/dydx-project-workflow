@@ -1,0 +1,82 @@
+{
+  "checkpoint_version": 1,
+  "phase_number": 8,
+  "phase_slug": "stage-4-fnspec-split-route",
+  "areas_total": 4,
+  "areas_completed": 3,
+  "current_area": null,
+  "completed_areas": [
+    {
+      "name": "TD-2 + ROUTE-03 addendum carrier",
+      "decisions": [
+        {
+          "id": "D-78",
+          "title": "TD-2 resolution: ADD ziflow to stage-skill platform: enum",
+          "summary": "Stage-skill `platform:` enum becomes `pipefy | wrike | ziflow | other` across every stage SKILL.md that declares the enum; platform-ziflow/SKILL.md:14 routing-key claim is retained and now wires through. Glossary routing-key entry updates accordingly."
+        },
+        {
+          "id": "D-79",
+          "title": "ROUTE-03 addendum carrier: Stage 4a authors body inline in v2.2",
+          "summary": "When (no 4b in scope) AND (4a has any `delivery: api` rows), Stage 4a SKILL.md instructs the skill to author the full `## Platform-API Addendum` H2 body inline + emit `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only` frontmatter. Addendum carries error-paths discipline for API portions only. v2.3 Stage 5 consumes the body verbatim."
+        }
+      ]
+    },
+    {
+      "name": "Plan slicing + wave parallelism",
+      "decisions": [
+        {
+          "id": "D-80",
+          "title": "3 atomic plans, sequential (D-69 / D-63 precedent)",
+          "summary": "08-01 = generate-fnspec-platform/ (Stage 4a) — STG4-01, STG4-04 (4a half), STG4-05, ROUTE-03 (4a addendum incl. D-79). 08-02 = generate-fnspec-integration/ (Stage 4b) — STG4-02, STG4-04 (4b half), ROUTE-01, ROUTE-02, ROUTE-03 (4b half); depends on 08-01 output. 08-03 = retire + cross-cutting — STG4-03 (retire generate-functional-spec/ dir), STG4-06 (topology docs), ROUTE-04 (D-78 ziflow enum rollout + glossary routing-key entry), ROUTE-05 (forward-compat smoke), REQUIREMENTS.md flips for all 11 rows, phase8-structure-check.sh (D-77 --section partitioning). Sequential — no parallel waves. Mirrors v2.1 D-63 + Phase 7 D-69 ('reviewer grades a whole skill at a time')."
+        }
+      ]
+    },
+    {
+      "name": "Skill internals — rubric + markup + refs shape",
+      "decisions": [
+        {
+          "id": "D-81",
+          "title": "Classifier rubric per-skill at `references/auto-classify-rubric.md` (D-73 precedent)",
+          "summary": "generate-fnspec-platform/references/auto-classify-rubric.md carries the HIGH/MEDIUM → suggest `native-ai`, LOW/`[OPEN]` → default `api` mapping + reviewer-override-per-row mechanics + re-run preservation rules. SKILL.md cites the rubric file. 4b has no rubric file — it reads 4a's per-row tags. Mirrors Phase 7 D-73 (kickoff-capture `references/auto-classify-rubric.md` per category)."
+        },
+        {
+          "id": "D-82",
+          "title": "Per-row markup: terse inline marker `delivery: X [CONFIDENCE, src: ...]`",
+          "summary": "Each requirement row in `04a_fnspec-platform_v<N>.md` carries: `delivery: native-ai | api` (canonical order, never reversed) followed by a bracketed suffix — `[HIGH, src: platform-pipefy]`, `[MEDIUM, src: platform-wrike]`, `[LOW → default api, src: platform-ziflow]`, or `[reviewer-override: api]` after human edit. Re-run preserves reviewer overrides by detecting the `[reviewer-override:]` marker (never re-classifies overridden rows). Idiom matches Phase 7 STG1-04 `[unknown — needs human classification]` marker convention. Greppable; provenance in one line."
+        },
+        {
+          "id": "D-83",
+          "title": "references/ shape: 3 files per skill",
+          "summary": "**generate-fnspec-platform/references/**: (1) `fnspec-platform-template.md` — artefact skeleton incl. `delivery:` row markup, (2) `auto-classify-rubric.md` — D-81, (3) `addendum-template.md` — `## Platform-API Addendum` H2 body skeleton for D-79. **generate-fnspec-integration/references/**: (1) `fnspec-integration-template.md` — artefact skeleton, (2) `consistency-rules.md` — three checks + halt-on-failure protocol + `04b_consistency_check_v<N>.md` template, (3) `either-spec-skip-paths.md` — STG4-06 three-topology rules. Mirrors Phase 7 D-71 (kickoff-capture 3-file references shape)."
+        }
+      ]
+    }
+  ],
+  "remaining_areas": [
+    "Cross-spec wiring — consistency + skip + smoke"
+  ],
+  "canonical_refs_accumulator": [
+    ".planning/ROADMAP.md",
+    ".planning/REQUIREMENTS.md",
+    ".planning/PROJECT.md",
+    ".planning/STATE.md",
+    ".planning/DESIGN.md",
+    ".planning/phases/07-stage-1-kickoff-discovery-sow-upstream-wiring/07-CONTEXT.md",
+    ".planning/phases/07-stage-1-kickoff-discovery-sow-upstream-wiring/07-VERIFICATION.md",
+    ".planning/milestones/v2.1-RETROSPECTIVE.md",
+    ".planning/milestones/v2.1-phases/05-foundations/05-CONTEXT.md",
+    ".planning/milestones/v2.1-phases/06-internalise-platform-skills/06-CONTEXT.md",
+    "dydx-delivery/skills/generate-functional-spec/SKILL.md",
+    "dydx-delivery/skills/platform-pipefy/references/native-ai-inventory.md",
+    "dydx-delivery/skills/platform-wrike/references/native-ai-inventory.md",
+    "dydx-delivery/skills/platform-ziflow/references/native-ai-inventory.md",
+    "dydx-delivery/skills/platform-ziflow/SKILL.md",
+    "dydx-delivery/skills/kickoff-capture/SKILL.md",
+    "dydx-delivery/skills/discovery-intake/SKILL.md",
+    "dydx-delivery/skills/generate-sow/SKILL.md",
+    "dydx-delivery/references/safety-rules.md",
+    "dydx-delivery/references/stage-numbering.md",
+    "dydx-delivery/references/frontmatter-scheme.md",
+    "dydx-delivery/references/glossary.md"
+  ]
+}
