@@ -125,10 +125,10 @@ Plugin-level canonical references, manifest sync, scaffold dirs, LICENSE, connec
 
 - [ ] **PLAT-01**: `skills/platform-pipefy/SKILL.md` + `references/{api-contract.md, native-ai-inventory.md, knowledge-ingestion.md, client-shape-gotchas.md, vocabulary.md}` written per DESIGN-14. **DESIGN-14 REVISED:** API endpoint canonical-only (`api.pipefy.com/graphql` for ALL tenants — Q24 verified 2026-05-10 via DNS test); `web_host` + `org_id` vary per tenant. **HTML-on-auth-failure gotcha** documented in `api-contract.md` (Pipefy returns Keycloak login HTML page, NOT JSON 401, on auth fail). `paginate_all` helper in `api-contract.md` to avoid MOD-4 cursor-pagination bug.
 - [ ] **PLAT-02**: `skills/platform-wrike/SKILL.md` + same 5-file `references/` shape per DESIGN-15. **`host` field persisted from OAuth token response** (NEVER hardcode `www.wrike.com` per MOD-5 — the OAuth token response carries the customer's regional host as part of its base-URL contract; hardcoding breaks multi-tenant). REST API surface for the gap (16 Copilot MCP tools inventoried in `native-ai-inventory.md`); knowledge ingestion via attach-doc-via-MCP path documented in `knowledge-ingestion.md`.
-- [ ] **PLAT-03**: `skills/platform-ziflow/SKILL.md` + same 5-file `references/` shape per DESIGN-16. **`wait_for_proof` helper** in `api-contract.md` for read-after-create eventual consistency (MOD-6); 30s poll budget / 2s interval default. Native-AI matrix grounded in Ziflow ReviewAI (Checklists Public Preview; Change Verification + Brand Standards Coming Soon). Knowledge ingestion path = checklist-generation primarily; copy-paste fallback documented.
-- [ ] **PLAT-04**: `tier_claims_last_verified:` frontmatter populated on each platform skill (`platform-pipefy`, `platform-wrike`, `platform-ziflow`) per MOD-7 — date stamps when the native-AI tier claims in `native-ai-inventory.md` were last verified against vendor docs
-- [ ] **PLAT-05**: Per-platform `native_ai_path:` flag enum locked to `paste | none` ONLY across all 3 platform skills (UAT-6.1 — `api` branch removed; native-AI ingestion APIs OUT-OF-SCOPE entirely; Stage 10 simplified to "paste bundle + upload audit log only" — humans manually upload via each platform's UI)
-- [ ] **PLAT-06**: 3 throttle/consistency OPEN-QUESTIONS resolved as part of platform-skill calibration — Q05 Ziflow read-after-create consistency window (informs `wait_for_proof` defaults in PLAT-03); Q06.2 Pipefy throttle calibration (depends on Q06.1 / FOUND-13); Q07.2 Wrike throttle calibration (depends on Q07.1 / FOUND-13)
+- [x] **PLAT-03**: `skills/platform-ziflow/SKILL.md` + same 5-file `references/` shape per DESIGN-16. **`wait_for_proof` helper** in `api-contract.md` for read-after-create eventual consistency (MOD-6); 30s poll budget / 2s interval default. Native-AI matrix grounded in Ziflow ReviewAI (Checklists Public Preview; Change Verification + Brand Standards Coming Soon). Knowledge ingestion path = checklist-generation primarily; copy-paste fallback documented.
+- [x] **PLAT-04**: `tier_claims_last_verified:` frontmatter populated on each platform skill (`platform-pipefy`, `platform-wrike`, `platform-ziflow`) per MOD-7 — date stamps when the native-AI tier claims in `native-ai-inventory.md` were last verified against vendor docs
+- [x] **PLAT-05**: Per-platform `native_ai_path:` flag enum locked to `paste | none` ONLY across all 3 platform skills (UAT-6.1 — `api` branch removed; native-AI ingestion APIs OUT-OF-SCOPE entirely; Stage 10 simplified to "paste bundle + upload audit log only" — humans manually upload via each platform's UI)
+- [x] **PLAT-06**: 3 throttle/consistency OPEN-QUESTIONS resolved as part of platform-skill calibration — Q05 Ziflow read-after-create consistency window (informs `wait_for_proof` defaults in PLAT-03); Q06.2 Pipefy throttle calibration (depends on Q06.1 / FOUND-13); Q07.2 Wrike throttle calibration (depends on Q07.1 / FOUND-13)
 
 ---
 
@@ -267,10 +267,10 @@ Updated during roadmap creation. Each requirement maps to exactly one phase.
 | FOUND-13 | Phase 5 | Pending |
 | PLAT-01 | Phase 6 | Pending |
 | PLAT-02 | Phase 6 | Pending |
-| PLAT-03 | Phase 6 | Pending |
-| PLAT-04 | Phase 6 | Pending |
-| PLAT-05 | Phase 6 | Pending |
-| PLAT-06 | Phase 6 | Pending |
+| PLAT-03 | Phase 6 | Complete |
+| PLAT-04 | Phase 6 | Complete |
+| PLAT-05 | Phase 6 | Complete |
+| PLAT-06 | Phase 6 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 50 total (8 AUDIT + 30 DESIGN + 5 CHANGE + 7 OPEN)
