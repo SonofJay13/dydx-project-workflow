@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: Foundations + Platform Skills
-status: executing
-stopped_at: "**Phase 5 COMPLETE** — All 5 wave plans (05-01..05-05) executed across 19 atomic commits + 5 SUMMARY commits + 1 verification commit. gsd-verifier PASS 5/5 SC, 13/13 FOUND-XX (`.planning/phases/05-foundations/05-VERIFICATION.md` @ `4f22854`). phase5-structure-check.sh re-run exits 0 with 43 PASS assertions. Wave 1 (`05-01`): 4 canonical refs at `dydx-delivery/references/` (safety-rules / stage-numbering / frontmatter-scheme / glossary) + 05-STATUS-SURVEY 'no drift' (FOUND-12). Wave 2 (`05-02`): 4 hard-rules surfaces collapsed per D-59/D-62 + 13 `based_on_*` renumbered + 6 template Stage-N labels migrated + 1 Rule-1 double-prefix auto-fix. Wave 3 (`05-03`): plugin.json + marketplace.json synced to 2.0.0 (UAT-3.1 author.email LOCKED `jasonmichaelb@gmail.com` NO-TOUCH) + LICENSE byte-exact 54-byte LF-only + .gitattributes LF pin + 3 scaffold dirs commands/agents/hooks each with `.gitkeep` + B.6 homepage symmetry. Wave 4 (`05-04`): connector-matrix.md 6×11 doc-only grid (UAT-3.5 no MCP for Pipefy/Wrike/Ziflow; UAT-6.1 no api for native-AI) + 8 OPEN-Qs flipped to `decided` (Q06.1/Q07.1/Q09/Q10/Q11/Q12/Q13/Q25) preserving D-47 9-field schema (C-1 HIGH) + OPEN-Q26 mcpServers deferral row (C-8 LOW) + Q09/Q13 glossary ratification (C-4 MEDIUM). Wave 5 (`05-05`): B.1 truncation closure + B.2 'test plan' wording + B.3 Variant B one-liner `targets a 13-stage delivery pipeline (v2.1 ships 6 working stages today; remainder land via v2.x roadmap)` in both READMEs (N=6 per user override; C-2 HIGH numeric-13 + future-facing tokens both PASS) + phase5-structure-check.sh 421-line, ~40 assertions, G-2 `--exclude-dir=scripts` × 8 + W-01 path correction in 05-VALIDATION.md + `wave_0_complete: true` flipped. B.5 owner-email correctly UNTOUCHED (UAT-3.1 LOCK). DESIGN-04 mcpServers deferred to v2.6/SURF-*. One info-only observation: frontmatter-scheme.md L24 short-form `based_on_techspec` vs L44 long-form `based_on_technical_spec` — both documented, no contract violation, outside Phase 5 scope. Phase 6 (Internalise Platform Skills) unblocked. Recommended next: explicit human approval gate → `/gsd-discuss-phase 6` → `/gsd-plan-phase 6`."
-last_updated: "2026-05-10T22:00:00.000Z"
-last_activity: 2026-05-10 -- Phase 05 COMPLETE (verifier PASS 13/13 FOUND-XX)
+status: verifying
+stopped_at: Phase 6 context gathered (D-63..D-68 locked)
+last_updated: "2026-05-11T03:59:35.232Z"
+last_activity: 2026-05-10 -- Phase 05 execute-phase COMPLETE (25 commits across 5 waves + verification)
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 41
+  total_plans: 36
   completed_plans: 36
-  percent: 88
+  percent: 100
 ---
 
 # STATE
@@ -206,12 +206,12 @@ None at roadmap-lock. Two research-blocked v2.x phases flagged for `/gsd-researc
 
 ## Session Continuity
 
-Last session: 2026-05-10
-Stopped at: **Phase 2 COMPLETE** — Plan 02-10 (Wave 10 synthesis) executed — 2 atomic commits (`e830f83` Task 1 — preamble blockquote finalised + Executive Summary 21-row TOC table + Appendix A Glossary 69 entries; `ff2609a` Task 2 — Appendix B 30-row DESIGN-* traceability table + Deferred OPEN-QUESTIONS finalised with 8-bullet enumeration in document order each with explicit `owner: Phase <N> per CHANGE-04`). Reconciliation algorithm (cross-AI HIGH #3) passes all 3 conditions: cardinality match INLINE_COUNT=LIST_BULLETS=8; textual match `diff` empty; ownership-per-bullet OWNERS_PRESENT=8=LIST_BULLETS. Final structural-check exits 0 — all 9 assertions PASS — **DESIGN.md is reviewer-ready** (cross-AI MEDIUM #7 — terminal state). T-02-10-01..10 mitigations honoured. Rule 2 auto-add — meta-pattern reword on preamble + CR pre-archive sanity bullet to remove literal `[OPEN: Phase 4 — ...]` ellipsis pattern that would inflate INLINE_COUNT. Rule 1 fix — seed marker text normalised from "risk-multiplier numeric defaults" to "risk-multiplier defaults" per D-27 mirror-rule (body is canonical). Awaiting Phase 2 approval gate review per ROADMAP. Phase 3 (Change list) next via `/gsd-discuss-phase 3` after approval.
+Last session: 2026-05-11T03:59:35.219Z
+Stopped at: Phase 6 context gathered (D-63..D-68 locked)
 
 Previously: Phase 2 Plan 09 (Wave 9 — Test bot architecture DESIGN-28/29/30) complete — 2 atomic commits (`9e05a5e` Task 1 ## Test bot architecture H2 opening framing paragraph + DESIGN-28 tier-1 / tier-2 boundary 6-column table + verbatim Out-of-Scope anti-feature citation + mixed-layer cases + 1 worked Pipefy card-create TC classification example; `752e85c` Task 2 DESIGN-29 client_state.yaml skeleton 7 top-level keys + 4 sandbox sub-blocks Coda CRIT-5 + wrike.host PERSISTED per DESIGN-15 + 3 worked per-platform examples + field-by-field rationale + DESIGN-30 drift-detection contract WITHOUT numbered pseudocode + 2-path human-action). Echo count progressed 29 → 32/30. Inline `[OPEN: Phase 4]` count unchanged at 17 (closed enums). Structural-check exits 0 — DESIGN.md was structurally passable (Plan 02-10 synthesis advances to reviewer-ready terminal state).
 
 Previously: Phase 2 Plan 08 (Wave 8 — Stages 8/9/10/11 skills DESIGN-24/25/26/27) complete — 2 atomic commits (`e6f479a` Stage 8 overview DESIGN-24 + Stage 9 DESIGN-25 closed doc_type enum + double-underscore naming + doc-diff-before-publish + doc_published_at invariant + MOD-1 graceful halt; `a55a51d` Stage 10 DESIGN-26 native_ai_path 3-branch enum + CRIT-8 refusal + MIN-4 refusal + copy-paste fallback default + Stage 11 DESIGN-27 brain-mirror 7-section template + one-way Coda mirror + tone_lint MOD-9 + CR archive + 00_Index bump + pre-archive sanity + Field Notes input-only). Echo count progressed 25 → 29 (DESIGN-24 + DESIGN-25 + DESIGN-26 + DESIGN-27 — 4 single-stage echoes). Inline `[OPEN: Phase 4]` count unchanged at 17 across DESIGN.md (all 4 contracts LOCKED with closed enums). Structural-check assertion #4 (echo count >= 30) short-circuits at 29/30 — expected mid-phase invariant. Plan 02-09 next; resume execution via `/gsd-execute-phase 2`.
 
 Previous: Phase 2 Plan 07 (Wave 7 — Stages 6/7a/7b skills DESIGN-22/23) complete — 2 atomic commits (`9063c85` Stage 6 cost estimate DESIGN-22 + matrix Stage 6 → 7a alignment; `209e84f` Stage 7a + 7b dual build prompts DESIGN-23 + matrix Stage 7a/7b → 8a alignment). Echo line count progressed 22 → 25 (DESIGN-22 under Stage 6 + DESIGN-23 dual-echo under Stage 7a + Stage 7b). 1 net-new canonical inline `[OPEN: Phase 4]` marker added (D-22 risk-multiplier deferral at point of use in Stage 6 H tier row of taxonomy table per D-27) PLUS 3 research-recommended-but-deferred citation echoes in L / M default-value cells (not net-new deferrals — Plan 02-10 dedups against canonical seed); total inline `[OPEN]` count across DESIGN.md = 17 (>= 8 floor with margin). Structural-check assertion #4 (echo count >= 30) short-circuits at 25/30 — expected mid-phase invariant. Plans 02-08..02-10 next; resume execution via `/gsd-execute-phase 2`.
-Resume file: (Phase 2 complete — awaiting approval; next is `/gsd-discuss-phase 3` after Phase 2 approval gate)
+Resume file: .planning/phases/06-internalise-platform-skills/06-CONTEXT.md
