@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Stage 1 Kickoff + Stage 4 Fnspec Split
-status: Phase 8 shipped — ready for verify-work
-stopped_at: Phase 8 plan 08-03 SHIPPED — phase8-structure-check.sh --all PASS (all P/I/E/S/X assertions green, exit 0); 11 REQUIREMENTS.md rows flipped; ROADMAP.md Phase 8 → Complete ✓ SHIPPED
-last_updated: "2026-05-11T18:00:00.000Z"
-last_activity: 2026-05-11 — Phase 8 plan 08-03 (Wave 3) executed (cross-cutting closeout: phase8-structure-check.sh --all PASS; STG4-01..06 + ROUTE-01..05 satisfied; Phase 8 SHIPPED)
+status: Phase 8 shipped — PR #1 open (verify-work + secure-phase PASS)
+stopped_at: Phase 8 PR #1 opened against main (https://github.com/SonofJay13/dydx-project-workflow/pull/1) — branch gsd/phase-08-stage-4-fnspec-split-route, +2775 -498 across 37 files; verify-work 7/7 PASS; secure-phase SECURED (15 threats, 0 open)
+last_updated: "2026-05-11T19:45:00.000Z"
+last_activity: 2026-05-11 — Phase 8 shipped via PR #1; v2.2 milestone ready for /gsd-complete-milestone after merge
 progress:
   total_phases: 2
   completed_phases: 2
