@@ -157,14 +157,21 @@ This document evolves at phase transitions and milestone boundaries.
 - **TD-2:** Stage-skill `platform:` enum reconciliation with platform-ziflow routing key
 - All 11 OPEN-Q rows owned by v2.1 are `Status: decided`; remaining OPEN-Q items belong to later phases
 
-## Next Milestone Goals: v2.2 Stage 1 Kickoff + Stage 4 Fnspec Split
+## Current Milestone: v2.2 Stage 1 Kickoff + Stage 4 Fnspec Split
 
 **Goal:** CHANGE-01 bundle 2 of N — land the missing Stage 1 Kickoff skill and split `generate-functional-spec` into 4a (platform-agnostic) + 4b (platform-routed) per DESIGN-20.
 
-**Likely Phase breakdown** (verify against CHANGELIST.md when `/gsd-new-milestone` runs):
-- Phase 7: `stage-1-kickoff` skill — kickoff agenda, RACI, comms cadence, first-week deliverables; feeds discovery-intake
-- Phase 8: Stage 4 Fnspec split (DESIGN-20) — 4a/4b artefact shape, delivery routing key, cross-spec consistency check
-- Phase 8 inline: TD-2 reconciliation (stage-skill `platform:` enum vs platform-ziflow routing claim)
+**Target features:**
+- `kickoff-capture/` skill (Stage 1, NEW) — meeting-notes/Miro/Field-Notes capture with dual-branch (`discovery-ready` → Stage 2; `draft-sow` → SKIP Stage 2 → Stage 3); Field Notes triage default `processed_at IS NULL`; feeds discovery-intake
+- `generate-fnspec-platform/` skill (Stage 4a, NEW) — platform-only fnspec with per-requirement `delivery: native-ai | api` routing key; uses per-platform `native-ai-inventory.md` HIGH/MEDIUM confidence rows as classifier input
+- `generate-fnspec-integration/` skill (Stage 4b, NEW) — integration-only fnspec; OWNS cross-spec consistency check before fnspec write (no conflicting `delivery:` tags / dangling refs / orphan endpoints); halts emitting `04b_consistency_check_v<N>.md` on failure
+- `generate-functional-spec` RETIRED → SPLIT — replaced by 4a + 4b; v0.3.0 artefacts remain readable per DESIGN-08 lenient mode
+- `discovery-intake/` MODIFIED — consumes `01_kickoff_v*` (`based_on_kickoff:` MANDATORY); raw-notes entry path RETIRED; skips entire stage when `kickoff_branch: draft-sow`
+- `generate-sow/` MODIFIED — status lifecycle locked to canonical `draft → client_review → approved → archived`; `client_review` retained per AUDIT-01.2
+- TD-2 reconciliation (inline) — resolve stage-skill `platform:` enum (`pipefy | wrike | other`) vs `platform-ziflow/SKILL.md:14` routing claim; either add `ziflow` to enum or explicitly document Ziflow as integration-only (never primary platform routing key); decided as part of Stage 4 Fnspec split routing-key contract
+
+**Phase breakdown (continues numbering from v2.1; finalised by roadmapper):**
+- Phase 7+: per CHANGELIST.md Phase 3 (v2.2) — finalised when roadmapper runs against the locked REQUIREMENTS.md
 
 **Scope locks carried forward from v2.0/v2.1 (do not re-litigate):**
 - UAT-3.5 — MCPs OUT-OF-SCOPE through v2.6 (API-first across all platforms)
@@ -200,4 +207,4 @@ This document evolves at phase transitions and milestone boundaries.
 </details>
 
 ---
-*Last updated: 2026-05-11 after v2.1 milestone close*
+*Last updated: 2026-05-11 after v2.2 milestone start*

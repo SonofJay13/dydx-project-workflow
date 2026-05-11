@@ -96,7 +96,7 @@ Cosmetic items deferred (will be cleaned during v2.0 build):
 - `.planning/CHANGELIST.md` ✓ APPROVED 2026-05-10 — sequenced v0.3.0 → v2 delta with per-skill NEW/MODIFIED/RETIRED + cosmetic-fix list + research-blocked phase flags + migration cutover rules
 - `.planning/OPEN-QUESTIONS.md` ✓ APPROVED 2026-05-10 — register of all deferred questions with owners + target phases
 
-Phase directories remain in `.planning/phases/01-audit/` through `04-open-questions/` (not retroactively archived).
+Phase directories archived to `.planning/milestones/v2.0-phases/` on 2026-05-11 at v2.2 kickoff (deferred archive of design-only milestone that was never CLI-closed via `/gsd-complete-milestone v2.0`).
 
 ---
 *Last updated: 2026-05-11 after v2.1 milestone close*

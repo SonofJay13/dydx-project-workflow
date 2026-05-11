@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.1
-milestone_name: — Foundations + Platform Skills
-status: Awaiting next milestone
-stopped_at: Phase 6 complete (4/4 plans landed) — awaiting milestone v2.1 approval gate
-last_updated: "2026-05-11T07:13:15.239Z"
-last_activity: 2026-05-11 — Milestone v2.1 completed and archived
+milestone: v2.2
+milestone_name: Stage 1 Kickoff + Stage 4 Fnspec Split
+status: planning
+last_updated: "2026-05-11T07:56:16.554Z"
+last_activity: 2026-05-11
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 40
-  completed_plans: 40
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # STATE
@@ -26,10 +25,10 @@ See: `.planning/PROJECT.md` (updated 2026-05-10)
 
 ## Current Position
 
-Phase: Milestone v2.1 closed (2026-05-11)
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting `/gsd-new-milestone` for v2.2
-Last activity: 2026-05-11 — Milestone v2.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-05-11 — Milestone v2.2 started
 
 ## Deferred Items
 
