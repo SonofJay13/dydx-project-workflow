@@ -26,31 +26,43 @@ The plugin behaves as a senior implementation partner end-to-end: every stage pr
 - ✓ Versioned artefacts — Option B `_v{N}.md` filenames, frontmatter `version`, `status` (v0.3.0)
 - ✓ Sandbox safety rules — read-write only against named sandbox tenants, no destructive integrations outside scope (v0.3.0)
 
+<!-- Shipped in v2.0 (design-only milestone — locked architecture; no skill edits). -->
+
+- ✓ **AUDIT.md** — citation-grounded inventory of v0.3.0 plugin (8 AUDIT-XX requirements) — v2.0
+- ✓ **DESIGN.md** — locked v2 architecture: cross-cutting structural decisions, 13-skill inventory, 3 internalised platform skills, every stage skill design, test bot architecture (30 DESIGN-XX requirements) — v2.0
+- ✓ **CHANGELIST.md** — sequenced v0.3.0 → v2 delta with per-skill NEW/MODIFIED/RETIRED tagging + research-blocked phase flags + migration cutover rules (5 CHANGE-XX requirements) — v2.0
+- ✓ **OPEN-QUESTIONS.md** — register of all deferred questions with owners + target phases (7 OPEN-XX requirements) — v2.0
+
+<!-- Shipped in v2.1 (Foundations + Platform Skills) — see milestones/v2.1-ROADMAP.md -->
+
+- ✓ Plugin-level canonical references (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`, `connector-matrix.md`) — v2.1
+- ✓ 7 v0.3.0 skills repointed to canonical references (duplicates collapsed, sandbox-block bug fixed, `based_on_*` normalised) — v2.1
+- ✓ File renumbering 00→02 / 01→03 / 02→04 / 03→05 / 04→07a — v2.1
+- ✓ Plugin manifest 2.0.0 sync across `plugin.json` + `marketplace.json` — v2.1
+- ✓ LICENSE file at repo root — v2.1
+- ✓ Empty `commands/`, `agents/`, `hooks/` scaffold dirs — v2.1
+- ✓ Connector probe + graceful-degradation matrix (Coda MCP / Google Workspace MCP / Miro MCP / Pipefy API / Wrike API / Ziflow API) — v2.1
+- ✓ 5 cosmetic CONCERNS fixes (B.1 / B.2 / B.3 / B.4 / B.6); B.5 owner-email INTENTIONAL per UAT-3.1 — v2.1
+- ✓ **platform-pipefy** skill — 5-file references/ shape + `paginate_all` helper + canonical `api.pipefy.com/graphql` endpoint + HTML-on-auth-failure detection + Q06.2 13 req/sec throttle — v2.1
+- ✓ **platform-wrike** skill — 5-file references/ shape + OAuth `host` persistence pattern + 16 Copilot MCP tools matrix + Q07.2 320 req/min throttle — v2.1
+- ✓ **platform-ziflow** skill — 5-file references/ shape + webhook-PRIMARY framing + `wait_for_proof` fallback (max_wait_s=30 / interval_s=2) + ReviewAI 4-row matrix + Q05 resolution — v2.1
+- ✓ `tier_claims_last_verified: 2026-05-09` frontmatter on each platform skill — v2.1
+- ✓ Per-platform `native_ai_path: paste|none` enum locked (T-06-02: zero `api` field assignments) — v2.1
+
 ### Active
 
-<!-- v2.1 "Foundations + Platform Skills" milestone scope — populated by REQUIREMENTS.md.
-     Wider v2.x roadmap (Stages 0/3/4/5/6/7/8/9/10 build, native-AI, archive) is queued
-     for v2.2-v2.6 per CHANGELIST.md CHANGE-01. See REQUIREMENTS.md for current v2.1 REQ-IDs. -->
+<!-- v2.2 milestone scope — populated by REQUIREMENTS.md when /gsd-new-milestone runs. -->
 
-**v2.1 (current):** Foundations + Platform Skills
+**v2.2 (next):** Stage 1 Kickoff + Stage 4 Fnspec split (CHANGE-01 bundle 2 of N)
 
-- [ ] Plugin-level canonical references (`safety-rules.md`, `stage-numbering.md`, `frontmatter-scheme.md`, `glossary.md`)
-- [ ] 7 v0.3.0 skills updated to point at canonical references (collapses duplicates, fixes sandbox-block bug, normalises `based_on_*`)
-- [ ] File renumbering 00→02 / 01→03 / 02→04 / 03→05 / 04→07a (FOUND-03)
-- [ ] Plugin manifest 2.0.0 sync (`plugin.json` + `marketplace.json`)
-- [ ] LICENSE file at repo root (two-line boilerplate per OPEN-Q23)
-- [ ] Empty `commands/`, `agents/`, `hooks/` scaffold dirs
-- [ ] Connector probe + graceful-degradation matrix (Coda MCP / Google Workspace MCP / Miro MCP / Pipefy API / Wrike API / Ziflow API)
-- [ ] 5 active cosmetic CONCERNS fixes (B.1 / B.2 / B.3 / B.4 / B.6) — B.5 owner-email = INTENTIONAL (no fix)
-- [ ] `skills/platform-pipefy/` with 5-file `references/` shape + `paginate_all` helper + DESIGN-14-revised canonical API endpoint + HTML-on-auth-failure gotcha
-- [ ] `skills/platform-wrike/` with 5-file `references/` shape + OAuth `host` persistence (MOD-5)
-- [ ] `skills/platform-ziflow/` with 5-file `references/` shape + `wait_for_proof` helper (MOD-6)
-- [ ] `tier_claims_last_verified:` frontmatter on each platform skill (MOD-7)
-- [ ] Per-platform `native_ai_path:` flag enum = `paste | none` (UAT-6.1)
+- [ ] **stage-1-kickoff** skill — the missing front-end stage between signed SOW and discovery-intake (kickoff agenda, RACI, comms cadence, first-week deliverables)
+- [ ] **Stage 4 Fnspec split (DESIGN-20)** — break `generate-functional-spec` into 4a (platform-agnostic functional decomposition) and 4b (platform-routed delivery shape) per the DESIGN.md locked architecture
+- [ ] **Delivery routing key + cross-spec consistency check** (DESIGN-20 sub-items)
+- [ ] **TD-2 carry-forward from v2.1 audit** — reconcile stage-skill `platform:` enum (`pipefy|wrike|other`) with platform-ziflow routing claim; either add `ziflow` to enum or explicitly document Ziflow as integration-only (never primary platform routing key)
 
-**Queued for later v2.x milestones (out of scope for v2.1):**
+**Queued for later v2.x milestones (out of scope for v2.2):**
 
-- v2.2-v2.6: Stages 0/3/4/5/6/7/8/9/10 build, per-client persistent test harness, documentation update, native-AI enablement (paste-only per UAT-6.1), sign-off + brain update + archive — per CHANGELIST.md CHANGE-01 phasing
+- v2.3-v2.6: Stages 5/6/7/8/9/10 build, per-client persistent test harness, documentation update, native-AI paste-bundle workflow (paste-only per UAT-6.1), sign-off + brain update + archive — per CHANGELIST.md CHANGE-01 phasing
 
 ### Out of Scope
 
@@ -62,13 +74,15 @@ The plugin behaves as a senior implementation partner end-to-end: every stage pr
 | Re-platforming existing clients off Pipefy/Wrike/Ziflow | Out of scope per kickoff |
 | Two-way Coda sync (Coda → local brain merge) | Coda mirror is strictly one-way local→Coda; Field Notes table is read-only triage queue |
 | Auto-progression between stages | Approval gates are non-negotiable; humans gate every stage |
-| Skill edits during the v2.0 design phase | Kickoff prompt explicitly forbids skill edits in the design milestone |
+| Skill edits during the v2.0 design phase | Kickoff prompt explicitly forbids skill edits in the design milestone (v2.0 shipped 2026-05-10; lock lifted at v2.1 start) |
+| Native-AI API ingestion (Pipefy / Wrike / Ziflow) | UAT-6.1 locked through v2.6 — Stage 10 = paste bundle + upload audit log only |
+| MCP adoption for Pipefy / Wrike | UAT-3.5 locked through v2.6 — API-first across all platform skills; re-evaluated post-first-real-client-engagement |
 
 ## Context
 
-**Repository:** `dydx-project-workflow` — single-plugin marketplace at `dydx-digital@1.2.0`. Plugin lives at `dydx-delivery/` with 7 markdown-only skills. No `commands/`, `agents/`, or `hooks/` directories yet.
+**Repository:** `dydx-project-workflow` — single-plugin marketplace. Plugin lives at `dydx-delivery/` at version **2.0.0** (synced across `plugin.json` + `marketplace.json`) with **10 skills total**: 7 stage skills (discovery-intake, generate-sow, generate-functional-spec, generate-technical-spec, generate-test-plan, generate-build-prompt, execute-tests) + 3 platform reference skills (platform-pipefy, platform-wrike, platform-ziflow) shipped in v2.1. Empty `commands/`, `agents/`, `hooks/` scaffold dirs exist. LICENSE in place.
 
-**Pipeline today (v0.3.0):** Linear five-stage artefact-driven flow — discovery → SOW → fnspec → techspec → test plan → build prompt → execute tests. Each stage reads the highest-version output from the prior stage. Single fnspec, single tech spec. Platform-pipefy / platform-wrike skills are *referenced* but not present in the repo; they ship under `anthropic-skills` separately and need to move inside this plugin in v2.
+**Pipeline today (post-v2.1):** Linear stage-gated flow — discovery → SOW → fnspec → techspec → test plan → build prompt → execute tests. Each stage reads the highest-version output from the prior stage. Stage skills load platform reference skills (platform-pipefy / platform-wrike) via `platform:` frontmatter enum; `ziflow` currently falls through `other` (TD-2 carryover to v2.2). Single fnspec / single tech spec (Stage 4 split lands in v2.2 per DESIGN-20).
 
 **v2 ambition:** Plugin becomes a senior implementation partner that owns ten lifecycle stages (kickoff → discovery → SOW → split fnspec → tech spec → cost → dual build prompts → test → docs → native-AI enablement → archive). Each client gets a persistent test harness that lives in the client Brain and updates each ship.
 
@@ -99,14 +113,18 @@ The plugin behaves as a senior implementation partner end-to-end: every stage pr
 
 | Decision | Rationale | Outcome |
 |---|---|---|
-| Brownfield v2.0 framing (not greenfield v1.0) | Existing v0.3.0 plugin is shipped reality; v2.0 captures the rebuild without rewriting history | — Pending |
-| Platform skills move inside `dydx-delivery` plugin | Platforms are first-class to delivery; living outside causes broken-reference drift today | — Pending |
-| Coda becomes a hard dependency | Required for scope/costing tasks AND brain mirror; no fallback without Coda | — Pending |
-| Local brain canonical, Coda mirror published one-way | Two-way sync invites merge conflicts; Field Notes stays a triage queue, never auto-merged | — Pending |
-| Test harness per client, persistent, hybrid Python+AI | Deterministic state checks + AI judgement is the only way to get reliable end-to-end coverage across heterogeneous platforms | — Pending |
-| Reset phase numbering at 1 for v2.0 | No prior milestone phases archived; clean numbering avoids confusion with file-prefix stage numbers | — Pending |
-| Run-domain research before defining requirements | Hybrid Python+AI test harness, Coda schema patterns, native-AI ingestion paths, and integration pitfalls warrant grounded inputs | — Pending |
-| v2.0 milestone is design-only — no skill edits | Kickoff explicitly mandates audit + design lock before build; prevents premature skill churn | — Pending |
+| Brownfield v2.0 framing (not greenfield v1.0) | Existing v0.3.0 plugin is shipped reality; v2.0 captures the rebuild without rewriting history | ✓ Good — v2.0 design-locked architecture shipped without rewriting v0.3.0 history |
+| Platform skills move inside `dydx-delivery` plugin | Platforms are first-class to delivery; living outside causes broken-reference drift today | ✓ Good — platform-{pipefy,wrike,ziflow} shipped in v2.1 with 5-file references/ shape |
+| Coda becomes a hard dependency | Required for scope/costing tasks AND brain mirror; no fallback without Coda | — Pending (lands in v2.4+ when Stage 6 cost + Stage 11 archive consume Coda) |
+| Local brain canonical, Coda mirror published one-way | Two-way sync invites merge conflicts; Field Notes stays a triage queue, never auto-merged | — Pending (lands in v2.5+ with Stage 11 brain-update workflow) |
+| Test harness per client, persistent, hybrid Python+AI | Deterministic state checks + AI judgement is the only way to get reliable end-to-end coverage across heterogeneous platforms | — Pending (lands in v2.5 Stage 8 test-bot rebuild) |
+| Reset phase numbering at 1 for v2.0 | No prior milestone phases archived; clean numbering avoids confusion with file-prefix stage numbers | ✓ Good — Phases 1-4 (v2.0) + Phases 5-6 (v2.1); no collision with file-prefix stage numbers |
+| Run-domain research before defining requirements | Hybrid Python+AI test harness, Coda schema patterns, native-AI ingestion paths, and integration pitfalls warrant grounded inputs | ✓ Good — research outputs in .planning/research/ informed CHANGELIST sequencing |
+| v2.0 milestone is design-only — no skill edits | Kickoff explicitly mandates audit + design lock before build; prevents premature skill churn | ✓ Good — design-lock held through Phase 4; first skill edits landed in Phase 5 (v2.1) as planned |
+| Per-platform slicing of Phase 6 (D-63) — Pipefy/Wrike/Ziflow each as one atomic plan | Reviewer grades a whole platform at a time; mixing platforms across plans causes review-context loss | ✓ Good — 06-01/02/03 shipped as atomic platforms; parallel Wave 2 execution worked |
+| Webhook-PRIMARY framing for Ziflow read-after-create (Q05) | Vendor explicitly recommends webhooks over polling; wait_for_proof is fallback only | ✓ Good — landed in platform-ziflow/api-contract.md with 30s/2s polling defaults |
+| `tier_claims_last_verified:` per-platform date (MOD-7, D-68) | Connector capability claims rot fast; per-platform date gives a re-verification trigger | ✓ Good — 2026-05-09 baseline applied to all 3 platform SKILL.md frontmatter |
+| Vocabulary dedup gate (D-66) — project-wide glossary terms ONLY in glossary.md | Platform-specific vocabularies must not redefine project-wide terms | ✓ Good — D-66 grep gate green at v2.1 close; zero cross-platform redefinitions |
 
 ## Evolution
 
@@ -125,50 +143,61 @@ This document evolves at phase transitions and milestone boundaries.
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
-## Current Milestone: v2.1 Foundations + Platform Skills
+## Current State: v2.1 Shipped (2026-05-11)
 
-**Goal:** First build milestone after v2.0 design-lock — land canonical-references foundation + 3 internalised platform skills (Pipefy/Wrike/Ziflow) per CHANGELIST CHANGE-01, resolving all v0.3.0 BLOCKING bugs from AUDIT.md and codifying the connector probe + graceful-degradation matrix. Apply v2.0 DESIGN contracts + UAT decisions verbatim — do not re-derive scope.
+**Last shipped:** v2.1 Foundations + Platform Skills — 2 phases (Phase 5 Foundations + Connector Verification; Phase 6 Internalise Platform Skills), 9 plans, 19 requirements (13 FOUND + 6 PLAT) all satisfied. Full archive: `.planning/milestones/v2.1-ROADMAP.md` + `v2.1-REQUIREMENTS.md` + `v2.1-MILESTONE-AUDIT.md`.
 
-**Target features (Phase 5 — Foundations + Connector Verification):**
-- Plugin-level canonical references at `dydx-delivery/references/{safety-rules.md, stage-numbering.md, frontmatter-scheme.md, glossary.md}` (single source of truth)
-- 7 existing v0.3.0 skills updated to point at canonical references (collapses 4 hard-rules duplicates per AUDIT-05.1; fixes sandbox-block bug; normalises `based_on_*` field names)
+**Plugin v2.0.0 surface today:**
+- 7 stage skills + 3 platform reference skills under `dydx-delivery/skills/`
+- 4 plugin-level canonical references + connector-matrix at `dydx-delivery/references/`
+- Manifest 2.0.0 synced across plugin.json + marketplace.json
+- LICENSE in place; empty commands/agents/hooks/ scaffold dirs
+
+**Carry-forward into v2.2 (from v2.1 audit):**
+- **TD-2:** Stage-skill `platform:` enum reconciliation with platform-ziflow routing key
+- All 11 OPEN-Q rows owned by v2.1 are `Status: decided`; remaining OPEN-Q items belong to later phases
+
+## Next Milestone Goals: v2.2 Stage 1 Kickoff + Stage 4 Fnspec Split
+
+**Goal:** CHANGE-01 bundle 2 of N — land the missing Stage 1 Kickoff skill and split `generate-functional-spec` into 4a (platform-agnostic) + 4b (platform-routed) per DESIGN-20.
+
+**Likely Phase breakdown** (verify against CHANGELIST.md when `/gsd-new-milestone` runs):
+- Phase 7: `stage-1-kickoff` skill — kickoff agenda, RACI, comms cadence, first-week deliverables; feeds discovery-intake
+- Phase 8: Stage 4 Fnspec split (DESIGN-20) — 4a/4b artefact shape, delivery routing key, cross-spec consistency check
+- Phase 8 inline: TD-2 reconciliation (stage-skill `platform:` enum vs platform-ziflow routing claim)
+
+**Scope locks carried forward from v2.0/v2.1 (do not re-litigate):**
+- UAT-3.5 — MCPs OUT-OF-SCOPE through v2.6 (API-first across all platforms)
+- UAT-6.1 — Native-AI ingestion APIs OUT-OF-SCOPE entirely (paste-only)
+- UAT-4.1 — Pipefy API host canonical-only; web_host + org_id vary per tenant
+- UAT-4.2 — Pipefy auth-concurrency exclusive; Stage 8 test bot tier-1 serializes per-tenant
+- UAT-3.1 — Private email `jasonmichaelb@gmail.com` on plugin manifests is INTENTIONAL (dYdX-approved)
+- D-65 — Client-shape-gotchas use VodafoneZiggo + Up & Up Group; other clients TBD-at-first-engagement
+- D-67 — Each phase resolves its own OPEN-Q rows inline; synthesis plans flip the OPEN-QUESTIONS register
+
+<details>
+<summary>Archived v2.1 milestone scope (Phases 5-6) — shipped 2026-05-11</summary>
+
+**Phase 5 — Foundations + Connector Verification (FOUND-01..FOUND-13):**
+- Plugin-level canonical references at `dydx-delivery/references/{safety-rules.md, stage-numbering.md, frontmatter-scheme.md, glossary.md}`
+- 7 v0.3.0 skills repointed to canonical references (4 hard-rules duplicates collapsed per AUDIT-05.1; sandbox-block bug fixed; `based_on_*` normalised)
 - File renumbering 00→02 / 01→03 / 02→04 / 03→05 / 04→07a per FOUND-03
-- Plugin manifest 2.0.0 synced across `plugin.json` + `marketplace.json` (metadata + `plugins[0]`)
-- LICENSE file at repo root per OPEN-Q23 (two-line "All rights reserved.\nNot licensed for redistribution.")
-- Empty `commands/`, `agents/`, `hooks/` scaffold directories
-- Connector probe + graceful-degradation matrix (Coda MCP / Google Workspace MCP / Miro MCP / Pipefy API / Wrike API / Ziflow API)
-- 5 active cosmetic CONCERNS fixes per AUDIT-07 (B.1 README truncation / B.2 "test sheet" wording / B.3 pipeline-step count → 13 / B.4 LICENSE created / B.6 homepage asymmetry). **B.5 owner-email is INTENTIONAL** (dYdX-approved private email per UAT-3.1; not a defect)
+- Plugin manifest 2.0.0 synced (`plugin.json` + `marketplace.json`)
+- LICENSE file at repo root per OPEN-Q23
+- Empty `commands/`, `agents/`, `hooks/` scaffold dirs
+- `connector-matrix.md` — Coda MCP / Google Workspace MCP / Miro MCP / Pipefy API / Wrike API / Ziflow API probe baseline 2026-05-09
+- 5 cosmetic CONCERNS fixes per AUDIT-07 (B.1 / B.2 / B.3 / B.4 / B.6); B.5 owner-email INTENTIONAL per UAT-3.1
 
-**Target features (Phase 6 — Internalise Platform Skills):**
-- `skills/platform-pipefy/` + 5-file `references/` shape (`api-contract.md` / `native-ai-inventory.md` / `knowledge-ingestion.md` / `client-shape-gotchas.md` / `vocabulary.md`); `paginate_all` helper (avoids MOD-4); **DESIGN-14 REVISED:** `api.pipefy.com/graphql` canonical-only for ALL tenants (Q24 verified 2026-05-10 via DNS test); `web_host` + `org_id` vary per tenant; **HTML-on-auth-failure gotcha** documented in `api-contract.md` (Pipefy returns Keycloak login HTML, NOT JSON 401, on auth fail)
-- `skills/platform-wrike/` same shape; persists `host` from OAuth token response (NEVER hardcode `www.wrike.com` per MOD-5)
-- `skills/platform-ziflow/` same shape; `wait_for_proof` helper for read-after-create eventual consistency (MOD-6); 30s poll / 2s interval default
-- `tier_claims_last_verified:` frontmatter on each platform skill (MOD-7)
-- Per-platform `native_ai_path:` flag enum = `paste | none` ONLY (UAT-6.1 removed `api` branch — native-AI ingestion is OUT OF SCOPE entirely)
+**Phase 6 — Internalise Platform Skills (PLAT-01..PLAT-06):**
+- `platform-pipefy/` — 5-file references/ shape, `paginate_all` helper, `api.pipefy.com/graphql` canonical, HTML-on-auth detection, Q06.2 13 req/sec throttle
+- `platform-wrike/` — 5-file references/ shape, OAuth host persistence, 16 Copilot MCP tools matrix, Q07.2 320 req/min throttle
+- `platform-ziflow/` — 5-file references/ shape, webhook-PRIMARY framing, `wait_for_proof` fallback (30s/2s defaults), 4-row ReviewAI matrix, Q05 resolution, `ZiflowRateLimitExceeded` 429 class
+- `tier_claims_last_verified: 2026-05-09` baseline on all 3 SKILL.md
+- `native_ai_path: paste|none` enum locked (T-06-02: zero `api` field assignments)
+- D-66 vocabulary dedup gate green
+- 3 OPEN-Q row flips (Q05/Q06.2/Q07.2 proposed → decided)
 
-**Key context:** v2.0 design-only mandate ENDS at v2.1 start — skill edits are now permitted. Phase 5 canonical references land BEFORE Phase 6 platform skills point at them (intra-milestone ordering). Phase numbering continues from v2.0 (Phase 5 = Foundations; Phase 6 = Platform Skills).
-
-**Active OPEN-QUESTIONS to resolve during v2.1 (11 rows):**
-- *Phase 5 (8):* Q06.1 Pipefy 2026 rate-limits · Q07.1 Wrike 2026 rate-limits · Q09 Claude in Chrome canonical naming · Q10 Coda MCP wired+pin · Q11 Google Workspace MCP server choice (taylorwilsdon vs alternatives) · Q12 Miro MCP wired vs paste-only · Q13 Wrike host source-of-truth across multi-tenant deployments · Q25 Wrike+Ziflow auth-concurrency class verification
-- *Phase 6 (3):* Q05 Ziflow read-after-create consistency window · Q06.2 Pipefy throttle calibration (depends on Q06.1) · Q07.2 Wrike throttle calibration (depends on Q07.1)
-
-**Decisions inherited from v2.0 UAT (LOCKED — do not re-litigate):**
-- Q15 — opt-in per CR; v2 readers permanently lenient on v0.3.0 frontmatter; no calendar trigger
-- Q16 — re-run status-lifecycle survey at Phase 5 kickoff to confirm no drift since 2026-05-10 sample
-- Q17 — per-client brain Coda docs ARE the canonical tracker; Up & Up Group + VodafoneZiggo are the 2 established clients (URLs in OPEN-QUESTIONS Q17); other clients TBD bootstrapped at first Stage 11 archive
-- Q21 — single parameterised `commands/refine.md` taking skill name as `$1`
-- Q21.1 — `/dydx-refine-*` plugin-prefixed namespace
-- Q23 — LICENSE = "All rights reserved.\nNot licensed for redistribution." (two-line boilerplate)
-- Q24 — Pipefy API canonical-only; DESIGN-29 simplified (no `api_host` field; `web_host` + `org_id` retained)
-
-**Scope locks (LOCKED — do not re-open in v2.1):**
-- **UAT-3.5 — MCPs OUT-OF-SCOPE through v2.6.** API-first across all platform skills. Pipedream Pipefy MCP (`mcp.pipedream.net/v2`) and Wrike MCP (`https://developers.wrike.com/docs/setup-claude-with-wrike-mcp`) are parked references — adoption re-evaluated as a post-v2.6 milestone gated on first-real-client-engagement-practice-run. Ziflow has no MCP.
-- **UAT-6.1 — Native-AI ingestion APIs OUT-OF-SCOPE entirely.** OPEN-Q01/Q02/Q03 are status=closed. Stage 10 = paste bundle + upload audit log only. The tool produces correctly-shaped upload instructions; humans manually upload via each platform's UI.
-- **UAT-4.1 — Pipefy host persistence simplified.** API host canonical-only; only `web_host` + `org_id` vary per tenant.
-- **UAT-4.2 — Pipefy auth-concurrency = exclusive.** Stage 8 test bot tier-1 must serialize per-tenant ops + emit `auth_switch_required` retry signal.
-- **AUDIT-07 §7.5 owner-email = INTENTIONAL** (UAT-3.1 — dYdX-approved private email; not a defect; do NOT change to org domain).
-
-**Success definition:** All v0.3.0 BLOCKING bugs from AUDIT.md resolved + 3 new platform skills shipped + connector probe matrix codified.
+</details>
 
 ---
-*Last updated: 2026-05-10 after milestone v2.1 kickoff*
+*Last updated: 2026-05-11 after v2.1 milestone close*
