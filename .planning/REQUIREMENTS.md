@@ -48,22 +48,22 @@
 
 `generate-functional-spec/` RETIRED → SPLIT into `generate-fnspec-platform/` (Stage 4a, NEW) and `generate-fnspec-integration/` (Stage 4b, NEW). Highest-leverage v2 feature — the `delivery: native-ai | api` tag is the routing key for Stages 5/6/7b/10. Locked contract: DESIGN-20.
 
-- [ ] **STG4-01**: `generate-fnspec-platform/` skill exists at `dydx-delivery/skills/generate-fnspec-platform/` (Stage 4a, NEW). Reads approved discovery (`02_discovery_v*`) + approved SOW (`03_sow_v*`) + per-platform `references/native-ai-inventory.md`. Writes `04a_fnspec-platform_v<N>.md` per DESIGN-02 file-prefix scheme.
-- [ ] **STG4-02**: `generate-fnspec-integration/` skill exists at `dydx-delivery/skills/generate-fnspec-integration/` (Stage 4b, NEW). Reads approved discovery + approved SOW + Stage 4a output. Writes `04b_fnspec-integration_v<N>.md` per DESIGN-02.
-- [ ] **STG4-03**: v0.3.0 `generate-functional-spec/` skill RETIRED — directory removed from `dydx-delivery/skills/` once 4a + 4b ship. Any references to `generate-functional-spec` in v0.3.0 templates / READMEs / changelogs updated to point at 4a + 4b. v0.3.0 artefacts using old filename (`02_functional-spec_v*.md` or `04_functional-spec_v*.md`) remain readable per DESIGN-08 lenient mode; no auto-migration of existing artefacts.
-- [ ] **STG4-04**: Both 4a and 4b emit per-requirement `delivery: native-ai | api` routing-key tagging on every requirement row in their respective fnspec artefacts. Canonical enum order (`native-ai | api`); never reversed. Routing key drives Stages 5 / 6 / 7b / 10 without re-classification downstream.
-- [ ] **STG4-05**: Stage 4a classifier reads loaded platform skill's `references/native-ai-inventory.md` (per DESIGN-14/15/16). HIGH/MEDIUM confidence rows → suggest `delivery: native-ai`; LOW confidence (`[OPEN]`-flagged) → default to `delivery: api`. Default-to-api avoids optimistic native-AI claims when only copy-paste works. Human reviewer can override per row.
-- [ ] **STG4-06**: 4a and 4b are independently optional for single-track projects — three valid topologies: (a) 4a only (no integration work in scope); (b) 4b only (no platform configuration in scope); (c) both (typical case). Either-spec-skip explicitly supported per DESIGN-20; downstream stages handle the skip per DESIGN-21 Stage 5 scope-gate.
+- [x] **STG4-01**: `generate-fnspec-platform/` skill exists at `dydx-delivery/skills/generate-fnspec-platform/` (Stage 4a, NEW). Reads approved discovery (`02_discovery_v*`) + approved SOW (`03_sow_v*`) + per-platform `references/native-ai-inventory.md`. Writes `04a_fnspec-platform_v<N>.md` per DESIGN-02 file-prefix scheme.
+- [x] **STG4-02**: `generate-fnspec-integration/` skill exists at `dydx-delivery/skills/generate-fnspec-integration/` (Stage 4b, NEW). Reads approved discovery + approved SOW + Stage 4a output. Writes `04b_fnspec-integration_v<N>.md` per DESIGN-02.
+- [x] **STG4-03**: v0.3.0 `generate-functional-spec/` skill RETIRED — directory removed from `dydx-delivery/skills/` once 4a + 4b ship. Any references to `generate-functional-spec` in v0.3.0 templates / READMEs / changelogs updated to point at 4a + 4b. v0.3.0 artefacts using old filename (`02_functional-spec_v*.md` or `04_functional-spec_v*.md`) remain readable per DESIGN-08 lenient mode; no auto-migration of existing artefacts.
+- [x] **STG4-04**: Both 4a and 4b emit per-requirement `delivery: native-ai | api` routing-key tagging on every requirement row in their respective fnspec artefacts. Canonical enum order (`native-ai | api`); never reversed. Routing key drives Stages 5 / 6 / 7b / 10 without re-classification downstream.
+- [x] **STG4-05**: Stage 4a classifier reads loaded platform skill's `references/native-ai-inventory.md` (per DESIGN-14/15/16). HIGH/MEDIUM confidence rows → suggest `delivery: native-ai`; LOW confidence (`[OPEN]`-flagged) → default to `delivery: api`. Default-to-api avoids optimistic native-AI claims when only copy-paste works. Human reviewer can override per row.
+- [x] **STG4-06**: 4a and 4b are independently optional for single-track projects — three valid topologies: (a) 4a only (no integration work in scope); (b) 4b only (no platform configuration in scope); (c) both (typical case). Either-spec-skip explicitly supported per DESIGN-20; downstream stages handle the skip per DESIGN-21 Stage 5 scope-gate.
 
 ### Routing key + Cross-spec consistency check + TD-2 (ROUTE)
 
 Cross-cutting requirements that don't fit cleanly into a single stage. Locked contracts: DESIGN-20 (consistency check) + DESIGN-21 (Stage 5 scope-gate, forward-compatible) + TD-2 (v2.1 carry-forward).
 
-- [ ] **ROUTE-01**: Cross-spec consistency check is OWNED by Stage 4b (`generate-fnspec-integration/`). Runs FIRST — before fnspec-integration write. Three checks, all required: (a) no requirement ID with conflicting `delivery:` tags across 4a and 4b; (b) every integration touchpoint in 4b cites a referenced platform requirement ID from 4a (no dangling refs); (c) no orphan API endpoints in 4b (every endpoint maps to a requirement). Two-place declaration in 4a + 4b key-decisions sections per T-02-06-02 mitigation.
-- [ ] **ROUTE-02**: Consistency check failure halts Stage 4b BEFORE fnspec-integration write and emits `04b_consistency_check_v<N>.md` listing the specific failure rows for human triage. No silent write of an inconsistent fnspec; reviewer must resolve before retry.
-- [ ] **ROUTE-03**: Stage 5 scope-gate contract DOCUMENTED in Stage 4a/4b skill bodies as forward-compatible interface — three explicit branches per DESIGN-21: (a) default — 4b exists with `delivery: api` rows → full tech spec written by Stage 5 in v2.3; (b) skip-with-addendum — no 4b but 4a has `delivery: api` rows → 4a carries `## Platform-API Addendum` H2 + `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only` frontmatter; (c) skip-entirely — no 4b AND no `delivery: api` rows anywhere → no tech spec, no addendum, no 4a frontmatter change. No silent default. **v2.2 scope:** 4a/4b emit the necessary frontmatter fields and addendum H2 to make Stage 5 scope-gating work; actual Stage 5 consumption lives in v2.3.
-- [ ] **ROUTE-04**: TD-2 carry-forward from v2.1 audit RESOLVED. Stage-skill `platform:` enum currently `pipefy | wrike | other` (per `dydx-delivery/skills/generate-functional-spec/SKILL.md:14` and sibling stage skills); `platform-ziflow/SKILL.md:14` claims `platform: ziflow` is the routing key but no stage-side wiring maps that value. Resolution path (decide and document during Stage 4 split work): either (a) ADD `ziflow` to the stage-skill `platform:` enum and update all consuming skills + `platform-ziflow/SKILL.md` to align; OR (b) document Ziflow as integration-only (never a primary platform routing key) and update `platform-ziflow/SKILL.md:14` to remove the routing-key claim. Outcome captured in DESIGN-20 sub-decision or `dydx-delivery/references/glossary.md` routing-key entry.
-- [ ] **ROUTE-05**: `delivery:` routing key declared in 4a/4b propagates forward through `based_on_*` chains to Stage 5 (tech spec) / Stage 6 (cost) / Stage 7b (implementation prompt) / Stage 10 (push-native-ai-knowledge). v2.2 emits the tag; downstream consumption is forward-compatible interface only — actual consumption ships in v2.3+ milestones per CHANGELIST.md Phase 4..7. Verification: 4a/4b artefacts produced in v2.2 round-trip through a forward-compatibility smoke check showing the `delivery:` field survives at the canonical position on every requirement row.
+- [x] **ROUTE-01**: Cross-spec consistency check is OWNED by Stage 4b (`generate-fnspec-integration/`). Runs FIRST — before fnspec-integration write. Three checks, all required: (a) no requirement ID with conflicting `delivery:` tags across 4a and 4b; (b) every integration touchpoint in 4b cites a referenced platform requirement ID from 4a (no dangling refs); (c) no orphan API endpoints in 4b (every endpoint maps to a requirement). Two-place declaration in 4a + 4b key-decisions sections per T-02-06-02 mitigation.
+- [x] **ROUTE-02**: Consistency check failure halts Stage 4b BEFORE fnspec-integration write and emits `04b_consistency_check_v<N>.md` listing the specific failure rows for human triage. No silent write of an inconsistent fnspec; reviewer must resolve before retry.
+- [x] **ROUTE-03**: Stage 5 scope-gate contract DOCUMENTED in Stage 4a/4b skill bodies as forward-compatible interface — three explicit branches per DESIGN-21: (a) default — 4b exists with `delivery: api` rows → full tech spec written by Stage 5 in v2.3; (b) skip-with-addendum — no 4b but 4a has `delivery: api` rows → 4a carries `## Platform-API Addendum` H2 + `has_platform_api_addendum: true` + `tech_spec_scope: platform-api-addendum-only` frontmatter; (c) skip-entirely — no 4b AND no `delivery: api` rows anywhere → no tech spec, no addendum, no 4a frontmatter change. No silent default. **v2.2 scope:** 4a/4b emit the necessary frontmatter fields and addendum H2 to make Stage 5 scope-gating work; actual Stage 5 consumption lives in v2.3.
+- [x] **ROUTE-04**: TD-2 carry-forward from v2.1 audit RESOLVED. Stage-skill `platform:` enum currently `pipefy | wrike | other` (per `dydx-delivery/skills/generate-functional-spec/SKILL.md:14` and sibling stage skills); `platform-ziflow/SKILL.md:14` claims `platform: ziflow` is the routing key but no stage-side wiring maps that value. Resolution path (decide and document during Stage 4 split work): either (a) ADD `ziflow` to the stage-skill `platform:` enum and update all consuming skills + `platform-ziflow/SKILL.md` to align; OR (b) document Ziflow as integration-only (never a primary platform routing key) and update `platform-ziflow/SKILL.md:14` to remove the routing-key claim. Outcome captured in DESIGN-20 sub-decision or `dydx-delivery/references/glossary.md` routing-key entry.
+- [x] **ROUTE-05**: `delivery:` routing key declared in 4a/4b propagates forward through `based_on_*` chains to Stage 5 (tech spec) / Stage 6 (cost) / Stage 7b (implementation prompt) / Stage 10 (push-native-ai-knowledge). v2.2 emits the tag; downstream consumption is forward-compatible interface only — actual consumption ships in v2.3+ milestones per CHANGELIST.md Phase 4..7. Verification: 4a/4b artefacts produced in v2.2 round-trip through a forward-compatibility smoke check showing the `delivery:` field survives at the canonical position on every requirement row.
 
 ## Future Requirements
 
@@ -127,17 +127,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STG2-03 | Phase 7 | Satisfied |
 | STG3-01 | Phase 7 | Satisfied |
 | STG3-02 | Phase 7 | Satisfied |
-| STG4-01 | Phase 8 | Pending |
-| STG4-02 | Phase 8 | Pending |
-| STG4-03 | Phase 8 | Pending |
-| STG4-04 | Phase 8 | Pending |
-| STG4-05 | Phase 8 | Pending |
-| STG4-06 | Phase 8 | Pending |
-| ROUTE-01 | Phase 8 | Pending |
-| ROUTE-02 | Phase 8 | Pending |
-| ROUTE-03 | Phase 8 | Pending |
-| ROUTE-04 | Phase 8 | Pending |
-| ROUTE-05 | Phase 8 | Pending |
+| STG4-01 | Phase 8 | Satisfied |
+| STG4-02 | Phase 8 | Satisfied |
+| STG4-03 | Phase 8 | Satisfied |
+| STG4-04 | Phase 8 | Satisfied |
+| STG4-05 | Phase 8 | Satisfied |
+| STG4-06 | Phase 8 | Satisfied |
+| ROUTE-01 | Phase 8 | Satisfied |
+| ROUTE-02 | Phase 8 | Satisfied |
+| ROUTE-03 | Phase 8 | Satisfied |
+| ROUTE-04 | Phase 8 | Satisfied |
+| ROUTE-05 | Phase 8 | Satisfied |
 
 **Coverage:**
 - v2.2 requirements: 21 total (5 STG1 + 3 STG2 + 2 STG3 + 6 STG4 + 5 ROUTE)
