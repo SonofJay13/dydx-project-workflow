@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.2
 milestone_name: Stage 1 Kickoff + Stage 4 Fnspec Split
-status: planning
-last_updated: "2026-05-11T08:30:00.000Z"
-last_activity: 2026-05-11
+status: Not started — roadmap locked, awaiting plan-phase
+stopped_at: Phase 7 context gathered
+last_updated: "2026-05-11T08:21:54.459Z"
+last_activity: 2026-05-11 — v2.2 ROADMAP.md locked (Phase 7 + Phase 8 mapped against 21 reqs; 100% coverage)
 progress:
-  total_phases: 8
-  completed_phases: 6
+  total_phases: 2
+  completed_phases: 0
   total_plans: 0
   completed_plans: 0
-  percent: 0
 ---
 
 # STATE
@@ -83,12 +83,12 @@ None at v2.2 roadmap lock. Phase 7 and Phase 8 are NOT research-blocked per CHAN
 
 ## Session Continuity
 
-Last session: 2026-05-11T08:30:00.000Z
-Stopped at: v2.2 ROADMAP.md locked — Phase 7 + Phase 8 mapped against 21 reqs (100% coverage); REQUIREMENTS.md traceability table flipped TBD → Phase 7/Phase 8 on all 21 rows; ready for `/gsd-discuss-phase 7`.
+Last session: 2026-05-11T08:21:54.451Z
+Stopped at: Phase 7 context gathered
 
 Previously: v2.1 milestone close 2026-05-11 — Phase 6 P04 reviewer-ready signal; 17 OPEN-Q + 13 FOUND + 6 PLAT requirements all SATISFIED; phase dirs archived to `.planning/milestones/v2.1-phases/`; RETROSPECTIVE.md created; v2.0 phase dirs archived to `.planning/milestones/v2.0-phases/` at v2.2 kickoff (deferred archive of design-only milestone).
 
-Resume file: None.
+Resume file: .planning/phases/07-stage-1-kickoff-discovery-sow-upstream-wiring/07-CONTEXT.md
 
 ## Operator Next Steps
 
